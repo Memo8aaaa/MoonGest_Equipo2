@@ -3,305 +3,197 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Moon Gest — Gestionar Citas</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Moon Beauty Space — Gestionar Citas</title>
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap');
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --brown-dark: #2d1f14;
-  --brown-mid: #7a5535;
-  --brown-main: #a07850;
-  --brown-light: #c9a98a;
-  --cream: #f9f5f0;
-  --white: #ffffff;
-  --border: #ede5dc;
-  --text-main: #2d1f14;
-  --text-muted: #9e8878;
-  --text-hint: #b8a898;
+  --brown-dark: #2d1f14; --brown-mid: #7a5535; --brown-main: #a07850;
+  --brown-light: #c9a98a; --cream: #f9f5f0; --white: #ffffff;
+  --border: #ede5dc; --text-main: #2d1f14; --text-muted: #9e8878; --text-hint: #b8a898;
   --badge-red-bg: #fdecea; --badge-red-text: #c0614e;
   --badge-yellow-bg: #fef3e2; --badge-yellow-text: #b07820;
   --badge-green-bg: #e8f5ee; --badge-green-text: #3a8a5c;
 }
-
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--cream);
-  color: var(--text-main);
-  min-height: 100vh;
-}
-
-/* ── APP SHELL ── */
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text-main); min-height: 100vh; }
 .app { display: flex; min-height: 100vh; }
-
-/* ── SIDEBAR ── */
-.sidebar {
-  width: 210px;
-  background: var(--brown-dark);
-  display: flex;
-  flex-direction: column;
-  padding: 24px 0;
-  flex-shrink: 0;
-  position: fixed;
-  height: 100vh;
-  top: 0; left: 0;
-  z-index: 100;
-}
-.sidebar-logo {
-  padding: 0 20px 24px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-.sidebar-logo h2 {
-  font-family: 'Cormorant Garamond', serif;
-  color: #e8d5c0;
-  font-size: 17px;
-  font-weight: 300;
-  line-height: 1.3;
-}
+.sidebar { width: 210px; background: var(--brown-dark); display: flex; flex-direction: column; padding: 24px 0; flex-shrink: 0; position: fixed; height: 100vh; top: 0; left: 0; z-index: 100; }
+.sidebar-logo { padding: 0 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.sidebar-logo h2 { font-family: 'Cormorant Garamond', serif; color: #e8d5c0; font-size: 17px; font-weight: 300; line-height: 1.3; }
 .sidebar-logo p { color: rgba(255,255,255,0.3); font-size: 10px; letter-spacing: 1px; margin-top: 4px; }
 .nav { flex: 1; padding: 16px 0; }
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 20px;
-  font-size: 13px;
-  color: rgba(255,255,255,0.45);
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.15s;
-}
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 12px 20px; font-size: 13px; color: rgba(255,255,255,0.45); cursor: pointer; text-decoration: none; transition: all 0.15s; }
 .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
 .nav-item.active { background: rgba(160,120,80,0.25); color: #e8c99a; border-left: 3px solid var(--brown-main); }
 .nav-icon { font-size: 15px; width: 20px; text-align: center; }
 .sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
 .sidebar-footer span { font-size: 11px; color: rgba(255,255,255,0.3); }
-.btn-cerrar-sesion {
-  display: flex; align-items: center; gap: 8px;
-  color: rgba(255,255,255,0.4); font-size: 12px;
-  cursor: pointer; margin-top: 8px;
-  background: none; border: none; font-family: 'DM Sans', sans-serif;
-  padding: 0;
-}
+.btn-cerrar-sesion { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.4); font-size: 12px; cursor: pointer; margin-top: 8px; background: none; border: none; font-family: 'DM Sans', sans-serif; padding: 0; }
 .btn-cerrar-sesion:hover { color: rgba(255,255,255,0.7); }
-
-/* ── MAIN CONTENT ── */
 .main { flex: 1; margin-left: 210px; display: flex; flex-direction: column; min-height: 100vh; }
-.topbar {
-  background: var(--white);
-  padding: 18px 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--border);
-  position: sticky; top: 0; z-index: 50;
-}
+.topbar { background: var(--white); padding: 18px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
 .topbar h1 { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--text-main); font-weight: 400; }
 .topbar-actions { display: flex; gap: 10px; align-items: center; }
-.content { flex: 1; padding: 28px 32px; }
-
-/* ── BUTTONS ── */
-.btn {
-  padding: 9px 20px;
-  border-radius: 8px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  transition: opacity 0.15s;
-}
+.btn { padding: 9px 20px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: opacity 0.15s; }
 .btn:hover { opacity: 0.88; }
 .btn-primary { background: var(--brown-main); color: #fff; }
 .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--brown-mid); }
 .btn-sm { padding: 7px 14px; font-size: 12px; border-radius: 6px; }
 .btn-danger { background: #fdecea; color: #c0614e; border: 1.5px solid #f5c4c0; }
-
-/* ── FORM FIELDS ── */
-.field { margin-bottom: 18px; }
-.field label {
-  display: block;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--brown-mid);
-  letter-spacing: 1.4px;
-  text-transform: uppercase;
-  margin-bottom: 7px;
-}
-.field input, .field select, .field textarea {
-  width: 100%;
-  padding: 11px 14px;
-  border: 1.5px solid #e8ddd5;
-  border-radius: 8px;
-  font-size: 13px;
-  font-family: 'DM Sans', sans-serif;
-  color: var(--text-main);
-  background: #fdf9f6;
-  outline: none;
-  transition: border-color 0.2s;
-}
+.btn-ghost { background: none; border: none; color: var(--brown-mid); font-size: 12px; font-family: 'DM Sans', sans-serif; cursor: pointer; padding: 0; text-decoration: underline; }
+.btn-ghost:hover { color: var(--brown-main); }
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 11px; font-weight: 500; color: var(--brown-mid); letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 7px; }
+.field input, .field select, .field textarea { width: 100%; padding: 11px 14px; border: 1.5px solid #e8ddd5; border-radius: 8px; font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--text-main); background: #fdf9f6; outline: none; transition: border-color 0.2s; }
 .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--brown-main); background: #fff; }
 .field input::placeholder, .field textarea::placeholder { color: #c5b5a8; }
-.field textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+.field textarea { resize: vertical; min-height: 70px; line-height: 1.6; }
 .field-row { display: flex; gap: 16px; }
 .field-row .field { flex: 1; }
-
-/* ── BADGES ── */
-.badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 500;
-  white-space: nowrap;
-}
+.badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; white-space: nowrap; }
 .badge-sin { background: var(--badge-red-bg); color: var(--badge-red-text); }
 .badge-anticipo { background: var(--badge-yellow-bg); color: var(--badge-yellow-text); }
 .badge-pagado { background: var(--badge-green-bg); color: var(--badge-green-text); }
-
-/* ── CARDS ── */
-.card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 18px 20px;
-}
-
-/* ── MODAL ── */
-.modal-overlay {
-  display: none;
-  position: fixed; inset: 0;
-  background: rgba(45,31,20,0.4);
-  z-index: 200;
-  align-items: center;
-  justify-content: center;
-}
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(45,31,20,0.45); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
 .modal-overlay.open { display: flex; }
-.modal-box {
-  background: var(--white);
-  border-radius: 14px;
-  padding: 28px 32px;
-  width: 100%;
-  max-width: 480px;
-  box-shadow: 0 16px 60px rgba(0,0,0,0.15);
-  animation: fadeUp 0.2s ease;
-}
+.modal-box { background: var(--white); border-radius: 14px; padding: 28px 32px; width: 100%; max-width: 480px; box-shadow: 0 16px 60px rgba(0,0,0,0.18); animation: fadeUp 0.2s ease; max-height: 92vh; overflow-y: auto; }
+.modal-box.wide { max-width: 600px; }
 @keyframes fadeUp { from { transform: translateY(16px); opacity:0; } to { transform: translateY(0); opacity:1; } }
 .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--text-main); margin-bottom: 4px; }
 .modal-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
 .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
 .modal-actions .btn { flex: 1; padding: 12px; }
-
-/* ── ALERTS ── */
-.alert {
-  padding: 11px 14px;
-  border-radius: 8px;
-  font-size: 12px;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-}
+.alert { padding: 11px 14px; border-radius: 8px; font-size: 12px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
 .alert-warning { background: #fef3e2; border: 1px solid #f5d9a0; color: #7a5010; }
 .alert-error { background: var(--badge-red-bg); border: 1px solid #f5c4c0; color: #8a2010; }
 .alert-success { background: var(--badge-green-bg); border: 1px solid #b0dfc0; color: #1a6040; }
-
-/* ── SECTION LABEL ── */
-.section-label {
-  font-size: 11px;
-  color: var(--text-hint);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-
-/* ── INFO BOX ── */
 .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 12px; margin-bottom: 20px; }
 .info-box { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
 .info-box .ib-label { font-size: 10px; color: var(--text-hint); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
 .info-box .ib-value { font-size: 14px; color: var(--text-main); font-weight: 500; }
-
-  </style>
-  <style>
-    .content { padding: 0; display: flex; flex: 1; overflow: hidden; height: calc(100vh - 66px); }
-    .cal-panel {
-      width: 270px; flex-shrink: 0;
-      background: var(--white); border-right: 1px solid var(--border);
-      padding: 22px 20px; overflow-y: auto;
-    }
-    .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .cal-header span { font-size: 14px; font-weight: 500; color: var(--text-main); }
-    .cal-nav { background: none; border: none; color: var(--brown-main); cursor: pointer; font-size: 18px; padding: 0 4px; }
-    .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
-    .cal-day-name { text-align: center; font-size: 10px; color: var(--text-hint); font-weight: 500; padding: 5px 0; }
-    .cal-day {
-      text-align: center; font-size: 12px; padding: 7px 2px;
-      border-radius: 6px; cursor: pointer; color: var(--text-main);
-      position: relative; transition: background 0.12s;
-    }
-    .cal-day:hover { background: #f5ede5; }
-    .cal-day.today { background: var(--brown-main); color: #fff; font-weight: 500; }
-    .cal-day.selected { background: #fdf3e8; color: var(--brown-mid); font-weight: 500; outline: 2px solid var(--brown-light); }
-    .cal-day.has-cita::after {
-      content: ''; position: absolute; bottom: 3px; left: 50%;
-      transform: translateX(-50%); width: 5px; height: 5px;
-      border-radius: 50%; background: var(--brown-light);
-    }
-    .cal-day.today.has-cita::after { background: rgba(255,255,255,0.7); }
-    .cal-day.empty { pointer-events: none; color: transparent; }
-    .legend { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
-    .legend-title { font-size: 10px; color: var(--text-hint); letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 10px; }
-    .legend-item { display: flex; align-items: center; gap: 9px; font-size: 12px; color: #7a6558; margin-bottom: 7px; }
-    .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
-    /* Citas list */
-    .citas-panel { flex: 1; padding: 24px 28px; overflow-y: auto; background: var(--cream); }
-    .day-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--text-main); margin-bottom: 4px; }
-    .day-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
-    .cita-card {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: 10px; padding: 16px 20px; margin-bottom: 12px;
-      display: flex; align-items: center; gap: 18px;
-      cursor: pointer; transition: box-shadow 0.15s;
-    }
-    .cita-card:hover { box-shadow: 0 4px 16px rgba(160,120,80,0.13); }
-    .cita-time { text-align: center; flex-shrink: 0; width: 54px; }
-    .cita-time .hour { font-size: 18px; font-weight: 500; color: var(--text-main); line-height: 1; }
-    .cita-time .period { font-size: 10px; color: var(--text-hint); margin-top: 2px; }
-    .cita-div { width: 1px; height: 48px; background: var(--border); flex-shrink: 0; }
-    .cita-info { flex: 1; }
-    .cita-name { font-size: 14px; font-weight: 500; color: var(--text-main); }
-    .cita-service { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
-    .cita-notas { font-size: 11px; color: #b8a898; margin-top: 4px; font-style: italic; }
-    .cita-actions { display: flex; gap: 8px; flex-shrink: 0; }
-    .cita-btn {
-      padding: 7px 13px; border-radius: 6px; font-size: 12px;
-      border: 1.5px solid var(--border); background: transparent;
-      color: var(--brown-mid); cursor: pointer; font-family: 'DM Sans', sans-serif;
-      transition: all 0.12s;
-    }
-    .cita-btn:hover { border-color: var(--brown-main); color: var(--brown-main); }
-    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-hint); }
-    .empty-state .es-icon { font-size: 40px; margin-bottom: 14px; }
-    .empty-state p { font-size: 14px; }
-
-    /* Modal Agendar */
-    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
-    .method-row { display: flex; gap: 10px; }
-    .method-btn {
-      flex: 1; padding: 10px; border: 1.5px solid #e8ddd5;
-      border-radius: 7px; text-align: center; font-size: 12px;
-      cursor: pointer; color: #7a6558; background: #fdf9f6;
-      transition: all 0.12s; font-family: 'DM Sans', sans-serif;
-    }
-    .method-btn.sel { border-color: var(--brown-main); background: #fdf3e8; color: var(--brown-mid); font-weight: 500; }
+.content { padding: 0; display: flex; flex: 1; overflow: hidden; height: calc(100vh - 66px); }
+.cal-panel { width: 270px; flex-shrink: 0; background: var(--white); border-right: 1px solid var(--border); padding: 22px 20px; overflow-y: auto; }
+.cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.cal-header span { font-size: 14px; font-weight: 500; color: var(--text-main); }
+.cal-nav { background: none; border: none; color: var(--brown-main); cursor: pointer; font-size: 18px; padding: 0 4px; }
+.cal-nav:hover { opacity: 0.7; }
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+.cal-day-name { text-align: center; font-size: 10px; color: var(--text-hint); font-weight: 500; padding: 5px 0; }
+.cal-day { text-align: center; font-size: 12px; padding: 7px 2px; border-radius: 6px; cursor: pointer; color: var(--text-main); position: relative; transition: background 0.12s; user-select: none; }
+.cal-day:hover:not(.empty) { background: #f5ede5; }
+.cal-day.selected { background: #fdf3e8 !important; color: var(--brown-mid) !important; font-weight: 500; outline: 2px solid var(--brown-light); outline-offset: -1px; }
+.cal-day.today { background: var(--brown-main); color: #fff; font-weight: 500; }
+.cal-day.today.selected { background: var(--brown-mid) !important; color: #fff !important; outline: 2px solid var(--brown-light); }
+.cal-day.has-cita::after { content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 5px; height: 5px; border-radius: 50%; background: var(--brown-light); }
+.cal-day.today.has-cita::after { background: rgba(255,255,255,0.8); }
+.cal-day.selected.has-cita::after { background: var(--brown-main); }
+.cal-day.empty { pointer-events: none; color: transparent; }
+.legend { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
+.legend-title { font-size: 10px; color: var(--text-hint); letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 10px; }
+.legend-item { display: flex; align-items: center; gap: 9px; font-size: 12px; color: #7a6558; margin-bottom: 7px; }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+.citas-panel { flex: 1; padding: 24px 28px; overflow-y: auto; background: var(--cream); }
+.day-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--text-main); margin-bottom: 4px; }
+.day-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+.cita-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 12px; display: flex; align-items: center; gap: 18px; cursor: pointer; transition: box-shadow 0.15s; }
+.cita-card:hover { box-shadow: 0 4px 16px rgba(160,120,80,0.13); }
+.cita-time { text-align: center; flex-shrink: 0; width: 54px; }
+.cita-time .hour { font-size: 18px; font-weight: 500; color: var(--text-main); line-height: 1; }
+.cita-time .period { font-size: 10px; color: var(--text-hint); margin-top: 2px; }
+.cita-div { width: 1px; height: 48px; background: var(--border); flex-shrink: 0; }
+.cita-info { flex: 1; }
+.cita-name { font-size: 14px; font-weight: 500; color: var(--text-main); }
+.cita-service { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+.cita-notas { font-size: 11px; color: #b8a898; margin-top: 4px; font-style: italic; }
+.cita-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.cita-btn { padding: 7px 13px; border-radius: 6px; font-size: 12px; border: 1.5px solid var(--border); background: transparent; color: var(--brown-mid); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.12s; }
+.cita-btn:hover { border-color: var(--brown-main); color: var(--brown-main); }
+.cita-btn.danger:hover { border-color: #c0614e; color: #c0614e; }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text-hint); }
+.empty-state .es-icon { font-size: 40px; margin-bottom: 14px; }
+.empty-state p { font-size: 14px; }
+/* ── SECCIÓN DIVIDER ── */
+.sec-div { font-size: 10px; color: var(--text-hint); letter-spacing: 1.5px; text-transform: uppercase; padding-bottom: 8px; border-bottom: 1px solid var(--border); margin: 4px 0 14px; }
+/* ── MINI CAL DISPONIBILIDAD ── */
+.mini-cal { border: 1.5px solid #e8ddd5; border-radius: 10px; padding: 13px; background: #fdf9f6; margin-bottom: 8px; }
+.mini-cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.mini-cal-header span { font-size: 13px; font-weight: 500; color: var(--text-main); }
+.mini-nav { background: none; border: none; color: var(--brown-main); cursor: pointer; font-size: 15px; padding: 0 3px; }
+.mini-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+.mdn { text-align: center; font-size: 9px; color: var(--text-hint); font-weight: 500; padding: 3px 0; }
+.md { text-align: center; font-size: 11px; padding: 5px 2px; border-radius: 5px; cursor: pointer; color: var(--text-main); transition: background 0.1s; }
+.md:hover:not(.md-empty):not(.md-past) { background: #f5ede5; }
+.md.md-empty, .md.md-past { pointer-events: none; color: #d5cac3; }
+.md.md-busy { background: #fdecea; color: #c0614e; font-weight: 500; }
+.md.md-sel { background: var(--brown-main) !important; color: #fff !important; font-weight: 500; }
+.md.md-today { font-weight: 700; }
+.mini-leyenda { display: flex; gap: 12px; margin-top: 8px; font-size: 10px; color: var(--text-muted); }
+.mini-leyenda span { display: flex; align-items: center; gap: 4px; }
+.mini-dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+/* ── PERFIL CLIENTA ── */
+.clienta-card { background: #fdf9f6; border: 1.5px solid #e8ddd5; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; animation: fadeUp 0.18s ease; display: none; }
+.clienta-card.visible { display: block; }
+.cc-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.cc-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--brown-light); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; color: var(--brown-dark); flex-shrink: 0; }
+.cc-name { font-size: 14px; font-weight: 500; color: var(--text-main); }
+.cc-tel { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.cc-stats { display: flex; gap: 8px; flex-wrap: wrap; }
+.cc-stat { background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font-size: 11px; color: var(--text-muted); }
+.cc-stat strong { display: block; font-size: 13px; color: var(--text-main); font-weight: 500; }
+.cc-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.cc-tag { padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 500; }
+.cc-tag.alergia { background: #fdecea; color: #c0614e; }
+.cc-tag.pref { background: #eef4fd; color: #1a5fa0; }
+.cc-tag.nota { background: #fef3e2; color: #b07820; }
+.cc-divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+/* ── VISTA SEMANAL ── */
+.semana-panel { flex: 1; display: none; flex-direction: column; overflow: hidden; background: var(--cream); }
+.semana-panel.active { display: flex; }
+.semana-header { background: var(--white); border-bottom: 1px solid var(--border); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.semana-nav { display: flex; align-items: center; gap: 10px; }
+.semana-nav button { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--brown-main); cursor: pointer; font-size: 15px; padding: 4px 10px; line-height: 1; }
+.semana-nav button:hover { background: #f5ede5; }
+.semana-label { font-size: 13px; font-weight: 500; color: var(--text-main); min-width: 200px; text-align: center; }
+.semana-grid { flex: 1; display: grid; grid-template-columns: 54px repeat(7, 1fr); overflow-y: auto; }
+.sg-time-col { grid-column: 1; }
+.sg-col { border-left: 1px solid var(--border); }
+.sg-col-header { padding: 10px 6px; text-align: center; background: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 5; }
+.sg-col-header .sg-dia { font-size: 11px; color: var(--text-hint); text-transform: uppercase; letter-spacing: 0.8px; }
+.sg-col-header .sg-num { font-size: 20px; font-weight: 400; color: var(--text-main); line-height: 1.2; margin-top: 2px; }
+.sg-col-header.sg-hoy .sg-num { background: var(--brown-main); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 2px auto 0; font-size: 16px; }
+.sg-time-header { padding: 10px 6px; background: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 5; }
+.sg-slot { height: 52px; border-bottom: 1px solid #f5ede5; position: relative; padding: 2px 3px; }
+.sg-slot:nth-child(odd) { background: rgba(249,245,240,0.5); }
+.sg-time-slot { height: 52px; border-bottom: 1px solid #f5ede5; display: flex; align-items: flex-start; justify-content: flex-end; padding: 4px 6px 0 0; }
+.sg-time-slot span { font-size: 9px; color: var(--text-hint); white-space: nowrap; }
+.sg-cita-block {
+  position: absolute; left: 2px; right: 2px; top: 2px;
+  border-radius: 5px; padding: 3px 6px; cursor: pointer;
+  font-size: 10px; line-height: 1.3; overflow: hidden;
+  border-left: 3px solid; transition: opacity 0.15s;
+  min-height: 22px;
+}
+.sg-cita-block:hover { opacity: 0.82; }
+.sg-cita-block.pagado { background: #e8f5ee; border-color: #3a8a5c; color: #1a5c38; }
+.sg-cita-block.anticipo { background: #fef3e2; border-color: #b07820; color: #7a5010; }
+.sg-cita-block.sin { background: #fdecea; border-color: #c0614e; color: #8a2010; }
+.sg-cita-name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sg-cita-svc { opacity: 0.75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 9px; }
+.sg-empty-slot { position: absolute; inset: 2px; border-radius: 4px; cursor: pointer; transition: background 0.12s; }
+.sg-empty-slot:hover { background: rgba(160,120,80,0.07); }
+/* Toggle vista */
+.vista-toggle { display: flex; gap: 4px; background: var(--cream); border-radius: 7px; padding: 3px; border: 1px solid var(--border); }
+.vista-btn { padding: 5px 12px; border-radius: 5px; font-size: 12px; font-weight: 500; cursor: pointer; border: none; background: transparent; color: var(--text-muted); font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.vista-btn.active { background: var(--white); color: var(--brown-mid); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+/* TOAST */
+.toast { position: fixed; bottom: 28px; right: 28px; z-index: 999; background: var(--brown-dark); color: #e8d5c0; padding: 14px 20px; border-radius: 10px; font-size: 13px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); transform: translateY(80px); opacity: 0; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); pointer-events: none; }
+.toast.show { transform: translateY(0); opacity: 1; }
   </style>
 </head>
 <body>
 <div class="app">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="sidebar-logo"><h2>Moon<br>Gest</h2><p>SISTEMA DE GESTIÓN</p></div>
+    <div class="sidebar-logo"><h2>Moon<br>Beauty<br>Space</h2><p>SISTEMA DE GESTIÓN</p></div>
     <nav class="nav">
       <a class="nav-item active" href="citas.html"><span class="nav-icon">📅</span> Gestionar Citas</a>
       <a class="nav-item" href="clientas.html"><span class="nav-icon">👤</span> Clientas</a>
@@ -315,23 +207,23 @@ body {
       <button class="btn-cerrar-sesion" onclick="window.location.href='index.html'">↩ Cerrar sesión</button>
     </div>
   </aside>
-
-  <!-- MAIN -->
   <div class="main">
     <div class="topbar">
       <h1>Gestionar Citas</h1>
       <div class="topbar-actions">
-        <button class="btn btn-outline btn-sm">Ver semana</button>
-        <button class="btn btn-primary btn-sm" onclick="abrirModal('modal-agendar')">+ Agendar Cita</button>
+        <div class="vista-toggle">
+          <button class="vista-btn active" id="btn-vista-dia" onclick="setVista('dia')">📅 Día</button>
+          <button class="vista-btn" id="btn-vista-semana" onclick="setVista('semana')">📆 Semana</button>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="abrirModalAgendar()">+ Agendar Cita</button>
       </div>
     </div>
     <div class="content">
-      <!-- Calendario -->
       <div class="cal-panel">
         <div class="cal-header">
-          <button class="cal-nav">‹</button>
+          <button class="cal-nav" onclick="cambiarMes(-1)">‹</button>
           <span id="cal-mes">Marzo 2026</span>
-          <button class="cal-nav">›</button>
+          <button class="cal-nav" onclick="cambiarMes(1)">›</button>
         </div>
         <div class="cal-grid" id="cal-grid"></div>
         <div class="legend">
@@ -341,31 +233,66 @@ body {
           <div class="legend-item"><div class="legend-dot" style="background:#e8f5ee;border:1.5px solid #7ecba0"></div> Pagado completamente</div>
         </div>
       </div>
-
-      <!-- Lista citas -->
       <div class="citas-panel">
         <div class="day-title" id="day-title">Domingo 15 de marzo</div>
-        <div class="day-sub" id="day-sub">3 citas agendadas</div>
+        <div class="day-sub" id="day-sub"></div>
         <div id="citas-list"></div>
+      </div>
+
+      <!-- ── VISTA SEMANAL ── -->
+      <div class="semana-panel" id="semana-panel">
+        <div class="semana-header">
+          <div class="semana-nav">
+            <button onclick="navSemana(-1)">‹</button>
+            <span class="semana-label" id="semana-label"></span>
+            <button onclick="navSemana(1)">›</button>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="irHoySemana()">Hoy</button>
+        </div>
+        <div class="semana-grid" id="semana-grid"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL AGENDAR CITA -->
+<!-- ═══ MODAL AGENDAR CITA ═══ -->
 <div class="modal-overlay" id="modal-agendar">
-  <div class="modal-box" style="max-width:540px">
+  <div class="modal-box wide">
     <div class="modal-title">Agendar Cita</div>
     <div class="modal-sub">Completa los datos para registrar la nueva cita</div>
-    <div class="field">
-      <label>Buscar clienta</label>
-      <input type="text" id="buscar-clienta" placeholder="Nombre o teléfono..." oninput="filtrarClientas(this.value)">
-      <div id="clientas-dropdown" style="display:none; background:#fff; border:1.5px solid #e8ddd5; border-radius:8px; margin-top:4px; overflow:hidden;"></div>
+
+    <!-- PASO 1: Clienta -->
+    <div class="sec-div">1 · Clienta</div>
+    <div class="field" style="margin-bottom:8px">
+      <label>Buscar clienta existente</label>
+      <input type="text" id="buscar-clienta" placeholder="Nombre o teléfono..." oninput="filtrarClientas(this.value)" autocomplete="off">
+      <div id="clientas-dropdown" style="display:none;background:#fff;border:1.5px solid #e8ddd5;border-radius:8px;margin-top:4px;overflow:hidden;max-height:160px;overflow-y:auto;"></div>
     </div>
+    <div style="margin-bottom:14px;text-align:right">
+      <button class="btn-ghost" onclick="abrirNuevaClienta()">+ Registrar nueva clienta</button>
+    </div>
+
+    <!-- Tarjeta de perfil de clienta (aparece al seleccionar) -->
+    <div class="clienta-card" id="clienta-card">
+      <div class="cc-header">
+        <div class="cc-avatar" id="cc-avatar">?</div>
+        <div>
+          <div class="cc-name" id="cc-name">—</div>
+          <div class="cc-tel" id="cc-tel">—</div>
+        </div>
+      </div>
+      <div class="cc-stats" id="cc-stats"></div>
+      <hr class="cc-divider">
+      <div style="font-size:10px;color:var(--text-hint);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;">Alertas y notas del perfil</div>
+      <div class="cc-tags" id="cc-tags"></div>
+    </div>
+
+    <!-- PASO 2: Servicio -->
+    <div class="sec-div">2 · Servicio</div>
     <div class="field-row">
       <div class="field">
         <label>Servicio</label>
-        <select id="sel-servicio">
+        <select id="sel-servicio" onchange="actualizarDuracion()">
           <option value="">Seleccionar servicio...</option>
           <option value="Extensión clásica|75">Extensión clásica (75 min)</option>
           <option value="Volumen ruso|90">Volumen ruso (90 min)</option>
@@ -375,167 +302,712 @@ body {
       </div>
       <div class="field">
         <label>Duración</label>
-        <input type="text" id="duracion-display" placeholder="Se calcula automático" readonly style="background:#f0ebe5;color:#9e8878">
+        <input type="text" id="duracion-display" placeholder="Automático" readonly style="background:#f0ebe5;color:#9e8878">
       </div>
     </div>
-    <div class="field-row">
-      <div class="field">
-        <label>Fecha</label>
-        <input type="date" id="fecha-cita">
+
+    <!-- PASO 3: Fecha y hora -->
+    <div class="sec-div">3 · Fecha y hora</div>
+    <div class="field-row" style="align-items:flex-start">
+      <div style="flex:1.5">
+        <label style="display:block;font-size:11px;font-weight:500;color:var(--brown-mid);letter-spacing:1.4px;text-transform:uppercase;margin-bottom:7px;">Calendario de disponibilidad</label>
+        <div class="mini-cal">
+          <div class="mini-cal-header">
+            <button class="mini-nav" onclick="cambiarMiniMes(-1)">‹</button>
+            <span id="mini-mes">Mar 2026</span>
+            <button class="mini-nav" onclick="cambiarMiniMes(1)">›</button>
+          </div>
+          <div class="mini-grid" id="mini-grid"></div>
+          <div class="mini-leyenda">
+            <span><span class="mini-dot" style="background:#fdecea;border:1px solid #e8a898"></span>Con citas</span>
+            <span><span class="mini-dot" style="background:var(--brown-main)"></span>Seleccionado</span>
+            <span><span class="mini-dot" style="background:#ece8e4;border:1px solid #ccc"></span>Pasado</span>
+          </div>
+        </div>
+        <input type="date" id="fecha-cita" style="display:none">
+        <div id="fecha-display" style="font-size:12px;color:var(--text-muted);margin-top:4px;">Sin fecha seleccionada</div>
       </div>
-      <div class="field">
-        <label>Hora</label>
-        <select id="hora-cita">
-          <option>9:00 AM</option><option>9:30 AM</option><option>10:00 AM</option>
-          <option>10:30 AM</option><option>11:00 AM</option><option>11:30 AM</option>
-          <option>12:00 PM</option><option>12:30 PM</option><option>1:00 PM</option>
-          <option>2:00 PM</option><option>3:00 PM</option><option>4:00 PM</option>
-          <option>5:00 PM</option><option>6:00 PM</option>
-        </select>
+      <div style="flex:1">
+        <div class="field">
+          <label>Hora</label>
+          <select id="hora-cita">
+            <option value="9:00 AM">9:00 AM</option><option value="9:30 AM">9:30 AM</option>
+            <option value="10:00 AM">10:00 AM</option><option value="10:30 AM">10:30 AM</option>
+            <option value="11:00 AM">11:00 AM</option><option value="11:30 AM">11:30 AM</option>
+            <option value="12:00 PM">12:00 PM</option><option value="12:30 PM">12:30 PM</option>
+            <option value="1:00 PM">1:00 PM</option><option value="2:00 PM">2:00 PM</option>
+            <option value="3:00 PM">3:00 PM</option><option value="4:00 PM">4:00 PM</option>
+            <option value="5:00 PM">5:00 PM</option><option value="6:00 PM">6:00 PM</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>Estado de pago</label>
+          <select id="estado-cita">
+            <option value="sin">Sin anticipo</option>
+            <option value="anticipo">Anticipo registrado</option>
+            <option value="pagado">Pagado completamente</option>
+          </select>
+        </div>
       </div>
     </div>
+
+    <!-- PASO 4: Notas -->
+    <div class="sec-div" style="margin-top:14px">4 · Notas de la cita</div>
     <div class="field">
-      <label>Notas especiales (opcional)</label>
-      <textarea placeholder="Indicaciones, peticiones especiales, alergias a considerar..."></textarea>
+      <textarea id="notas-cita" placeholder="Indicaciones o peticiones especiales para esta cita..."></textarea>
     </div>
+
     <div id="modal-agendar-error" class="alert alert-error" style="display:none"></div>
     <div class="modal-actions">
-      <button class="btn btn-outline" onclick="cerrarModal('modal-agendar')">Cancelar</button>
+      <button class="btn btn-outline" onclick="pedirCancelarAgendamiento()">Cancelar</button>
       <button class="btn btn-primary" onclick="confirmarCita()">Confirmar Cita</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL DETALLE -->
+<!-- ═══ MODAL NUEVA CLIENTA ═══ -->
+<div class="modal-overlay" id="modal-nueva-clienta">
+  <div class="modal-box">
+    <div class="modal-title">Nueva Clienta</div>
+    <div class="modal-sub">Registra los datos de la nueva clienta en el sistema</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Nombre completo *</label>
+        <input type="text" id="nc-nombre" placeholder="Ej. Laura Sánchez">
+      </div>
+      <div class="field">
+        <label>Teléfono *</label>
+        <input type="text" id="nc-tel" placeholder="555-000-0000">
+      </div>
+    </div>
+    <div class="field">
+      <label>Correo electrónico</label>
+      <input type="email" id="nc-email" placeholder="correo@ejemplo.com">
+    </div>
+    <div class="field">
+      <label>Alergias conocidas</label>
+      <input type="text" id="nc-alergias" placeholder="Ej. adhesivo latex, ninguna... (separar con comas)">
+    </div>
+    <div class="field">
+      <label>Preferencias / Estilo</label>
+      <input type="text" id="nc-pref" placeholder="Ej. extensiones naturales, efecto cat-eye...">
+    </div>
+    <div class="field">
+      <label>Notas del perfil</label>
+      <textarea id="nc-notas" placeholder="Información relevante: sensibilidades, horarios preferidos..."></textarea>
+    </div>
+    <div id="nc-error" class="alert alert-error" style="display:none"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="volverAgendar()">← Regresar</button>
+      <button class="btn btn-primary" onclick="guardarNuevaClienta()">Guardar y seleccionar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL CONFIRMAR CANCELAR AGENDAMIENTO ═══ -->
+<div class="modal-overlay" id="modal-confirmar-cancelar">
+  <div class="modal-box" style="max-width:380px;text-align:center">
+    <div style="font-size:36px;margin-bottom:12px">🗑️</div>
+    <div class="modal-title" style="text-align:center">¿Cancelar el agendamiento?</div>
+    <div class="modal-sub" style="text-align:center;margin-bottom:20px">Los datos ingresados no se guardarán y tendrás que comenzar de nuevo.</div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="cerrarModal('modal-confirmar-cancelar')">Seguir editando</button>
+      <button class="btn btn-danger" onclick="confirmarCancelarAgendamiento()">Sí, cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL DETALLE ═══ -->
 <div class="modal-overlay" id="modal-detalle">
   <div class="modal-box">
     <div class="modal-title" id="det-nombre"></div>
     <div class="modal-sub" id="det-service"></div>
     <div class="info-grid" id="det-info"></div>
-    <div id="det-notas" style="margin-bottom:16px"></div>
+    <div id="det-notas"></div>
+    <div id="det-perfil" style="margin-bottom:4px"></div>
     <div class="modal-actions">
-      <button class="btn btn-outline btn-danger btn-sm" onclick="cerrarModal('modal-detalle')">Cancelar Cita</button>
+      <button class="btn btn-outline btn-danger btn-sm" id="btn-cancelar-cita">Cancelar Cita</button>
       <button class="btn btn-outline btn-sm" onclick="cerrarModal('modal-detalle')">Reprogramar</button>
       <button class="btn btn-primary btn-sm" onclick="cerrarModal('modal-detalle')">Cerrar</button>
     </div>
   </div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
-  const clientasData = [
-    { nombre:'Sofía Martínez', tel:'555-123-4567' },
-    { nombre:'Valentina Reyes', tel:'555-234-5678' },
-    { nombre:'Camila Torres', tel:'555-345-6789' },
-    { nombre:'Andrea López', tel:'555-456-7890' },
-    { nombre:'Mariana García', tel:'555-567-8901' },
-  ];
+// ── DATOS CLIENTAS ──────────────────────────────────────────────────────────
+let clientasData = [
+  { nombre:'Sofía Martínez',  tel:'555-123-4567', email:'sofia@mail.com',   alergias:['Adhesivo sensitivo'], preferencias:['Extensiones naturales','Rizos suaves'],    notas:'Prefiere citas por la mañana. Sensibilidad en ojo derecho.', visitas:8, ultimaVisita:'1 mar 2026',  servicioFav:'Extensión clásica' },
+  { nombre:'Valentina Reyes', tel:'555-234-5678', email:'vale@mail.com',    alergias:[],                     preferencias:['Volumen dramático'],                        notas:'Trae referencias de Instagram. Muy puntual.',               visitas:5, ultimaVisita:'14 mar 2026', servicioFav:'Volumen ruso' },
+  { nombre:'Camila Torres',   tel:'555-345-6789', email:'',                 alergias:['Polen','Perfumes'],   preferencias:['Look natural'],                             notas:'Avisar con 24h si hay cancelación.',                        visitas:3, ultimaVisita:'15 mar 2026', servicioFav:'Diseño de cejas' },
+  { nombre:'Andrea López',    tel:'555-456-7890', email:'andrea@mail.com',  alergias:[],                     preferencias:['Cejas gruesas y definidas'],                notas:'',                                                          visitas:4, ultimaVisita:'17 mar 2026', servicioFav:'Diseño de cejas' },
+  { nombre:'Mariana García',  tel:'555-567-8901', email:'',                 alergias:['Latex'],              preferencias:['Extensiones largas'],                       notas:'Alérgica al latex — usar adhesivo especial siempre.',        visitas:6, ultimaVisita:'31 mar 2026', servicioFav:'Extensión clásica' },
+  { nombre:'Daniela Ruiz',    tel:'555-678-9012', email:'dani@mail.com',    alergias:[],                     preferencias:['Volumen ruso','Efecto cat-eye'],            notas:'Primera cita en enero. Muy satisfecha.',                    visitas:2, ultimaVisita:'8 mar 2026',  servicioFav:'Volumen ruso' },
+  { nombre:'Fernanda Díaz',   tel:'555-789-0123', email:'',                 alergias:[],                     preferencias:[],                                           notas:'Sensibilidad en ojo izquierdo — aplicar con cuidado.',      visitas:1, ultimaVisita:'5 mar 2026',  servicioFav:'Extensión clásica' },
+];
 
-  const citasData = [
-    { hora:'10:00', period:'AM', nombre:'Sofía Martínez', servicio:'Extensión de pestañas · 75 min', estado:'pagado', notas:'Usar adhesivo sensitivo' },
-    { hora:'12:00', period:'PM', nombre:'Valentina Reyes', servicio:'Retoque de pestañas · 45 min', estado:'anticipo', notas:'' },
-    { hora:'3:00',  period:'PM', nombre:'Camila Torres',  servicio:'Diseño de cejas · 30 min', estado:'sin', notas:'' },
-  ];
+// ── CITAS ───────────────────────────────────────────────────────────────────
+let todasLasCitas = {
+  '2026-03-03':[{hora:'10:00',period:'AM',nombre:'Andrea López',servicio:'Retoque de pestañas · 45 min',estado:'pagado',notas:''}],
+  '2026-03-05':[{hora:'11:00',period:'AM',nombre:'Mariana García',servicio:'Diseño de cejas · 30 min',estado:'anticipo',notas:''},{hora:'3:00',period:'PM',nombre:'Fernanda Díaz',servicio:'Extensión clásica · 75 min',estado:'sin',notas:'Sensibilidad en ojo izquierdo'}],
+  '2026-03-08':[{hora:'9:30',period:'AM',nombre:'Daniela Ruiz',servicio:'Volumen ruso · 90 min',estado:'pagado',notas:''}],
+  '2026-03-11':[{hora:'12:00',period:'PM',nombre:'Camila Torres',servicio:'Diseño de cejas · 30 min',estado:'anticipo',notas:''}],
+  '2026-03-14':[{hora:'10:00',period:'AM',nombre:'Valentina Reyes',servicio:'Retoque de pestañas · 45 min',estado:'pagado',notas:''},{hora:'2:00',period:'PM',nombre:'Sofía Martínez',servicio:'Volumen ruso · 90 min',estado:'anticipo',notas:'Llevar referencia de look'}],
+  '2026-03-15':[{hora:'10:00',period:'AM',nombre:'Sofía Martínez',servicio:'Extensión clásica · 75 min',estado:'pagado',notas:'Usar adhesivo sensitivo'},{hora:'12:00',period:'PM',nombre:'Valentina Reyes',servicio:'Retoque de pestañas · 45 min',estado:'anticipo',notas:''},{hora:'3:00',period:'PM',nombre:'Camila Torres',servicio:'Diseño de cejas · 30 min',estado:'sin',notas:''}],
+  '2026-03-17':[{hora:'9:00',period:'AM',nombre:'Andrea López',servicio:'Extensión clásica · 75 min',estado:'sin',notas:''},{hora:'11:30',period:'AM',nombre:'Mariana García',servicio:'Diseño de cejas · 30 min',estado:'pagado',notas:''}],
+  '2026-03-19':[{hora:'4:00',period:'PM',nombre:'Daniela Ruiz',servicio:'Retoque de pestañas · 45 min',estado:'anticipo',notas:''}],
+  '2026-03-22':[{hora:'10:30',period:'AM',nombre:'Fernanda Díaz',servicio:'Volumen ruso · 90 min',estado:'pagado',notas:''},{hora:'1:00',period:'PM',nombre:'Camila Torres',servicio:'Extensión clásica · 75 min',estado:'sin',notas:'Nuevo cliente'}],
+  '2026-03-25':[{hora:'9:00',period:'AM',nombre:'Sofía Martínez',servicio:'Retoque de pestañas · 45 min',estado:'anticipo',notas:''}],
+  '2026-03-27':[{hora:'11:00',period:'AM',nombre:'Valentina Reyes',servicio:'Diseño de cejas · 30 min',estado:'pagado',notas:''},{hora:'3:00',period:'PM',nombre:'Andrea López',servicio:'Volumen ruso · 90 min',estado:'sin',notas:''}],
+  '2026-03-31':[{hora:'10:00',period:'AM',nombre:'Mariana García',servicio:'Extensión clásica · 75 min',estado:'pagado',notas:'Referencia enviada por WhatsApp'}],
+};
 
-  const diasCitas = [1,3,5,7,8,11,14,15,17,19,22,25,27,31];
-  const diasSemana = ['L','M','M','J','V','S','D'];
+// ── ESTADO ──────────────────────────────────────────────────────────────────
+let curY=2026, curM=2, selDate='2026-03-15';
+let miniY=2026, miniM=2, miniFecha='';
+const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MESES_C=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const DIAS_ES=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 
-  function buildCalendar() {
-    const grid = document.getElementById('cal-grid');
-    grid.innerHTML = diasSemana.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
-    // Marzo 2026 empieza en domingo (offset 6 en L-D)
-    for(let i=0;i<6;i++) grid.innerHTML += `<div class="cal-day empty"></div>`;
-    for(let d=1;d<=31;d++){
-      const hasCita = diasCitas.includes(d);
-      const isToday = d===15;
-      let cls = 'cal-day';
-      if(isToday) cls += ' today';
-      if(hasCita) cls += ' has-cita';
-      grid.innerHTML += `<div class="${cls}" onclick="selectDay(${d})">${d}</div>`;
-    }
+// ── CALENDARIO PRINCIPAL ─────────────────────────────────────────────────────
+function buildCalendar(){
+  const g=document.getElementById('cal-grid');
+  document.getElementById('cal-mes').textContent=MESES[curM]+' '+curY;
+  g.innerHTML=['L','M','M','J','V','S','D'].map(d=>`<div class="cal-day-name">${d}</div>`).join('');
+  const off=(new Date(curY,curM,1).getDay()+6)%7;
+  for(let i=0;i<off;i++) g.innerHTML+=`<div class="cal-day empty"></div>`;
+  const days=new Date(curY,curM+1,0).getDate(), today=new Date();
+  for(let d=1;d<=days;d++){
+    const ds=`${curY}-${String(curM+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const hc=!!(todasLasCitas[ds]?.length);
+    const isT=today.getFullYear()===curY&&today.getMonth()===curM&&today.getDate()===d;
+    const isS=ds===selDate;
+    g.innerHTML+=`<div class="cal-day${isT?' today':''}${isS?' selected':''}${hc?' has-cita':''}" onclick="selectDay('${ds}',${d})">${d}</div>`;
+  }
+}
+function selectDay(ds,dn){
+  selDate=ds; buildCalendar(); renderCitas(ds);
+  const d=new Date(ds+'T12:00:00');
+  document.getElementById('day-title').textContent=`${DIAS_ES[d.getDay()]} ${dn} de ${MESES[d.getMonth()].toLowerCase()}`;
+}
+function cambiarMes(dir){
+  curM+=dir; if(curM>11){curM=0;curY++;} if(curM<0){curM=11;curY--;} buildCalendar();
+  document.getElementById('day-title').textContent=MESES[curM]+' '+curY;
+  document.getElementById('day-sub').textContent='Selecciona un día para ver las citas';
+  document.getElementById('citas-list').innerHTML=`<div class="empty-state"><div class="es-icon">📅</div><p>Haz clic en un día del calendario.</p></div>`;
+}
+
+// ── MINI CALENDARIO DE DISPONIBILIDAD ────────────────────────────────────────
+function buildMiniCal(){
+  document.getElementById('mini-mes').textContent=MESES_C[miniM]+' '+miniY;
+  const g=document.getElementById('mini-grid');
+  g.innerHTML=['L','M','M','J','V','S','D'].map(d=>`<div class="mdn">${d}</div>`).join('');
+  const off=(new Date(miniY,miniM,1).getDay()+6)%7;
+  for(let i=0;i<off;i++) g.innerHTML+=`<div class="md md-empty"></div>`;
+  const days=new Date(miniY,miniM+1,0).getDate();
+  const today=new Date(); today.setHours(0,0,0,0);
+  for(let d=1;d<=days;d++){
+    const ds=`${miniY}-${String(miniM+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dObj=new Date(ds+'T12:00:00');
+    const isPast=dObj<today, isT=dObj.getTime()===today.getTime();
+    const hc=!!(todasLasCitas[ds]?.length), isSel=ds===miniFecha;
+    let cls='md'+(isPast?' md-past':(hc?' md-busy':''))+(isT?' md-today':'')+(isSel?' md-sel':'');
+    const oc=!isPast?`onclick="selMiniDia('${ds}')"`:'';
+    g.innerHTML+=`<div class="${cls}" ${oc}>${d}</div>`;
+  }
+}
+function selMiniDia(ds){
+  miniFecha=ds; document.getElementById('fecha-cita').value=ds;
+  const d=new Date(ds+'T12:00:00');
+  document.getElementById('fecha-display').textContent=`Seleccionado: ${DIAS_ES[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()].toLowerCase()} ${d.getFullYear()}`;
+  buildMiniCal();
+  const citas=todasLasCitas[ds];
+  const err=document.getElementById('modal-agendar-error');
+  if(citas?.length){ err.style.display='flex'; err.className='alert alert-warning'; err.textContent=`ℹ️ Este día ya tiene ${citas.length} cita(s). Verifica el horario.`; }
+  else { err.style.display='none'; }
+}
+function cambiarMiniMes(dir){
+  miniM+=dir; if(miniM>11){miniM=0;miniY++;} if(miniM<0){miniM=11;miniY--;} buildMiniCal();
+}
+
+// ── RENDER CITAS ─────────────────────────────────────────────────────────────
+function renderCitas(ds){
+  const citas=todasLasCitas[ds]||[];
+  const list=document.getElementById('citas-list');
+  document.getElementById('day-sub').textContent=citas.length?`${citas.length} cita${citas.length!==1?'s':''} agendada${citas.length!==1?'s':''}`:'Sin citas registradas';
+  if(!citas.length){ list.innerHTML=`<div class="empty-state"><div class="es-icon">📭</div><p>No hay citas para este día.</p><br><button class="btn btn-primary btn-sm" onclick="abrirModalAgendar()">+ Agendar primera cita</button></div>`; return; }
+  list.innerHTML=citas.map((c,i)=>`
+    <div class="cita-card" onclick="verDetalle('${ds}',${i})">
+      <div class="cita-time"><div class="hour">${c.hora}</div><div class="period">${c.period}</div></div>
+      <div class="cita-div"></div>
+      <div class="cita-info">
+        <div class="cita-name">${c.nombre}</div>
+        <div class="cita-service">${c.servicio}</div>
+        ${c.notas?`<div class="cita-notas">⚠️ ${c.notas}</div>`:''}
+      </div>
+      <span class="badge badge-${c.estado}">${c.estado==='pagado'?'Pagado ✓':c.estado==='anticipo'?'Anticipo $100':'Sin anticipo'}</span>
+      <div class="cita-actions">
+        <button class="cita-btn" onclick="event.stopPropagation()">Reprogramar</button>
+        <button class="cita-btn danger" onclick="event.stopPropagation();cancelarCita('${ds}',${i})">Cancelar</button>
+      </div>
+    </div>`).join('');
+}
+
+// ── DETALLE CITA ─────────────────────────────────────────────────────────────
+function verDetalle(ds,i){
+  const c=(todasLasCitas[ds]||[])[i]; if(!c) return;
+  const d=new Date(ds+'T12:00:00');
+  document.getElementById('det-nombre').textContent=c.nombre;
+  document.getElementById('det-service').textContent=`${c.servicio} · ${d.getDate()} ${MESES[d.getMonth()].toLowerCase()} ${d.getFullYear()}`;
+  document.getElementById('det-info').innerHTML=`
+    <div class="info-box"><div class="ib-label">Hora</div><div class="ib-value">${c.hora} ${c.period}</div></div>
+    <div class="info-box"><div class="ib-label">Estado de pago</div><div class="ib-value">${c.estado==='pagado'?'Pagado ✓':c.estado==='anticipo'?'Anticipo registrado':'Sin anticipo'}</div></div>`;
+  document.getElementById('det-notas').innerHTML=c.notas?`<div class="alert alert-warning" style="margin-bottom:14px">⚠️ ${c.notas}</div>`:'';
+  const p=clientasData.find(cl=>cl.nombre===c.nombre);
+  let ph='';
+  if(p){
+    const tags=[...p.alergias.map(a=>`<span class="cc-tag alergia">⚠ ${a}</span>`),...p.preferencias.map(x=>`<span class="cc-tag pref">✦ ${x}</span>`)].join('');
+    if(tags||p.notas) ph=`<div style="background:#fdf9f6;border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:12px"><div style="font-size:10px;color:var(--text-hint);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Perfil · ${p.visitas} visitas · último: ${p.ultimaVisita}</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:${p.notas?'8px':'0'}">${tags}</div>${p.notas?`<div style="font-size:12px;color:var(--text-muted);font-style:italic;margin-top:4px">${p.notas}</div>`:''}</div>`;
+  }
+  document.getElementById('det-perfil').innerHTML=ph;
+  document.getElementById('btn-cancelar-cita').onclick=()=>{ cancelarCita(ds,i); cerrarModal('modal-detalle'); };
+  abrirModal('modal-detalle');
+}
+function cancelarCita(ds,i){
+  const citas=todasLasCitas[ds]; if(!citas) return;
+  const n=citas[i]?.nombre||'la cita'; citas.splice(i,1);
+  if(!citas.length) delete todasLasCitas[ds];
+  buildCalendar(); renderCitas(ds); showToast(`✓ Cita de ${n} cancelada`);
+}
+
+// ── BUSCAR / PERFIL CLIENTA ──────────────────────────────────────────────────
+function filtrarClientas(q){
+  const dd=document.getElementById('clientas-dropdown');
+  if(!q.trim()){ dd.style.display='none'; ocultarPerfil(); quitarError('buscar-clienta'); return; }
+  quitarError('buscar-clienta');
+  const res=clientasData.filter(c=>c.nombre.toLowerCase().includes(q.toLowerCase())||c.tel.includes(q));
+  dd.style.display='block';
+  if(!res.length){
+    // Escenario 2.1: Clienta no encontrada
+    dd.innerHTML=`
+      <div style="padding:12px 14px;font-size:13px;color:var(--text-muted);border-bottom:1px solid #f5ede5">
+        No se encontró ninguna clienta con ese nombre o teléfono.
+      </div>
+      <div onclick="abrirNuevaClienta()" style="padding:10px 14px;cursor:pointer;font-size:13px;color:var(--brown-mid);font-weight:500;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='#fdf9f6'" onmouseout="this.style.background=''">
+        <span style="font-size:16px">+</span> Registrar nueva clienta
+      </div>`;
+    return;
+  }
+  dd.innerHTML=res.map(c=>`<div onclick="selClienta('${c.nombre}')" style="padding:10px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid #f5ede5;display:flex;align-items:center;justify-content:space-between" onmouseover="this.style.background='#fdf9f6'" onmouseout="this.style.background=''">${c.nombre} <span style="color:#b8a898;font-size:11px">· ${c.tel}</span>${c.alergias?.length?`<span style="background:#fdecea;color:#c0614e;font-size:10px;padding:2px 7px;border-radius:10px;margin-left:auto">⚠ alergia</span>`:''}</div>`).join('');
+}
+function selClienta(nombre){
+  document.getElementById('buscar-clienta').value=nombre;
+  document.getElementById('clientas-dropdown').style.display='none';
+  mostrarPerfil(nombre);
+}
+// NUEVO: Mostrar tarjeta con historial, alergias y notas de la clienta
+function mostrarPerfil(nombre){
+  const p=clientasData.find(c=>c.nombre===nombre);
+  const card=document.getElementById('clienta-card');
+  if(!p){ card.classList.remove('visible'); return; }
+  document.getElementById('cc-avatar').textContent=nombre.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('cc-name').textContent=p.nombre;
+  document.getElementById('cc-tel').textContent=p.tel+(p.email?' · '+p.email:'');
+  document.getElementById('cc-stats').innerHTML=`
+    <div class="cc-stat"><strong>${p.visitas}</strong>Visitas</div>
+    <div class="cc-stat"><strong>${p.ultimaVisita}</strong>Última cita</div>
+    <div class="cc-stat"><strong style="font-size:11px">${p.servicioFav}</strong>Servicio fav.</div>`;
+  const tags=[
+    ...p.alergias.map(a=>`<span class="cc-tag alergia">⚠ Alergia: ${a}</span>`),
+    ...p.preferencias.map(x=>`<span class="cc-tag pref">✦ ${x}</span>`),
+    ...(p.notas?[`<span class="cc-tag nota">📝 ${p.notas}</span>`]:[]),
+  ].join('');
+  document.getElementById('cc-tags').innerHTML=tags||'<span style="font-size:11px;color:var(--text-hint)">Sin notas en el perfil</span>';
+  card.classList.add('visible');
+}
+function ocultarPerfil(){ document.getElementById('clienta-card').classList.remove('visible'); }
+
+// ── NUEVA CLIENTA ────────────────────────────────────────────────────────────
+function abrirNuevaClienta(){
+  cerrarModal('modal-agendar');
+  ['nc-nombre','nc-tel','nc-email','nc-alergias','nc-pref','nc-notas'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('nc-error').style.display='none';
+  abrirModal('modal-nueva-clienta');
+}
+function volverAgendar(){ cerrarModal('modal-nueva-clienta'); abrirModal('modal-agendar'); }
+function guardarNuevaClienta(){
+  const nombre=document.getElementById('nc-nombre').value.trim();
+  const tel=document.getElementById('nc-tel').value.trim();
+  const email=document.getElementById('nc-email').value.trim();
+  const alerg=document.getElementById('nc-alergias').value.trim();
+  const pref=document.getElementById('nc-pref').value.trim();
+  const notas=document.getElementById('nc-notas').value.trim();
+  const errEl=document.getElementById('nc-error');
+  if(!nombre||!tel){ errEl.style.display='flex'; errEl.textContent='⚠️ Nombre y teléfono son obligatorios.'; return; }
+  if(clientasData.find(c=>c.tel===tel)){ errEl.style.display='flex'; errEl.textContent='⚠️ Ya existe una clienta con ese teléfono.'; return; }
+  clientasData.push({ nombre, tel, email, alergias:alerg?alerg.split(',').map(s=>s.trim()).filter(Boolean):[], preferencias:pref?pref.split(',').map(s=>s.trim()).filter(Boolean):[], notas, visitas:0, ultimaVisita:'—', servicioFav:'—' });
+  cerrarModal('modal-nueva-clienta'); abrirModal('modal-agendar');
+  document.getElementById('buscar-clienta').value=nombre;
+  mostrarPerfil(nombre);
+  showToast(`✓ Clienta "${nombre}" registrada`);
+}
+
+// ── CONFIRMAR CITA ───────────────────────────────────────────────────────────
+const HORA_APERTURA = 9;   // 9:00 AM
+const HORA_CIERRE   = 18;  // 6:00 PM
+
+function horaAMinutos(horaStr) {
+  // "9:00 AM" -> 540, "6:00 PM" -> 1080
+  const [time, period] = horaStr.split(' ');
+  let [h, m] = time.split(':').map(Number);
+  if(period === 'PM' && h !== 12) h += 12;
+  if(period === 'AM' && h === 12) h = 0;
+  return h * 60 + (m || 0);
+}
+
+function marcarError(id) {
+  const el = document.getElementById(id);
+  if(el) { el.style.borderColor = '#c0614e'; el.style.background = '#fff8f7'; }
+}
+function quitarError(id) {
+  const el = document.getElementById(id);
+  if(el) { el.style.borderColor = ''; el.style.background = ''; }
+}
+
+function confirmarCita(){
+  const clienta = document.getElementById('buscar-clienta').value.trim();
+  const servicio = document.getElementById('sel-servicio').value;
+  const fecha    = document.getElementById('fecha-cita').value;
+  const hora     = document.getElementById('hora-cita').value;
+  const notas    = document.getElementById('notas-cita').value.trim();
+  const estado   = document.getElementById('estado-cita').value;
+  const errEl    = document.getElementById('modal-agendar-error');
+
+  // Quitar errores previos
+  ['buscar-clienta','sel-servicio','hora-cita'].forEach(quitarError);
+  const miniCalEl = document.getElementById('mini-grid');
+  if(miniCalEl) miniCalEl.style.outline = '';
+
+  // ── Validación 1: Campos obligatorios vacíos ─────────────────────────────
+  const faltantes = [];
+  if(!clienta)  { faltantes.push('Clienta');  marcarError('buscar-clienta'); }
+  if(!servicio) { faltantes.push('Servicio'); marcarError('sel-servicio'); }
+  if(!fecha)    { faltantes.push('Fecha');    document.getElementById('mini-grid').style.outline = '2px solid #c0614e'; document.getElementById('mini-grid').style.borderRadius = '6px'; }
+  if(faltantes.length) {
+    errEl.style.display = 'flex'; errEl.className = 'alert alert-error';
+    errEl.textContent = `⚠️ Completa todos los campos obligatorios: ${faltantes.join(', ')}.`;
+    return;
   }
 
-  function selectDay(d) {
-    document.querySelectorAll('.cal-day').forEach(el=>el.classList.remove('selected'));
-    event.target.classList.add('selected');
+  // ── Validación 2: Fecha pasada ───────────────────────────────────────────
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const fechaObj = new Date(fecha + 'T12:00:00');
+  if(fechaObj < hoy) {
+    errEl.style.display = 'flex'; errEl.className = 'alert alert-error';
+    errEl.textContent = '⚠️ Fecha no válida: no se pueden agendar citas en fechas pasadas. Selecciona un día igual o posterior a hoy.';
+    document.getElementById('mini-grid').style.outline = '2px solid #c0614e';
+    document.getElementById('mini-grid').style.borderRadius = '6px';
+    return;
   }
 
-  function renderCitas() {
-    const list = document.getElementById('citas-list');
-    if(citasData.length === 0){
-      list.innerHTML = `<div class="empty-state"><div class="es-icon">📭</div><p>No hay citas agendadas para este día.</p></div>`;
-      return;
-    }
-    list.innerHTML = citasData.map((c,i) => `
-      <div class="cita-card" onclick="verDetalle(${i})">
-        <div class="cita-time"><div class="hour">${c.hora}</div><div class="period">${c.period}</div></div>
-        <div class="cita-div"></div>
-        <div class="cita-info">
-          <div class="cita-name">${c.nombre}</div>
-          <div class="cita-service">${c.servicio}</div>
-          ${c.notas ? `<div class="cita-notas">⚠️ ${c.notas}</div>`:''}
-        </div>
-        <span class="badge badge-${c.estado}">${c.estado==='pagado'?'Pagado ✓':c.estado==='anticipo'?'Anticipo $100':'Sin anticipo'}</span>
-        <div class="cita-actions">
-          <button class="cita-btn" onclick="event.stopPropagation()">Reprogramar</button>
-          <button class="cita-btn" onclick="event.stopPropagation()">Cancelar</button>
-        </div>
-      </div>`).join('');
+  // ── Validación 3: Horario fuera de rango de operación ───────────────────
+  const minutos = horaAMinutos(hora);
+  if(minutos < HORA_APERTURA * 60 || minutos >= HORA_CIERRE * 60) {
+    errEl.style.display = 'flex'; errEl.className = 'alert alert-error';
+    errEl.textContent = `⚠️ Horario fuera de operación: el horario de atención es de 9:00 AM a 6:00 PM. Por favor selecciona un horario dentro de ese rango.`;
+    marcarError('hora-cita');
+    return;
   }
 
-  function verDetalle(i) {
-    const c = citasData[i];
-    document.getElementById('det-nombre').textContent = c.nombre;
-    document.getElementById('det-service').textContent = c.servicio + ' · 15 mar 2026';
-    document.getElementById('det-info').innerHTML = `
-      <div class="info-box"><div class="ib-label">Hora</div><div class="ib-value">${c.hora} ${c.period}</div></div>
-      <div class="info-box"><div class="ib-label">Estado de pago</div><div class="ib-value">${c.estado==='pagado'?'Pagado ✓':c.estado==='anticipo'?'Anticipo registrado':'Sin anticipo'}</div></div>`;
-    document.getElementById('det-notas').innerHTML = c.notas ? `<div class="alert alert-warning">⚠️ ${c.notas}</div>` : '';
-    abrirModal('modal-detalle');
+  // ── Validación 4: Conflicto de horario ──────────────────────────────────
+  const conflicto = (todasLasCitas[fecha] || []).find(c => `${c.hora} ${c.period}` === hora);
+  if(conflicto) {
+    errEl.style.display = 'flex'; errEl.className = 'alert alert-error';
+    errEl.textContent = `⚠️ Horario no disponible: ya existe una cita a las ${hora} con ${conflicto.nombre}. Elige otro horario.`;
+    marcarError('hora-cita');
+    return;
   }
 
-  function filtrarClientas(q) {
-    const dd = document.getElementById('clientas-dropdown');
-    if(!q){ dd.style.display='none'; return; }
-    const res = clientasData.filter(c=>c.nombre.toLowerCase().includes(q.toLowerCase())||c.tel.includes(q));
-    if(!res.length){ dd.style.display='none'; return; }
-    dd.style.display='block';
-    dd.innerHTML = res.map(c=>`<div onclick="selClienta('${c.nombre}')" style="padding:10px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid #f5ede5" onmouseover="this.style.background='#fdf9f6'" onmouseout="this.style.background=''">${c.nombre} <span style="color:#b8a898;font-size:11px">· ${c.tel}</span></div>`).join('');
+  errEl.style.display = 'none';
+  const [svc, dur] = servicio.split('|');
+  const [horaNum, period] = hora.split(' ');
+  if(!todasLasCitas[fecha]) todasLasCitas[fecha] = [];
+  todasLasCitas[fecha].push({ hora:horaNum, period, nombre:clienta, servicio:`${svc}${dur?' · '+dur+' min':''}`, estado, notas });
+  todasLasCitas[fecha].sort((a,b) => { const f=t=>{const[h,m]=t.hora.split(':').map(Number);return h*60+(m||0);}; return f(a)-f(b); });
+  cerrarModal('modal-agendar'); buildCalendar();
+  if(fecha === selDate) renderCitas(fecha);
+  limpiarForm();
+  showToast(`✓ Cita de ${clienta} el ${formatFecha(fecha)} a las ${hora}`);
+}
+
+// ── CANCELAR AGENDAMIENTO CON CONFIRMACIÓN ───────────────────────────────────
+function pedirCancelarAgendamiento(){
+  // Solo pedir confirmación si hay datos ingresados
+  const clienta  = document.getElementById('buscar-clienta').value.trim();
+  const servicio = document.getElementById('sel-servicio').value;
+  const fecha    = document.getElementById('fecha-cita').value;
+  const hayDatos = clienta || servicio || fecha;
+  if(hayDatos) {
+    abrirModal('modal-confirmar-cancelar');
+  } else {
+    cerrarModal('modal-agendar');
+  }
+}
+function confirmarCancelarAgendamiento(){
+  cerrarModal('modal-confirmar-cancelar');
+  cerrarModal('modal-agendar');
+  limpiarForm();
+}
+function limpiarForm(){
+  ['buscar-clienta','notas-cita'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('sel-servicio').value='';
+  document.getElementById('duracion-display').value='';
+  document.getElementById('fecha-cita').value='';
+  document.getElementById('fecha-display').textContent='Sin fecha seleccionada';
+  document.getElementById('hora-cita').selectedIndex=0;
+  document.getElementById('estado-cita').selectedIndex=0;
+  document.getElementById('modal-agendar-error').style.display='none';
+  // Limpiar marcas de error visuales
+  ['buscar-clienta','sel-servicio','hora-cita'].forEach(quitarError);
+  const mg = document.getElementById('mini-grid');
+  if(mg) { mg.style.outline=''; mg.style.borderRadius=''; }
+  miniFecha=''; ocultarPerfil(); buildMiniCal();
+}
+
+// ── VISTA SEMANAL ─────────────────────────────────────────────────────────────
+let semanaBase = new Date('2026-03-15T12:00:00'); // lunes de la semana actual
+let vistaActual = 'dia';
+
+const HORAS_DIA = [];
+for(let h = 8; h <= 20; h++) {
+  HORAS_DIA.push(`${h}:00`);
+  if(h < 20) HORAS_DIA.push(`${h}:30`);
+}
+
+function getLunesDeSemana(d) {
+  const date = new Date(d);
+  const dow = date.getDay(); // 0=dom
+  const diff = (dow === 0) ? -6 : 1 - dow;
+  date.setDate(date.getDate() + diff);
+  date.setHours(12,0,0,0);
+  return date;
+}
+
+function setVista(v) {
+  vistaActual = v;
+  document.getElementById('btn-vista-dia').classList.toggle('active', v === 'dia');
+  document.getElementById('btn-vista-semana').classList.toggle('active', v === 'semana');
+
+  const dayLayout = document.querySelector('.content > .cal-panel');
+  const citasPanel = document.querySelector('.citas-panel');
+  const semanaPanel = document.getElementById('semana-panel');
+
+  if(v === 'dia') {
+    dayLayout.style.display = '';
+    citasPanel.style.display = '';
+    semanaPanel.classList.remove('active');
+  } else {
+    semanaBase = getLunesDeSemana(selDate ? new Date(selDate + 'T12:00:00') : new Date());
+    dayLayout.style.display = 'none';
+    citasPanel.style.display = 'none';
+    semanaPanel.classList.add('active');
+    buildSemanaView();
+  }
+}
+
+function navSemana(dir) {
+  semanaBase = new Date(semanaBase);
+  semanaBase.setDate(semanaBase.getDate() + dir * 7);
+  buildSemanaView();
+}
+
+function irHoySemana() {
+  semanaBase = getLunesDeSemana(new Date());
+  buildSemanaView();
+}
+
+function buildSemanaView() {
+  const grid = document.getElementById('semana-grid');
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // Calcular los 7 días de la semana
+  const dias = [];
+  for(let i = 0; i < 7; i++) {
+    const d = new Date(semanaBase);
+    d.setDate(d.getDate() + i);
+    d.setHours(12,0,0,0);
+    dias.push(d);
   }
 
-  function selClienta(nombre) {
-    document.getElementById('buscar-clienta').value = nombre;
-    document.getElementById('clientas-dropdown').style.display='none';
-  }
+  // Label de rango
+  const ini = dias[0], fin = dias[6];
+  const mismoMes = ini.getMonth() === fin.getMonth();
+  document.getElementById('semana-label').textContent = mismoMes
+    ? `${ini.getDate()} – ${fin.getDate()} de ${MESES[ini.getMonth()]} ${ini.getFullYear()}`
+    : `${ini.getDate()} ${MESES[ini.getMonth()].slice(0,3)} – ${fin.getDate()} ${MESES[fin.getMonth()].slice(0,3)} ${fin.getFullYear()}`;
 
-  document.getElementById('sel-servicio').addEventListener('change', function(){
-    const parts = this.value.split('|');
-    document.getElementById('duracion-display').value = parts[1] ? parts[1] + ' minutos' : '';
+  const diasNombres = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+
+  // Construir HTML
+  let html = '';
+
+  // Fila de cabeceras
+  html += `<div class="sg-time-col"><div class="sg-time-header"></div>`;
+  HORAS_DIA.forEach(h => {
+    html += `<div class="sg-time-slot"><span>${h}</span></div>`;
+  });
+  html += `</div>`;
+
+  dias.forEach((d, idx) => {
+    const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const esHoy = d.getTime() === today.getTime();
+    const citasDia = todasLasCitas[ds] || [];
+
+    html += `<div class="sg-col">`;
+    html += `<div class="sg-col-header${esHoy?' sg-hoy':''}">
+      <div class="sg-dia">${diasNombres[idx]}</div>
+      <div class="sg-num">${d.getDate()}</div>
+    </div>`;
+
+    // Slots por hora
+    HORAS_DIA.forEach(slotStr => {
+      const [sh, sm] = slotStr.split(':').map(Number);
+      const slotMin = sh * 60 + sm;
+
+      // ¿Hay alguna cita que empieza en este slot?
+      const cita = citasDia.find(c => {
+        const cm = horaAMinutos(`${c.hora} ${c.period}`);
+        return cm === slotMin;
+      });
+
+      if(cita) {
+        // Calcular altura según duración del servicio
+        const durMatch = cita.servicio.match(/(\d+)\s*min/);
+        const dur = durMatch ? parseInt(durMatch[1]) : 30;
+        const slots = Math.max(1, Math.round(dur / 30));
+        const height = slots * 52 - 4;
+
+        html += `<div class="sg-slot" style="height:52px">
+          <div class="sg-cita-block ${cita.estado}" style="height:${height}px;z-index:2"
+               onclick="verDetalle('${ds}', ${citasDia.indexOf(cita)})">
+            <div class="sg-cita-name">${cita.hora} ${cita.period} · ${cita.nombre}</div>
+            <div class="sg-cita-svc">${cita.servicio.split('·')[0].trim()}</div>
+          </div>
+        </div>`;
+      } else {
+        html += `<div class="sg-slot">
+          <div class="sg-empty-slot" onclick="abrirAgendarEnSlot('${ds}','${slotStr}')"></div>
+        </div>`;
+      }
+    });
+
+    html += `</div>`;
   });
 
-  // Fecha min = hoy
-  document.getElementById('fecha-cita').min = new Date().toISOString().split('T')[0];
+  grid.innerHTML = html;
 
-  function confirmarCita(){
-    const clienta = document.getElementById('buscar-clienta').value;
-    const servicio = document.getElementById('sel-servicio').value;
-    const fecha = document.getElementById('fecha-cita').value;
-    const errEl = document.getElementById('modal-agendar-error');
-    if(!clienta||!servicio||!fecha){
-      errEl.style.display='flex';
-      errEl.textContent='⚠️ Completa todos los campos obligatorios: Clienta, Servicio y Fecha.';
-      return;
-    }
-    errEl.style.display='none';
-    cerrarModal('modal-agendar');
-    alert('✅ Cita registrada exitosamente para ' + clienta);
+  // Scroll a hora laboral (9 AM = slot índice 2 → 2 * 52 + 40px header)
+  const scrollTarget = 2 * 52 * 2 + 40; // 8:00, 8:30, luego 9:00
+  grid.scrollTop = scrollTarget;
+}
+
+function abrirAgendarEnSlot(ds, horaStr) {
+  // Preseleccionar fecha y hora al abrir modal desde slot vacío
+  miniY = parseInt(ds.split('-')[0]);
+  miniM = parseInt(ds.split('-')[1]) - 1;
+  buildMiniCal();
+  abrirModal('modal-agendar');
+  // Seleccionar fecha en mini-cal
+  setTimeout(() => {
+    selMiniDia(ds);
+    // Intentar preseleccionar hora
+    const [h, m] = horaStr.split(':').map(Number);
+    const period = h < 12 ? 'AM' : 'PM';
+    const h12 = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+    const horaVal = `${h12}:${String(m).padStart(2,'0')} ${period}`;
+    const sel = document.getElementById('hora-cita');
+    const opt = Array.from(sel.options).find(o => o.value === horaVal);
+    if(opt) sel.value = opt.value;
+  }, 50);
+}
+function abrirModalAgendar(){ miniY=curY; miniM=curM; buildMiniCal(); abrirModal('modal-agendar'); }
+function actualizarDuracion(){ const p=document.getElementById('sel-servicio').value.split('|'); document.getElementById('duracion-display').value=p[1]?p[1]+' minutos':''; }
+function formatFecha(ds){ const d=new Date(ds+'T12:00:00'); return `${d.getDate()} de ${MESES[d.getMonth()].toLowerCase()}`; }
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3500); }
+function abrirModal(id){ document.getElementById(id).classList.add('open'); }
+function cerrarModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+document.addEventListener('click',e=>{ if(!e.target.closest('#buscar-clienta')&&!e.target.closest('#clientas-dropdown')) document.getElementById('clientas-dropdown').style.display='none'; });
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+buildCalendar();
+renderCitas(selDate);
+
+/* ─────────────────────────────────────────────────────────────
+     SISTEMA DE EXPIRACIÓN DE SESIÓN POR INACTIVIDAD
+     - Aviso emergente a los 25 minutos de inactividad
+     - Cuenta regresiva de 60 segundos
+     - Si presiona "Continuar sesión" → reinicia el contador a 25 min
+     - Si presiona "Cerrar sesión" o se agota el tiempo → redirige al login
+  ───────────────────────────────────────────────────────────── */
+  const SESSION_TIMEOUT  = 25 * 60 * 1000;  // 25 minutos
+  const WARNING_BEFORE   = 1 * 60 * 1000;  // aviso 1 min antes (al min 1)
+
+  let _inactivityTimer, _warningTimer, _countdownInterval;
+
+  let _warningVisible = false;
+
+  function resetTimers() {
+    // Si el aviso ya está visible, NO reiniciar — esperar decisión de la encargada
+    if (_warningVisible) return;
+
+    clearTimeout(_inactivityTimer);
+    clearTimeout(_warningTimer);
+    clearInterval(_countdownInterval);
+
+    // Programar aviso al minuto 1
+    _warningTimer = setTimeout(showSessionWarning, SESSION_TIMEOUT - WARNING_BEFORE);
+
+    // Programar cierre automático al minuto 2
+    _inactivityTimer = setTimeout(expireSession, SESSION_TIMEOUT);
   }
 
-  function abrirModal(id){ document.getElementById(id).classList.add('open'); }
-  function cerrarModal(id){ document.getElementById(id).classList.remove('open'); }
-  document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+  function showSessionWarning() {
+    _warningVisible = true;  // Bloquear reinicio por actividad
+    let secsLeft = 60;
+    document.getElementById('session-countdown').textContent = secsLeft;
+    document.getElementById('session-overlay').classList.add('open');
 
-  buildCalendar();
-  renderCitas();
+    _countdownInterval = setInterval(() => {
+      secsLeft--;
+      document.getElementById('session-countdown').textContent = secsLeft;
+      if (secsLeft <= 0) clearInterval(_countdownInterval);
+    }, 1000);
+  }
+
+  function continuarSesion() {
+    _warningVisible = false;  // Permitir de nuevo el reinicio por actividad
+    resetTimers();
+  }
+
+  function expireSession() {
+    clearTimeout(_inactivityTimer);
+    clearTimeout(_warningTimer);
+    clearInterval(_countdownInterval);
+    _warningVisible = false;
+    document.getElementById('session-overlay').classList.remove('open');
+    window.location.href = 'index.html?sesion=expirada';
+  }
+
+  // Reiniciar timers ante cualquier interacción del usuario
+  // (no tiene efecto si el aviso está visible gracias a _warningVisible)
+  ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt =>
+    document.addEventListener(evt, resetTimers, { passive: true })
+  );
+
+  // Arrancar al cargar la página
+  resetTimers();
 </script>
 </body>
 </html>

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Moon Gest — Catálogo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moon Beauty Space — Catálogo</title>
   <link rel="stylesheet" href="styles.css">
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap');
@@ -221,6 +222,79 @@ body {
 .info-box .ib-label { font-size: 10px; color: var(--text-hint); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
 .info-box .ib-value { font-size: 14px; color: var(--text-main); font-weight: 500; }
 
+/* ── SESSION INACTIVITY MODAL ── */
+.session-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(45,31,20,0.55);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+}
+.session-overlay.open { display: flex; }
+.session-box {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 32px 36px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 70px rgba(0,0,0,0.22);
+  animation: fadeUp 0.25s ease;
+  text-align: center;
+}
+.session-icon {
+  font-size: 40px;
+  margin-bottom: 14px;
+  display: block;
+}
+.session-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  color: var(--text-main);
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+.session-msg {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 6px;
+}
+.session-countdown-wrap {
+  margin: 18px 0;
+  background: #fef3e2;
+  border: 1px solid #f5d9a0;
+  border-radius: 10px;
+  padding: 14px 20px;
+  display: inline-block;
+  width: 100%;
+}
+.session-countdown-wrap .label {
+  font-size: 11px;
+  color: #b07820;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 4px;
+}
+.session-countdown-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 48px;
+  color: #b07820;
+  font-weight: 600;
+  line-height: 1;
+}
+.session-countdown-unit {
+  font-size: 12px;
+  color: #c89030;
+  margin-top: 2px;
+}
+.session-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+.session-actions .btn { flex: 1; padding: 13px; font-size: 13px; }
   </style>
   <style>
     .servicio-card { background:var(--white); border:1px solid var(--border); border-radius:10px; padding:18px 20px; margin-bottom:12px; display:flex; align-items:center; gap:18px; }
@@ -240,7 +314,7 @@ body {
 <body>
 <div class="app">
   <aside class="sidebar">
-    <div class="sidebar-logo"><h2>Moon<br>Gest</h2><p>SISTEMA DE GESTIÓN</p></div>
+    <div class="sidebar-logo"><h2>Moon Beauty<br>Space</h2></div>
     <nav class="nav">
       <a class="nav-item" href="citas.html"><span class="nav-icon">📅</span> Gestionar Citas</a>
       <a class="nav-item" href="clientas.html"><span class="nav-icon">👤</span> Clientas</a>
@@ -249,13 +323,25 @@ body {
       <a class="nav-item" href="notificaciones.html"><span class="nav-icon">🔔</span> Notificaciones</a>
       <a class="nav-item active" href="catalogo.html"><span class="nav-icon">✂️</span> Catálogo</a>
     </nav>
-    <div class="sidebar-footer"><span>Encargada · v2.0</span><button class="btn-cerrar-sesion" onclick="window.location.href='index.html'">↩ Cerrar sesión</button></div>
+    <div class="sidebar-footer"><span>Encargada · v2.0</span><button class="btn-cerrar-sesion" onclick="cerrarSesionManual()">↩ Cerrar sesión</button></div>
   </aside>
   <div class="main">
     <div class="topbar"><h1>Catálogo de Servicios</h1><button class="btn btn-primary btn-sm" onclick="abrirModal('modal-nuevo')">+ Agregar Servicio</button></div>
     <div class="content" style="padding:28px 32px;overflow-y:auto">
       <div class="section-label">Servicios activos</div>
       <div id="servicios-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CERRAR SESIÓN MANUAL (confirmación) -->
+<div class="modal-overlay" id="modal-cerrar-sesion">
+  <div class="modal-box">
+    <div class="modal-title">¿Cerrar sesión?</div>
+    <div class="modal-sub">Se perderán los datos no guardados.</div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="cerrarModal('modal-cerrar-sesion')">Cancelar</button>
+      <button class="btn btn-danger" onclick="window.location.href='index.html'">Confirmar</button>
     </div>
   </div>
 </div>
@@ -279,7 +365,33 @@ body {
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════
+     MODAL EXPIRACIÓN DE SESIÓN POR INACTIVIDAD
+     ══════════════════════════════════════════════ -->
+<div class="session-overlay" id="session-overlay">
+  <div class="session-box">
+    <span class="session-icon">⏱️</span>
+    <div class="session-title">Tu sesión expirará pronto</div>
+    <p class="session-msg">Has estado inactiva por 1 minuto.<br>¿Deseas continuar en el sistema?</p>
+    <div class="session-countdown-wrap">
+      <div class="label">Tiempo restante</div>
+      <div class="session-countdown-num" id="session-countdown">60</div>
+      <div class="session-countdown-unit">segundos</div>
+    </div>
+    <p class="session-msg" style="font-size:11px;color:var(--text-hint);margin-bottom:0">
+      Los datos no guardados se perderán si la sesión expira.
+    </p>
+    <div class="session-actions">
+      <button class="btn btn-outline" onclick="expireSession()">Cerrar sesión</button>
+      <button class="btn btn-primary" onclick="continuarSesion()">Continuar sesión</button>
+    </div>
+  </div>
+</div>
+
 <script>
+  /* ─────────────────────────────────────────
+     CATÁLOGO: lógica de servicios
+  ───────────────────────────────────────── */
   let servicios = [
     { nombre:'Extensión de pestañas — Clásico', desc:'Técnica pelo a pelo. Diseño natural.', precio:500, dur:75, activo:true },
     { nombre:'Extensión de pestañas — Volumen ruso', desc:'Técnica 3D-6D. Mayor densidad y drama.', precio:650, dur:90, activo:true },
@@ -324,8 +436,8 @@ body {
   function guardarServicio() {
     const nombre = document.getElementById('serv-nombre').value.trim();
     const precio = parseInt(document.getElementById('serv-precio').value);
-    const dur = parseInt(document.getElementById('serv-dur').value);
-    const errEl = document.getElementById('serv-error');
+    const dur    = parseInt(document.getElementById('serv-dur').value);
+    const errEl  = document.getElementById('serv-error');
     if(!nombre||!precio||!dur){ errEl.style.display='flex'; errEl.textContent='⚠️ Completa todos los campos obligatorios.'; return; }
     if(precio<1||dur<1){ errEl.style.display='flex'; errEl.textContent='⚠️ El precio y la duración deben ser mayores a 0.'; return; }
     errEl.style.display='none';
@@ -333,7 +445,10 @@ body {
     if(editIdx!==null){ servicios[editIdx]={...servicios[editIdx],...serv}; editIdx=null; }
     else servicios.unshift(serv);
     cerrarModal('modal-nuevo');
-    document.getElementById('serv-nombre').value=''; document.getElementById('serv-desc').value=''; document.getElementById('serv-precio').value=''; document.getElementById('serv-dur').value='';
+    document.getElementById('serv-nombre').value='';
+    document.getElementById('serv-desc').value='';
+    document.getElementById('serv-precio').value='';
+    document.getElementById('serv-dur').value='';
     document.getElementById('modal-serv-title').textContent='Agregar Servicio';
     renderServicios();
   }
@@ -348,9 +463,80 @@ body {
 
   function abrirModal(id){ document.getElementById(id).classList.add('open'); }
   function cerrarModal(id){ document.getElementById(id).classList.remove('open'); }
-  document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+  document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => {
+    if(e.target === m) m.classList.remove('open');
+  }));
+
+  function cerrarSesionManual() {
+    abrirModal('modal-cerrar-sesion');
+  }
 
   renderServicios();
+
+  /* ─────────────────────────────────────────────────────────────
+     SISTEMA DE EXPIRACIÓN DE SESIÓN POR INACTIVIDAD
+     - Aviso emergente a los 25 minutos de inactividad
+     - Cuenta regresiva de 60 segundos
+     - Si presiona "Continuar sesión" → reinicia el contador a 25 min
+     - Si presiona "Cerrar sesión" o se agota el tiempo → redirige al login
+  ───────────────────────────────────────────────────────────── */
+  const SESSION_TIMEOUT  = 25 * 60 * 1000;  // 25 minutos
+  const WARNING_BEFORE   = 1 * 60 * 1000;  // aviso 1 min antes (al min 1)
+
+  let _inactivityTimer, _warningTimer, _countdownInterval;
+
+  let _warningVisible = false;
+
+  function resetTimers() {
+    // Si el aviso ya está visible, NO reiniciar — esperar decisión de la encargada
+    if (_warningVisible) return;
+
+    clearTimeout(_inactivityTimer);
+    clearTimeout(_warningTimer);
+    clearInterval(_countdownInterval);
+
+    // Programar aviso al minuto 1
+    _warningTimer = setTimeout(showSessionWarning, SESSION_TIMEOUT - WARNING_BEFORE);
+
+    // Programar cierre automático al minuto 2
+    _inactivityTimer = setTimeout(expireSession, SESSION_TIMEOUT);
+  }
+
+  function showSessionWarning() {
+    _warningVisible = true;  // Bloquear reinicio por actividad
+    let secsLeft = 60;
+    document.getElementById('session-countdown').textContent = secsLeft;
+    document.getElementById('session-overlay').classList.add('open');
+
+    _countdownInterval = setInterval(() => {
+      secsLeft--;
+      document.getElementById('session-countdown').textContent = secsLeft;
+      if (secsLeft <= 0) clearInterval(_countdownInterval);
+    }, 1000);
+  }
+
+  function continuarSesion() {
+    _warningVisible = false;  // Permitir de nuevo el reinicio por actividad
+    resetTimers();
+  }
+
+  function expireSession() {
+    clearTimeout(_inactivityTimer);
+    clearTimeout(_warningTimer);
+    clearInterval(_countdownInterval);
+    _warningVisible = false;
+    document.getElementById('session-overlay').classList.remove('open');
+    window.location.href = 'index.html?sesion=expirada';
+  }
+
+  // Reiniciar timers ante cualquier interacción del usuario
+  // (no tiene efecto si el aviso está visible gracias a _warningVisible)
+  ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt =>
+    document.addEventListener(evt, resetTimers, { passive: true })
+  );
+
+  // Arrancar al cargar la página
+  resetTimers();
 </script>
 </body>
 </html>

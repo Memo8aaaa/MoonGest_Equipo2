@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Moon Gest — Reportes</title>
+  <title>Moon Beauty Space — Reportes</title>
   <link rel="stylesheet" href="styles.css">
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap');
@@ -227,7 +227,7 @@ body {
 <body>
 <div class="app">
   <aside class="sidebar">
-    <div class="sidebar-logo"><h2>Moon<br>Gest</h2><p>SISTEMA DE GESTIÓN</p></div>
+    <div class="sidebar-logo"><h2>Moon<br>Beauty<br>Space</h2><p>SISTEMA DE GESTIÓN</p></div>
     <nav class="nav">
       <a class="nav-item" href="citas.html"><span class="nav-icon">📅</span> Gestionar Citas</a>
       <a class="nav-item" href="clientas.html"><span class="nav-icon">👤</span> Clientas</a>
@@ -279,5 +279,62 @@ body {
     </div>
   </div>
 </div>
+<!-- MODAL SESIÓN -->
+<div id="session-overlay" style="display:none;position:fixed;inset:0;background:rgba(45,31,20,0.55);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(3px);">
+  <div style="background:#fff;border-radius:16px;padding:32px 36px;width:100%;max-width:420px;box-shadow:0 20px 70px rgba(0,0,0,0.22);text-align:center;">
+    <span style="font-size:40px;display:block;margin-bottom:14px">⏱️</span>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#2d1f14;margin-bottom:8px">Tu sesión expirará pronto</div>
+    <p style="font-size:13px;color:#9e8878;margin-bottom:6px">Has estado inactiva por 24 minutos.<br>¿Deseas continuar en el sistema?</p>
+    <div style="margin:18px 0;background:#fef3e2;border:1px solid #f5d9a0;border-radius:10px;padding:14px 20px;">
+      <div style="font-size:11px;color:#b07820;text-transform:uppercase;margin-bottom:4px">Tiempo restante</div>
+      <div id="session-countdown" style="font-family:'Cormorant Garamond',serif;font-size:48px;color:#b07820;font-weight:600;">60</div>
+      <div style="font-size:12px;color:#c89030;">segundos</div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="expireSession()" style="flex:1;padding:13px;border-radius:8px;border:1.5px solid #ede5dc;background:transparent;color:#7a5535;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">Cerrar sesión</button>
+      <button onclick="continuarSesion()" style="flex:1;padding:13px;border-radius:8px;border:none;background:#a07850;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">Continuar sesión</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const SESSION_TIMEOUT = 25 * 60 * 1000;
+  const WARNING_BEFORE  =  1 * 60 * 1000;
+  let _it, _wt, _ci, _wv = false;
+  function resetTimers(){
+    if(_wv) return;
+    clearTimeout(_it); clearTimeout(_wt); clearInterval(_ci);
+    _wt = setTimeout(showWarn, SESSION_TIMEOUT - WARNING_BEFORE);
+    _it = setTimeout(expireSession, SESSION_TIMEOUT);
+  }
+  function showWarn(){
+    _wv = true;
+    let s = 60;
+    document.getElementById('session-countdown').textContent = s;
+    document.getElementById('session-overlay').style.display = 'flex';
+    _ci = setInterval(() => {
+      s--;
+      document.getElementById('session-countdown').textContent = s;
+      if(s <= 0) clearInterval(_ci);
+    }, 1000);
+  }
+  window.continuarSesion = function(){
+    _wv = false;
+    document.getElementById('session-overlay').style.display = 'none';
+    clearInterval(_ci);
+    resetTimers();
+  };
+  window.expireSession = function(){
+    clearTimeout(_it); clearTimeout(_wt); clearInterval(_ci);
+    document.getElementById('session-overlay').style.display = 'none';
+    window.location.href = 'index.html?sesion=expirada';
+  };
+  ['mousemove','mousedown','keydown','touchstart','scroll','click'].forEach(evt =>
+    document.addEventListener(evt, resetTimers, { passive: true })
+  );
+  resetTimers();
+})();
+</script>
 </body>
 </html>

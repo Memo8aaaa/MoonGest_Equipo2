@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Moon Gest — Notificaciones</title>
+  <title>Moon Beauty Space — Notificaciones</title>
   <link rel="stylesheet" href="styles.css">
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap');
@@ -226,7 +226,7 @@ body {
 <body>
 <div class="app">
   <aside class="sidebar">
-    <div class="sidebar-logo"><h2>Moon<br>Gest</h2><p>SISTEMA DE GESTIÓN</p></div>
+    <div class="sidebar-logo"><h2>Moon Beauty<br>Space</h2><p>SISTEMA DE GESTIÓN</p></div>
     <nav class="nav">
       <a class="nav-item" href="citas.html"><span class="nav-icon">📅</span> Gestionar Citas</a>
       <a class="nav-item" href="clientas.html"><span class="nav-icon">👤</span> Clientas</a>
@@ -251,7 +251,7 @@ body {
     <div class="modal-title">Enviar Políticas del Salón</div>
     <div class="modal-sub">Selecciona la clienta destinataria y edita el mensaje si necesitas</div>
     <div class="field"><label>Clienta destinataria</label><select><option>Sofía Martínez · 5551234567</option><option>Valentina Reyes · 5552345678</option><option>Camila Torres · 5553456789</option></select></div>
-    <div class="field"><label>Mensaje (editable)</label><textarea style="min-height:140px">Hola! 🌙 Aquí las políticas de Moon Gest:
+    <div class="field"><label>Mensaje (editable)</label><textarea style="min-height:140px">Hola! 🌙 Aquí las políticas de Moon Beauty Space:
 
 • Anticipo de $100 requerido para apartar tu cita.
 • Puntualidad: tolerancia de 10 minutos. Si llegas tarde el servicio puede reducirse.
@@ -290,8 +290,73 @@ body {
   }
   function verMensaje(i) {
     const r = recordatorios[i];
-    alert(`Mensaje para ${r.clienta}:\n\nHola ${r.clienta.split(' ')[0]}! 🌙 Te recordamos tu cita en Moon Gest:\n\n📅 ${r.fecha}\n⏰ ${r.hora}\n✂️ ${r.servicio}\n\nRecuerda llegar sin maquillaje en ojos. ¡Te esperamos! 💕`);
+    alert(`Mensaje para ${r.clienta}:\n\nHola ${r.clienta.split(' ')[0]}! 🌙 Te recordamos tu cita en Moon Beauty Space:\n\n📅 ${r.fecha}\n⏰ ${r.hora}\n✂️ ${r.servicio}\n\nRecuerda llegar sin maquillaje en ojos. ¡Te esperamos! 💕`);
   }
+
+  /* ─────────────────────────────────────────────────────────────
+     SISTEMA DE EXPIRACIÓN DE SESIÓN POR INACTIVIDAD
+     - Aviso emergente a los 25 minutos de inactividad
+     - Cuenta regresiva de 60 segundos
+     - Si presiona "Continuar sesión" → reinicia el contador a 25 min
+     - Si presiona "Cerrar sesión" o se agota el tiempo → redirige al login
+  ───────────────────────────────────────────────────────────── */
+  const SESSION_TIMEOUT  = 25 * 60 * 1000;  // 25 minutos
+  const WARNING_BEFORE   = 1 * 60 * 1000;  // aviso 1 min antes (al min 1)
+
+  let _inactivityTimer, _warningTimer, _countdownInterval;
+
+  let _warningVisible = false;
+
+  function resetTimers() {
+    // Si el aviso ya está visible, NO reiniciar — esperar decisión de la encargada
+    if (_warningVisible) return;
+
+    clearTimeout(_inactivityTimer);
+    clearTimeout(_warningTimer);
+    clearInterval(_countdownInterval);
+
+    // Programar aviso al minuto 1
+    _warningTimer = setTimeout(showSessionWarning, SESSION_TIMEOUT - WARNING_BEFORE);
+
+    // Programar cierre automático al minuto 2
+    _inactivityTimer = setTimeout(expireSession, SESSION_TIMEOUT);
+  }
+
+  function showSessionWarning() {
+    _warningVisible = true;  // Bloquear reinicio por actividad
+    let secsLeft = 60;
+    document.getElementById('session-countdown').textContent = secsLeft;
+    document.getElementById('session-overlay').classList.add('open');
+
+    _countdownInterval = setInterval(() => {
+      secsLeft--;
+      document.getElementById('session-countdown').textContent = secsLeft;
+      if (secsLeft <= 0) clearInterval(_countdownInterval);
+    }, 1000);
+  }
+
+  function continuarSesion() {
+    _warningVisible = false;  // Permitir de nuevo el reinicio por actividad
+    resetTimers();
+  }
+
+  function expireSession() {
+    clearTimeout(_inactivityTimer);
+    clearTimeout(_warningTimer);
+    clearInterval(_countdownInterval);
+    _warningVisible = false;
+    document.getElementById('session-overlay').classList.remove('open');
+    window.location.href = 'index.html?sesion=expirada';
+  }
+
+  // Reiniciar timers ante cualquier interacción del usuario
+  // (no tiene efecto si el aviso está visible gracias a _warningVisible)
+  ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt =>
+    document.addEventListener(evt, resetTimers, { passive: true })
+  );
+
+  // Arrancar al cargar la página
+  resetTimers();
 </script>
 </body>
 </html>
