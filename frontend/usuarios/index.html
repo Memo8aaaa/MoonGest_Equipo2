@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Moon Beauty Space — Inicio de Sesión</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../styles.css">
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap');
 
@@ -349,30 +349,62 @@ body {
       else { input.type = 'password'; btn.textContent = 'Mostrar'; }
     }
 
-    function iniciarSesion() {
-      if (bloqueado) return;
-      const usuario = document.getElementById('usuario').value.trim();
-      const contrasena = document.getElementById('contrasena').value.trim();
+    async function iniciarSesion() {
+    if (bloqueado) return;
 
-      if (!usuario || !contrasena) {
+    // 1. Capturamos lo que el usuario escribió en el HTML
+    const usuarioInput = document.getElementById('usuario').value.trim();
+    const contrasenaInput = document.getElementById('contrasena').value.trim();
+
+    if (!usuarioInput || !contrasenaInput) {
         showError('Completa todos los campos para continuar.');
         return;
-      }
-
-      // Credencial demo
-      if (usuario === 'encargada' && contrasena === '1234') {
-        window.location.href = 'citas.html';
-        return;
-      }
-
-      intentos--;
-      document.getElementById('intentos-display').textContent = intentos + ' / 3';
-      document.getElementById('error-msg').style.display = 'flex';
-
-      if (intentos <= 0) {
-        bloquear();
-      }
     }
+
+    try {
+        // 2. Enviamos los datos al Backend (Puerto 8081)
+        const respuesta = await fetch('http://localhost:8081/api/usuarios/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            // Enviamos el objeto con los nombres de campos que espera tu Java
+            body: JSON.stringify({
+                nombre: usuarioInput,
+                password: contrasenaInput
+            })
+        });
+
+        // 3. Analizamos la respuesta del servidor
+        if (respuesta.ok) {
+            const usuarioValido = await respuesta.json();
+            console.log('Bienvenido:', usuarioValido.nombre);
+            
+            // Si el backend dice que todo está OK, redirigimos
+            window.location.href = '../citas/citas.html';
+        } else {
+            // Si el backend responde 401 o 404, ejecutamos tu lógica de intentos
+            manejarErrorLogin();
+        }
+
+    } catch (error) {
+        console.error('Error de conexión:', error);
+        showError('El servidor de base de datos no responde.');
+    }
+}
+
+// Esta función separa la lógica visual del error
+function manejarErrorLogin() {
+    intentos--;
+    const intentosDisplay = document.getElementById('intentos-display');
+    if(intentosDisplay) intentosDisplay.textContent = intentos + ' / 3';
+    
+    document.getElementById('error-msg').style.display = 'flex';
+    
+    if (intentos <= 0) {
+        bloquear();
+    }
+}
 
     function showError(msg) {
       const el = document.getElementById('error-msg');
@@ -461,7 +493,7 @@ body {
     clearInterval(_countdownInterval);
     _warningVisible = false;
     document.getElementById('session-overlay').classList.remove('open');
-    window.location.href = 'index.html?sesion=expirada';
+    window.location.href = '../usuarios/Sindex.html?sesion=expirada';
   }
 
   // Reiniciar timers ante cualquier interacción del usuario
