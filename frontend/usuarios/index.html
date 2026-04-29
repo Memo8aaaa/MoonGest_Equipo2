@@ -359,8 +359,6 @@ body {
     if (!usuarioInput || !contrasenaInput) {
         showError('Completa todos los campos para continuar.');
         return;
-<<<<<<< HEAD
-=======
       }
 
       // Credencial demo
@@ -376,7 +374,6 @@ body {
       if (intentos <= 0) {
         bloquear();
       }
->>>>>>> e32b372f40ed4691111ec612d5762bb20cfddc9d
     }
 
     try {
@@ -409,7 +406,7 @@ body {
         console.error('Error de conexión:', error);
         showError('El servidor de base de datos no responde.');
     }
-}
+
 
 // Esta función separa la lógica visual del error
 function manejarErrorLogin() {
@@ -511,11 +508,7 @@ function manejarErrorLogin() {
     clearInterval(_countdownInterval);
     _warningVisible = false;
     document.getElementById('session-overlay').classList.remove('open');
-<<<<<<< HEAD
-    window.location.href = '../usuarios/Sindex.html?sesion=expirada';
-=======
     window.location.href = '/frontend/usuarios/index.html?sesion=expirada';
->>>>>>> e32b372f40ed4691111ec612d5762bb20cfddc9d
   }
 
   // Reiniciar timers ante cualquier interacción del usuario
