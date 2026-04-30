@@ -1,4 +1,4 @@
-package com.moongest.ingsoft.model;
+package com.moongest.ingsoft.usuarios;
 
 import jakarta.persistence.*;
 

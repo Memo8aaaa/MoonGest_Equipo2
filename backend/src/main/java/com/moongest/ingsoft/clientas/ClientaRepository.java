@@ -1,6 +1,5 @@
-package com.moongest.ingsoft.repository;
+package com.moongest.ingsoft.clientas;
 
-import com.moongest.ingsoft.model.Clienta;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;

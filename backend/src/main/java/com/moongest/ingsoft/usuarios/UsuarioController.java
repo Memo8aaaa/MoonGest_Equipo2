@@ -1,7 +1,5 @@
-package com.moongest.ingsoft.controller;
+package com.moongest.ingsoft.usuarios;
 
-import com.moongest.ingsoft.model.Usuario;
-import com.moongest.ingsoft.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

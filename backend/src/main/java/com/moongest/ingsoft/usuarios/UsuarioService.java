@@ -1,7 +1,5 @@
-package com.moongest.ingsoft.service;
+package com.moongest.ingsoft.usuarios;
 
-import com.moongest.ingsoft.model.Usuario;
-import com.moongest.ingsoft.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

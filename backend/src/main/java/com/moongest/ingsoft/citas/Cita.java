@@ -1,4 +1,4 @@
-package com.moongest.ingsoft.model;
+package com.moongest.ingsoft.citas;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;

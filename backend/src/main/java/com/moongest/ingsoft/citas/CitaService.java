@@ -1,7 +1,5 @@
-package com.moongest.ingsoft.service;
+package com.moongest.ingsoft.citas;
 
-import com.moongest.ingsoft.model.Cita;
-import com.moongest.ingsoft.repository.CitaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;

@@ -1,7 +1,5 @@
-package com.moongest.ingsoft.controller;
+package com.moongest.ingsoft.clientas;
 
-import com.moongest.ingsoft.model.Clienta;
-import com.moongest.ingsoft.service.ClientaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

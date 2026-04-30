@@ -1,7 +1,5 @@
-package com.moongest.ingsoft.service;
+package com.moongest.ingsoft.clientas;
 
-import com.moongest.ingsoft.model.Clienta;
-import com.moongest.ingsoft.repository.ClientaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
