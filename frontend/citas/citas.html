@@ -195,16 +195,16 @@ body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(
   <aside class="sidebar">
     <div class="sidebar-logo"><h2>Moon<br>Beauty<br>Space</h2><p>SISTEMA DE GESTIÓN</p></div>
     <nav class="nav">
-      <a class="nav-item" href="/frontend/citas/citas.html"><span class="nav-icon">📅</span> Gestionar Citas</a>
-      <a class="nav-item" href="/frontend/clientes/clientas.html"><span class="nav-icon">👤</span> Clientas</a>
-      <a class="nav-item active" href="/frontend/pagos/pagos.html"><span class="nav-icon">💳</span> Pagos</a>
-      <a class="nav-item" href="/frontend/reportes/reportes.html"><span class="nav-icon">📊</span> Reportes</a>
-      <a class="nav-item" href="/frontend/notificaciones/notificaciones.html"><span class="nav-icon">🔔</span> Notificaciones</a>
-      <a class="nav-item" href="/frontend/catalago/catalago.html"><span class="nav-icon">✂️</span> Catálogo</a>
+      <a class="nav-item" href="citas.html"><span class="nav-icon">📅</span> Gestionar Citas</a>
+      <a class="nav-item" href="clientas.html"><span class="nav-icon">👤</span> Clientas</a>
+      <a class="nav-item" href="pagos.html"><span class="nav-icon">💳</span> Pagos</a>
+      <a class="nav-item" href="reportes.html"><span class="nav-icon">📊</span> Reportes</a>
+      <a class="nav-item" href="notificaciones.html"><span class="nav-icon">🔔</span> Notificaciones</a>
+      <a class="nav-item" href="catalago.html"><span class="nav-icon">✂️</span> Catálogo</a>
     </nav>
     <div class="sidebar-footer">
       <span>Encargada · v2.0</span>
-      <button class="btn-cerrar-sesion" onclick="window.location.href='../../index.html'">↩ Cerrar sesión</button>
+      <button class="btn-cerrar-sesion" onclick="window.location.href='index.html'">↩ Cerrar sesión</button>
     </div>
   </aside>
   <div class="main">
@@ -436,117 +436,176 @@ body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(
 <div class="toast" id="toast"></div>
 
 <script>
-// ── DATOS CLIENTAS ──────────────────────────────────────────────────────────
-let clientasData = [
-  { nombre:'Sofía Martínez',  tel:'555-123-4567', email:'sofia@mail.com',   alergias:['Adhesivo sensitivo'], preferencias:['Extensiones naturales','Rizos suaves'],    notas:'Prefiere citas por la mañana. Sensibilidad en ojo derecho.', visitas:8, ultimaVisita:'1 mar 2026',  servicioFav:'Extensión clásica' },
-  { nombre:'Valentina Reyes', tel:'555-234-5678', email:'vale@mail.com',    alergias:[],                     preferencias:['Volumen dramático'],                        notas:'Trae referencias de Instagram. Muy puntual.',               visitas:5, ultimaVisita:'14 mar 2026', servicioFav:'Volumen ruso' },
-  { nombre:'Camila Torres',   tel:'555-345-6789', email:'',                 alergias:['Polen','Perfumes'],   preferencias:['Look natural'],                             notas:'Avisar con 24h si hay cancelación.',                        visitas:3, ultimaVisita:'15 mar 2026', servicioFav:'Diseño de cejas' },
-  { nombre:'Andrea López',    tel:'555-456-7890', email:'andrea@mail.com',  alergias:[],                     preferencias:['Cejas gruesas y definidas'],                notas:'',                                                          visitas:4, ultimaVisita:'17 mar 2026', servicioFav:'Diseño de cejas' },
-  { nombre:'Mariana García',  tel:'555-567-8901', email:'',                 alergias:['Latex'],              preferencias:['Extensiones largas'],                       notas:'Alérgica al latex — usar adhesivo especial siempre.',        visitas:6, ultimaVisita:'31 mar 2026', servicioFav:'Extensión clásica' },
-  { nombre:'Daniela Ruiz',    tel:'555-678-9012', email:'dani@mail.com',    alergias:[],                     preferencias:['Volumen ruso','Efecto cat-eye'],            notas:'Primera cita en enero. Muy satisfecha.',                    visitas:2, ultimaVisita:'8 mar 2026',  servicioFav:'Volumen ruso' },
-  { nombre:'Fernanda Díaz',   tel:'555-789-0123', email:'',                 alergias:[],                     preferencias:[],                                           notas:'Sensibilidad en ojo izquierdo — aplicar con cuidado.',      visitas:1, ultimaVisita:'5 mar 2026',  servicioFav:'Extensión clásica' },
-];
+const BASE_URL = 'http://localhost:8080';
 
-// ── CITAS ───────────────────────────────────────────────────────────────────
-let todasLasCitas = {
-  '2026-03-03':[{hora:'10:00',period:'AM',nombre:'Andrea López',servicio:'Retoque de pestañas · 45 min',estado:'pagado',notas:''}],
-  '2026-03-05':[{hora:'11:00',period:'AM',nombre:'Mariana García',servicio:'Diseño de cejas · 30 min',estado:'anticipo',notas:''},{hora:'3:00',period:'PM',nombre:'Fernanda Díaz',servicio:'Extensión clásica · 75 min',estado:'sin',notas:'Sensibilidad en ojo izquierdo'}],
-  '2026-03-08':[{hora:'9:30',period:'AM',nombre:'Daniela Ruiz',servicio:'Volumen ruso · 90 min',estado:'pagado',notas:''}],
-  '2026-03-11':[{hora:'12:00',period:'PM',nombre:'Camila Torres',servicio:'Diseño de cejas · 30 min',estado:'anticipo',notas:''}],
-  '2026-03-14':[{hora:'10:00',period:'AM',nombre:'Valentina Reyes',servicio:'Retoque de pestañas · 45 min',estado:'pagado',notas:''},{hora:'2:00',period:'PM',nombre:'Sofía Martínez',servicio:'Volumen ruso · 90 min',estado:'anticipo',notas:'Llevar referencia de look'}],
-  '2026-03-15':[{hora:'10:00',period:'AM',nombre:'Sofía Martínez',servicio:'Extensión clásica · 75 min',estado:'pagado',notas:'Usar adhesivo sensitivo'},{hora:'12:00',period:'PM',nombre:'Valentina Reyes',servicio:'Retoque de pestañas · 45 min',estado:'anticipo',notas:''},{hora:'3:00',period:'PM',nombre:'Camila Torres',servicio:'Diseño de cejas · 30 min',estado:'sin',notas:''}],
-  '2026-03-17':[{hora:'9:00',period:'AM',nombre:'Andrea López',servicio:'Extensión clásica · 75 min',estado:'sin',notas:''},{hora:'11:30',period:'AM',nombre:'Mariana García',servicio:'Diseño de cejas · 30 min',estado:'pagado',notas:''}],
-  '2026-03-19':[{hora:'4:00',period:'PM',nombre:'Daniela Ruiz',servicio:'Retoque de pestañas · 45 min',estado:'anticipo',notas:''}],
-  '2026-03-22':[{hora:'10:30',period:'AM',nombre:'Fernanda Díaz',servicio:'Volumen ruso · 90 min',estado:'pagado',notas:''},{hora:'1:00',period:'PM',nombre:'Camila Torres',servicio:'Extensión clásica · 75 min',estado:'sin',notas:'Nuevo cliente'}],
-  '2026-03-25':[{hora:'9:00',period:'AM',nombre:'Sofía Martínez',servicio:'Retoque de pestañas · 45 min',estado:'anticipo',notas:''}],
-  '2026-03-27':[{hora:'11:00',period:'AM',nombre:'Valentina Reyes',servicio:'Diseño de cejas · 30 min',estado:'pagado',notas:''},{hora:'3:00',period:'PM',nombre:'Andrea López',servicio:'Volumen ruso · 90 min',estado:'sin',notas:''}],
-  '2026-03-31':[{hora:'10:00',period:'AM',nombre:'Mariana García',servicio:'Extensión clásica · 75 min',estado:'pagado',notas:'Referencia enviada por WhatsApp'}],
-};
+let clientasData = [];
+let serviciosData = [];
+let todasLasCitas = {};
 
 // ── ESTADO ──────────────────────────────────────────────────────────────────
-let curY=2026, curM=2, selDate='2026-03-15';
-let miniY=2026, miniM=2, miniFecha='';
-const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-const MESES_C=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-const DIAS_ES=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+let curY = new Date().getFullYear(), curM = new Date().getMonth();
+let selDate = new Date().toISOString().split('T')[0];
+let miniY = curY, miniM = curM, miniFecha = '';
+const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MESES_C = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const DIAS_ES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+// ── CARGA INICIAL ─────────────────────────────────────────────────────────────
+async function cargarDatos() {
+  try {
+    const [cRes, sRes, citasRes] = await Promise.all([
+      fetch(`${BASE_URL}/api/clientas`),
+      fetch(`${BASE_URL}/api/catalogo`),
+      fetch(`${BASE_URL}/api/citas`)
+    ]);
+    clientasData = await cRes.json();
+    serviciosData = await sRes.json();
+    const citas = await citasRes.json();
+
+    todasLasCitas = {};
+    citas.forEach(cita => {
+      const fecha = cita.fechaCita;
+      if (!todasLasCitas[fecha]) todasLasCitas[fecha] = [];
+      const clienta = clientasData.find(c => c.idClientas === cita.iddientas);
+      const servicio = serviciosData.find(s => s.idservicio === cita.idservicio);
+      const [hora, period] = convertirHora(cita.horaCita);
+      todasLasCitas[fecha].push({
+        id: cita.idcita,
+        hora, period,
+        nombre: clienta ? `${clienta.nombre} ${clienta.paterno || ''}`.trim() : 'Desconocida',
+        servicio: servicio ? servicio.nombreServicio : 'Servicio desconocido',
+        estado: 'sin',
+        notas: cita.notas || '',
+        _raw: cita
+      });
+    });
+
+    poblarSelectServicios();
+    buildCalendar();
+    renderCitas(selDate);
+  } catch (err) {
+    console.error('Error al cargar datos:', err);
+  }
+}
+
+function convertirHora(horaStr) {
+  if (!horaStr) return ['00:00', 'AM'];
+  const partes = horaStr.split(':');
+  let h = parseInt(partes[0]);
+  const m = partes[1] || '00';
+  const period = h >= 12 ? 'PM' : 'AM';
+  if (h > 12) h -= 12;
+  if (h === 0) h = 12;
+  return [`${h}:${m}`, period];
+}
+
+function convertirA24h(horaAmPm) {
+  const [time, period] = horaAmPm.split(' ');
+  let [h, m] = time.split(':').map(Number);
+  if (period === 'PM' && h !== 12) h += 12;
+  if (period === 'AM' && h === 12) h = 0;
+  return `${String(h).padStart(2,'0')}:${String(m||0).padStart(2,'0')}`;
+}
+
+function poblarSelectServicios() {
+  const sel = document.getElementById('sel-servicio');
+  sel.innerHTML = '<option value="">Seleccionar servicio...</option>';
+  serviciosData.filter(s => s.activo).forEach(s => {
+    sel.innerHTML += `<option value="${s.nombreServicio}|${s.duracionEstimada}">${s.nombreServicio}</option>`;
+  });
+}
 
 // ── CALENDARIO PRINCIPAL ─────────────────────────────────────────────────────
-function buildCalendar(){
-  const g=document.getElementById('cal-grid');
-  document.getElementById('cal-mes').textContent=MESES[curM]+' '+curY;
-  g.innerHTML=['L','M','M','J','V','S','D'].map(d=>`<div class="cal-day-name">${d}</div>`).join('');
-  const off=(new Date(curY,curM,1).getDay()+6)%7;
-  for(let i=0;i<off;i++) g.innerHTML+=`<div class="cal-day empty"></div>`;
-  const days=new Date(curY,curM+1,0).getDate(), today=new Date();
-  for(let d=1;d<=days;d++){
-    const ds=`${curY}-${String(curM+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const hc=!!(todasLasCitas[ds]?.length);
-    const isT=today.getFullYear()===curY&&today.getMonth()===curM&&today.getDate()===d;
-    const isS=ds===selDate;
-    g.innerHTML+=`<div class="cal-day${isT?' today':''}${isS?' selected':''}${hc?' has-cita':''}" onclick="selectDay('${ds}',${d})">${d}</div>`;
+function buildCalendar() {
+  const g = document.getElementById('cal-grid');
+  document.getElementById('cal-mes').textContent = MESES[curM] + ' ' + curY;
+  g.innerHTML = ['L','M','M','J','V','S','D'].map(d => `<div class="cal-day-name">${d}</div>`).join('');
+  const off = (new Date(curY, curM, 1).getDay() + 6) % 7;
+  for (let i = 0; i < off; i++) g.innerHTML += `<div class="cal-day empty"></div>`;
+  const days = new Date(curY, curM + 1, 0).getDate(), today = new Date();
+  for (let d = 1; d <= days; d++) {
+    const ds = `${curY}-${String(curM+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const hc = !!(todasLasCitas[ds]?.length);
+    const isT = today.getFullYear()===curY && today.getMonth()===curM && today.getDate()===d;
+    const isS = ds === selDate;
+    g.innerHTML += `<div class="cal-day${isT?' today':''}${isS?' selected':''}${hc?' has-cita':''}" onclick="selectDay('${ds}',${d})">${d}</div>`;
   }
-}
-function selectDay(ds,dn){
-  selDate=ds; buildCalendar(); renderCitas(ds);
-  const d=new Date(ds+'T12:00:00');
-  document.getElementById('day-title').textContent=`${DIAS_ES[d.getDay()]} ${dn} de ${MESES[d.getMonth()].toLowerCase()}`;
-}
-function cambiarMes(dir){
-  curM+=dir; if(curM>11){curM=0;curY++;} if(curM<0){curM=11;curY--;} buildCalendar();
-  document.getElementById('day-title').textContent=MESES[curM]+' '+curY;
-  document.getElementById('day-sub').textContent='Selecciona un día para ver las citas';
-  document.getElementById('citas-list').innerHTML=`<div class="empty-state"><div class="es-icon">📅</div><p>Haz clic en un día del calendario.</p></div>`;
 }
 
-// ── MINI CALENDARIO DE DISPONIBILIDAD ────────────────────────────────────────
-function buildMiniCal(){
-  document.getElementById('mini-mes').textContent=MESES_C[miniM]+' '+miniY;
-  const g=document.getElementById('mini-grid');
-  g.innerHTML=['L','M','M','J','V','S','D'].map(d=>`<div class="mdn">${d}</div>`).join('');
-  const off=(new Date(miniY,miniM,1).getDay()+6)%7;
-  for(let i=0;i<off;i++) g.innerHTML+=`<div class="md md-empty"></div>`;
-  const days=new Date(miniY,miniM+1,0).getDate();
-  const today=new Date(); today.setHours(0,0,0,0);
-  for(let d=1;d<=days;d++){
-    const ds=`${miniY}-${String(miniM+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const dObj=new Date(ds+'T12:00:00');
-    const isPast=dObj<today, isT=dObj.getTime()===today.getTime();
-    const hc=!!(todasLasCitas[ds]?.length), isSel=ds===miniFecha;
-    let cls='md'+(isPast?' md-past':(hc?' md-busy':''))+(isT?' md-today':'')+(isSel?' md-sel':'');
-    const oc=!isPast?`onclick="selMiniDia('${ds}')"`:'';
-    g.innerHTML+=`<div class="${cls}" ${oc}>${d}</div>`;
+function selectDay(ds, dn) {
+  selDate = ds; buildCalendar(); renderCitas(ds);
+  const d = new Date(ds + 'T12:00:00');
+  document.getElementById('day-title').textContent = `${DIAS_ES[d.getDay()]} ${dn} de ${MESES[d.getMonth()].toLowerCase()}`;
+}
+
+function cambiarMes(dir) {
+  curM += dir;
+  if (curM > 11) { curM = 0; curY++; }
+  if (curM < 0) { curM = 11; curY--; }
+  buildCalendar();
+  document.getElementById('day-title').textContent = MESES[curM] + ' ' + curY;
+  document.getElementById('day-sub').textContent = 'Selecciona un día para ver las citas';
+  document.getElementById('citas-list').innerHTML = `<div class="empty-state"><div class="es-icon">📅</div><p>Haz clic en un día del calendario.</p></div>`;
+}
+
+// ── MINI CALENDARIO ──────────────────────────────────────────────────────────
+function buildMiniCal() {
+  document.getElementById('mini-mes').textContent = MESES_C[miniM] + ' ' + miniY;
+  const g = document.getElementById('mini-grid');
+  g.innerHTML = ['L','M','M','J','V','S','D'].map(d => `<div class="mdn">${d}</div>`).join('');
+  const off = (new Date(miniY, miniM, 1).getDay() + 6) % 7;
+  for (let i = 0; i < off; i++) g.innerHTML += `<div class="md md-empty"></div>`;
+  const days = new Date(miniY, miniM + 1, 0).getDate();
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let d = 1; d <= days; d++) {
+    const ds = `${miniY}-${String(miniM+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dObj = new Date(ds + 'T12:00:00');
+    const isPast = dObj < today, isT = dObj.getTime() === today.getTime();
+    const hc = !!(todasLasCitas[ds]?.length), isSel = ds === miniFecha;
+    let cls = 'md' + (isPast?' md-past':(hc?' md-busy':'')) + (isT?' md-today':'') + (isSel?' md-sel':'');
+    const oc = !isPast ? `onclick="selMiniDia('${ds}')"` : '';
+    g.innerHTML += `<div class="${cls}" ${oc}>${d}</div>`;
   }
 }
-function selMiniDia(ds){
-  miniFecha=ds; document.getElementById('fecha-cita').value=ds;
-  const d=new Date(ds+'T12:00:00');
-  document.getElementById('fecha-display').textContent=`Seleccionado: ${DIAS_ES[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()].toLowerCase()} ${d.getFullYear()}`;
+
+function selMiniDia(ds) {
+  miniFecha = ds;
+  document.getElementById('fecha-cita').value = ds;
+  const d = new Date(ds + 'T12:00:00');
+  document.getElementById('fecha-display').textContent = `Seleccionado: ${DIAS_ES[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()].toLowerCase()} ${d.getFullYear()}`;
   buildMiniCal();
-  const citas=todasLasCitas[ds];
-  const err=document.getElementById('modal-agendar-error');
-  if(citas?.length){ err.style.display='flex'; err.className='alert alert-warning'; err.textContent=`ℹ️ Este día ya tiene ${citas.length} cita(s). Verifica el horario.`; }
-  else { err.style.display='none'; }
+  const citas = todasLasCitas[ds];
+  const err = document.getElementById('modal-agendar-error');
+  if (citas?.length) { err.style.display='flex'; err.className='alert alert-warning'; err.textContent=`ℹ️ Este día ya tiene ${citas.length} cita(s). Verifica el horario.`; }
+  else err.style.display = 'none';
 }
-function cambiarMiniMes(dir){
-  miniM+=dir; if(miniM>11){miniM=0;miniY++;} if(miniM<0){miniM=11;miniY--;} buildMiniCal();
+
+function cambiarMiniMes(dir) {
+  miniM += dir;
+  if (miniM > 11) { miniM = 0; miniY++; }
+  if (miniM < 0) { miniM = 11; miniY--; }
+  buildMiniCal();
 }
 
 // ── RENDER CITAS ─────────────────────────────────────────────────────────────
-function renderCitas(ds){
-  const citas=todasLasCitas[ds]||[];
-  const list=document.getElementById('citas-list');
-  document.getElementById('day-sub').textContent=citas.length?`${citas.length} cita${citas.length!==1?'s':''} agendada${citas.length!==1?'s':''}`:'Sin citas registradas';
-  if(!citas.length){ list.innerHTML=`<div class="empty-state"><div class="es-icon">📭</div><p>No hay citas para este día.</p><br><button class="btn btn-primary btn-sm" onclick="abrirModalAgendar()">+ Agendar primera cita</button></div>`; return; }
-  list.innerHTML=citas.map((c,i)=>`
+function renderCitas(ds) {
+  const citas = todasLasCitas[ds] || [];
+  const list = document.getElementById('citas-list');
+  document.getElementById('day-sub').textContent = citas.length ? `${citas.length} cita${citas.length!==1?'s':''} agendada${citas.length!==1?'s':''}` : 'Sin citas registradas';
+  if (!citas.length) {
+    list.innerHTML = `<div class="empty-state"><div class="es-icon">📭</div><p>No hay citas para este día.</p><br><button class="btn btn-primary btn-sm" onclick="abrirModalAgendar()">+ Agendar primera cita</button></div>`;
+    return;
+  }
+  list.innerHTML = citas.map((c,i) => `
     <div class="cita-card" onclick="verDetalle('${ds}',${i})">
       <div class="cita-time"><div class="hour">${c.hora}</div><div class="period">${c.period}</div></div>
       <div class="cita-div"></div>
       <div class="cita-info">
         <div class="cita-name">${c.nombre}</div>
         <div class="cita-service">${c.servicio}</div>
-        ${c.notas?`<div class="cita-notas">⚠️ ${c.notas}</div>`:''}
+        ${c.notas ? `<div class="cita-notas">⚠️ ${c.notas}</div>` : ''}
       </div>
-      <span class="badge badge-${c.estado}">${c.estado==='pagado'?'Pagado ✓':c.estado==='anticipo'?'Anticipo $100':'Sin anticipo'}</span>
+      <span class="badge badge-sin">Sin anticipo</span>
       <div class="cita-actions">
         <button class="cita-btn" onclick="event.stopPropagation()">Reprogramar</button>
         <button class="cita-btn danger" onclick="event.stopPropagation();cancelarCita('${ds}',${i})">Cancelar</button>
@@ -555,212 +614,199 @@ function renderCitas(ds){
 }
 
 // ── DETALLE CITA ─────────────────────────────────────────────────────────────
-function verDetalle(ds,i){
-  const c=(todasLasCitas[ds]||[])[i]; if(!c) return;
-  const d=new Date(ds+'T12:00:00');
-  document.getElementById('det-nombre').textContent=c.nombre;
-  document.getElementById('det-service').textContent=`${c.servicio} · ${d.getDate()} ${MESES[d.getMonth()].toLowerCase()} ${d.getFullYear()}`;
-  document.getElementById('det-info').innerHTML=`
+function verDetalle(ds, i) {
+  const c = (todasLasCitas[ds] || [])[i]; if (!c) return;
+  const d = new Date(ds + 'T12:00:00');
+  document.getElementById('det-nombre').textContent = c.nombre;
+  document.getElementById('det-service').textContent = `${c.servicio} · ${d.getDate()} ${MESES[d.getMonth()].toLowerCase()} ${d.getFullYear()}`;
+  document.getElementById('det-info').innerHTML = `
     <div class="info-box"><div class="ib-label">Hora</div><div class="ib-value">${c.hora} ${c.period}</div></div>
-    <div class="info-box"><div class="ib-label">Estado de pago</div><div class="ib-value">${c.estado==='pagado'?'Pagado ✓':c.estado==='anticipo'?'Anticipo registrado':'Sin anticipo'}</div></div>`;
-  document.getElementById('det-notas').innerHTML=c.notas?`<div class="alert alert-warning" style="margin-bottom:14px">⚠️ ${c.notas}</div>`:'';
-  const p=clientasData.find(cl=>cl.nombre===c.nombre);
-  let ph='';
-  if(p){
-    const tags=[...p.alergias.map(a=>`<span class="cc-tag alergia">⚠ ${a}</span>`),...p.preferencias.map(x=>`<span class="cc-tag pref">✦ ${x}</span>`)].join('');
-    if(tags||p.notas) ph=`<div style="background:#fdf9f6;border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:12px"><div style="font-size:10px;color:var(--text-hint);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Perfil · ${p.visitas} visitas · último: ${p.ultimaVisita}</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:${p.notas?'8px':'0'}">${tags}</div>${p.notas?`<div style="font-size:12px;color:var(--text-muted);font-style:italic;margin-top:4px">${p.notas}</div>`:''}</div>`;
-  }
-  document.getElementById('det-perfil').innerHTML=ph;
-  document.getElementById('btn-cancelar-cita').onclick=()=>{ cancelarCita(ds,i); cerrarModal('modal-detalle'); };
+    <div class="info-box"><div class="ib-label">Notas</div><div class="ib-value">${c.notas || '—'}</div></div>`;
+  document.getElementById('det-notas').innerHTML = c.notas ? `<div class="alert alert-warning" style="margin-bottom:14px">⚠️ ${c.notas}</div>` : '';
+  document.getElementById('det-perfil').innerHTML = '';
+  document.getElementById('btn-cancelar-cita').onclick = () => { cancelarCita(ds, i); cerrarModal('modal-detalle'); };
   abrirModal('modal-detalle');
 }
-function cancelarCita(ds,i){
-  const citas=todasLasCitas[ds]; if(!citas) return;
-  const n=citas[i]?.nombre||'la cita'; citas.splice(i,1);
-  if(!citas.length) delete todasLasCitas[ds];
-  buildCalendar(); renderCitas(ds); showToast(`✓ Cita de ${n} cancelada`);
+
+async function cancelarCita(ds, i) {
+  const citas = todasLasCitas[ds]; if (!citas) return;
+  const c = citas[i]; if (!c) return;
+  try {
+    await fetch(`${BASE_URL}/api/citas/${c.id}`, { method: 'DELETE' });
+    await cargarDatos();
+    renderCitas(ds);
+    showToast(`✓ Cita de ${c.nombre} cancelada`);
+  } catch (err) {
+    console.error('Error al cancelar cita:', err);
+  }
 }
 
-// ── BUSCAR / PERFIL CLIENTA ──────────────────────────────────────────────────
-function filtrarClientas(q){
-  const dd=document.getElementById('clientas-dropdown');
-  if(!q.trim()){ dd.style.display='none'; ocultarPerfil(); quitarError('buscar-clienta'); return; }
-  quitarError('buscar-clienta');
-  const res=clientasData.filter(c=>c.nombre.toLowerCase().includes(q.toLowerCase())||c.tel.includes(q));
-  dd.style.display='block';
-  if(!res.length){
-    // Escenario 2.1: Clienta no encontrada
-    dd.innerHTML=`
-      <div style="padding:12px 14px;font-size:13px;color:var(--text-muted);border-bottom:1px solid #f5ede5">
-        No se encontró ninguna clienta con ese nombre o teléfono.
-      </div>
-      <div onclick="abrirNuevaClienta()" style="padding:10px 14px;cursor:pointer;font-size:13px;color:var(--brown-mid);font-weight:500;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='#fdf9f6'" onmouseout="this.style.background=''">
-        <span style="font-size:16px">+</span> Registrar nueva clienta
-      </div>`;
+// ── BUSCAR CLIENTA ───────────────────────────────────────────────────────────
+function filtrarClientas(q) {
+  const dd = document.getElementById('clientas-dropdown');
+  if (!q.trim()) { dd.style.display='none'; ocultarPerfil(); return; }
+  const res = clientasData.filter(c =>
+    `${c.nombre} ${c.paterno||''}`.toLowerCase().includes(q.toLowerCase()) || c.telefono?.includes(q)
+  );
+  dd.style.display = 'block';
+  if (!res.length) {
+    dd.innerHTML = `
+      <div style="padding:12px 14px;font-size:13px;color:var(--text-muted);border-bottom:1px solid #f5ede5">No se encontró ninguna clienta.</div>
+      <div onclick="abrirNuevaClienta()" style="padding:10px 14px;cursor:pointer;font-size:13px;color:var(--brown-mid);font-weight:500" onmouseover="this.style.background='#fdf9f6'" onmouseout="this.style.background=''">+ Registrar nueva clienta</div>`;
     return;
   }
-  dd.innerHTML=res.map(c=>`<div onclick="selClienta('${c.nombre}')" style="padding:10px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid #f5ede5;display:flex;align-items:center;justify-content:space-between" onmouseover="this.style.background='#fdf9f6'" onmouseout="this.style.background=''">${c.nombre} <span style="color:#b8a898;font-size:11px">· ${c.tel}</span>${c.alergias?.length?`<span style="background:#fdecea;color:#c0614e;font-size:10px;padding:2px 7px;border-radius:10px;margin-left:auto">⚠ alergia</span>`:''}</div>`).join('');
+  dd.innerHTML = res.map(c => {
+    const nombre = `${c.nombre} ${c.paterno||''}`.trim();
+    return `<div onclick="selClienta(${c.idClientas},'${nombre}')" style="padding:10px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid #f5ede5;display:flex;align-items:center;justify-content:space-between" onmouseover="this.style.background='#fdf9f6'" onmouseout="this.style.background=''">${nombre} <span style="color:#b8a898;font-size:11px">· ${c.telefono||''}</span>${c.notasAlergia?`<span style="background:#fdecea;color:#c0614e;font-size:10px;padding:2px 7px;border-radius:10px;margin-left:auto">⚠ alergia</span>`:''}</div>`;
+  }).join('');
 }
-function selClienta(nombre){
-  document.getElementById('buscar-clienta').value=nombre;
-  document.getElementById('clientas-dropdown').style.display='none';
-  mostrarPerfil(nombre);
+
+function selClienta(id, nombre) {
+  document.getElementById('buscar-clienta').value = nombre;
+  document.getElementById('clientas-dropdown').style.display = 'none';
+  mostrarPerfil(id);
 }
-// NUEVO: Mostrar tarjeta con historial, alergias y notas de la clienta
-function mostrarPerfil(nombre){
-  const p=clientasData.find(c=>c.nombre===nombre);
-  const card=document.getElementById('clienta-card');
-  if(!p){ card.classList.remove('visible'); return; }
-  document.getElementById('cc-avatar').textContent=nombre.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
-  document.getElementById('cc-name').textContent=p.nombre;
-  document.getElementById('cc-tel').textContent=p.tel+(p.email?' · '+p.email:'');
-  document.getElementById('cc-stats').innerHTML=`
-    <div class="cc-stat"><strong>${p.visitas}</strong>Visitas</div>
-    <div class="cc-stat"><strong>${p.ultimaVisita}</strong>Última cita</div>
-    <div class="cc-stat"><strong style="font-size:11px">${p.servicioFav}</strong>Servicio fav.</div>`;
-  const tags=[
-    ...p.alergias.map(a=>`<span class="cc-tag alergia">⚠ Alergia: ${a}</span>`),
-    ...p.preferencias.map(x=>`<span class="cc-tag pref">✦ ${x}</span>`),
-    ...(p.notas?[`<span class="cc-tag nota">📝 ${p.notas}</span>`]:[]),
+
+function mostrarPerfil(id) {
+  const p = clientasData.find(c => c.idClientas === id);
+  const card = document.getElementById('clienta-card');
+  if (!p) { card.classList.remove('visible'); return; }
+  const nombre = `${p.nombre} ${p.paterno||''}`.trim();
+  document.getElementById('cc-avatar').textContent = nombre.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('cc-name').textContent = nombre;
+  document.getElementById('cc-tel').textContent = p.telefono || '—';
+  document.getElementById('cc-stats').innerHTML = `<div class="cc-stat"><strong>${p.fechaPrimeraVisita||'—'}</strong>Primera visita</div>`;
+  const tags = [
+    ...(p.notasAlergia ? [`<span class="cc-tag alergia">⚠ ${p.notasAlergia}</span>`] : []),
+    ...(p.notasPreferencias ? [`<span class="cc-tag pref">✦ ${p.notasPreferencias}</span>`] : []),
   ].join('');
-  document.getElementById('cc-tags').innerHTML=tags||'<span style="font-size:11px;color:var(--text-hint)">Sin notas en el perfil</span>';
+  document.getElementById('cc-tags').innerHTML = tags || '<span style="font-size:11px;color:var(--text-hint)">Sin notas en el perfil</span>';
   card.classList.add('visible');
 }
-function ocultarPerfil(){ document.getElementById('clienta-card').classList.remove('visible'); }
+
+function ocultarPerfil() { document.getElementById('clienta-card').classList.remove('visible'); }
 
 // ── NUEVA CLIENTA ────────────────────────────────────────────────────────────
-function abrirNuevaClienta(){
+function abrirNuevaClienta() {
   cerrarModal('modal-agendar');
-  ['nc-nombre','nc-tel','nc-email','nc-alergias','nc-pref','nc-notas'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('nc-error').style.display='none';
+  ['nc-nombre','nc-tel','nc-email','nc-alergias','nc-pref','nc-notas'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('nc-error').style.display = 'none';
   abrirModal('modal-nueva-clienta');
 }
-function volverAgendar(){ cerrarModal('modal-nueva-clienta'); abrirModal('modal-agendar'); }
-function guardarNuevaClienta(){
-  const nombre=document.getElementById('nc-nombre').value.trim();
-  const tel=document.getElementById('nc-tel').value.trim();
-  const email=document.getElementById('nc-email').value.trim();
-  const alerg=document.getElementById('nc-alergias').value.trim();
-  const pref=document.getElementById('nc-pref').value.trim();
-  const notas=document.getElementById('nc-notas').value.trim();
-  const errEl=document.getElementById('nc-error');
-  if(!nombre||!tel){ errEl.style.display='flex'; errEl.textContent='⚠️ Nombre y teléfono son obligatorios.'; return; }
-  if(clientasData.find(c=>c.tel===tel)){ errEl.style.display='flex'; errEl.textContent='⚠️ Ya existe una clienta con ese teléfono.'; return; }
-  clientasData.push({ nombre, tel, email, alergias:alerg?alerg.split(',').map(s=>s.trim()).filter(Boolean):[], preferencias:pref?pref.split(',').map(s=>s.trim()).filter(Boolean):[], notas, visitas:0, ultimaVisita:'—', servicioFav:'—' });
-  cerrarModal('modal-nueva-clienta'); abrirModal('modal-agendar');
-  document.getElementById('buscar-clienta').value=nombre;
-  mostrarPerfil(nombre);
-  showToast(`✓ Clienta "${nombre}" registrada`);
+function volverAgendar() { cerrarModal('modal-nueva-clienta'); abrirModal('modal-agendar'); }
+
+async function guardarNuevaClienta() {
+  const nombre = document.getElementById('nc-nombre').value.trim();
+  const tel = document.getElementById('nc-tel').value.trim();
+  const alerg = document.getElementById('nc-alergias').value.trim();
+  const pref = document.getElementById('nc-pref').value.trim();
+  const errEl = document.getElementById('nc-error');
+  if (!nombre || !tel) { errEl.style.display='flex'; errEl.textContent='⚠️ Nombre y teléfono son obligatorios.'; return; }
+  try {
+    const res = await fetch(`${BASE_URL}/api/clientas`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombre, telefono: tel,
+        notasAlergia: alerg,
+        notasPreferencias: pref,
+        fechaPrimeraVisita: new Date().toISOString().split('T')[0]
+      })
+    });
+    if (res.ok) {
+      const nueva = await res.json();
+      clientasData.push(nueva);
+      cerrarModal('modal-nueva-clienta'); abrirModal('modal-agendar');
+      const nombreCompleto = `${nueva.nombre} ${nueva.paterno||''}`.trim();
+      document.getElementById('buscar-clienta').value = nombreCompleto;
+      mostrarPerfil(nueva.idClientas);
+      showToast(`✓ Clienta "${nombreCompleto}" registrada`);
+    }
+  } catch (err) { console.error('Error al guardar clienta:', err); }
 }
 
 // ── CONFIRMAR CITA ───────────────────────────────────────────────────────────
-const HORA_APERTURA = 9;   // 9:00 AM
-const HORA_CIERRE   = 18;  // 6:00 PM
+const HORA_APERTURA = 9, HORA_CIERRE = 18;
 
 function horaAMinutos(horaStr) {
-  // "9:00 AM" -> 540, "6:00 PM" -> 1080
   const [time, period] = horaStr.split(' ');
   let [h, m] = time.split(':').map(Number);
-  if(period === 'PM' && h !== 12) h += 12;
-  if(period === 'AM' && h === 12) h = 0;
+  if (period === 'PM' && h !== 12) h += 12;
+  if (period === 'AM' && h === 12) h = 0;
   return h * 60 + (m || 0);
 }
 
-function marcarError(id) {
-  const el = document.getElementById(id);
-  if(el) { el.style.borderColor = '#c0614e'; el.style.background = '#fff8f7'; }
-}
-function quitarError(id) {
-  const el = document.getElementById(id);
-  if(el) { el.style.borderColor = ''; el.style.background = ''; }
+function marcarError(id) { const el=document.getElementById(id); if(el){el.style.borderColor='#c0614e';el.style.background='#fff8f7';} }
+function quitarError(id) { const el=document.getElementById(id); if(el){el.style.borderColor='';el.style.background='';} }
+
+async function confirmarCita() {
+  const clientaNombre = document.getElementById('buscar-clienta').value.trim();
+  const servicio = document.getElementById('sel-servicio').value;
+  const fecha = document.getElementById('fecha-cita').value;
+  const hora = document.getElementById('hora-cita').value;
+  const notas = document.getElementById('notas-cita').value.trim();
+  const errEl = document.getElementById('modal-agendar-error');
+
+  ['buscar-clienta','sel-servicio','hora-cita'].forEach(quitarError);
+
+  const faltantes = [];
+  if (!clientaNombre) { faltantes.push('Clienta'); marcarError('buscar-clienta'); }
+  if (!servicio) { faltantes.push('Servicio'); marcarError('sel-servicio'); }
+  if (!fecha) { faltantes.push('Fecha'); document.getElementById('mini-grid').style.outline='2px solid #c0614e'; }
+  if (faltantes.length) { errEl.style.display='flex'; errEl.className='alert alert-error'; errEl.textContent=`⚠️ Completa: ${faltantes.join(', ')}.`; return; }
+
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  if (new Date(fecha+'T12:00:00') < hoy) { errEl.style.display='flex'; errEl.className='alert alert-error'; errEl.textContent='⚠️ No se pueden agendar citas en fechas pasadas.'; return; }
+
+  const minutos = horaAMinutos(hora);
+  if (minutos < HORA_APERTURA*60 || minutos >= HORA_CIERRE*60) { errEl.style.display='flex'; errEl.className='alert alert-error'; errEl.textContent='⚠️ Horario fuera del rango de operación (9 AM – 6 PM).'; marcarError('hora-cita'); return; }
+
+  const conflicto = (todasLasCitas[fecha]||[]).find(c => `${c.hora} ${c.period}` === hora);
+  if (conflicto) { errEl.style.display='flex'; errEl.className='alert alert-error'; errEl.textContent=`⚠️ Ya existe una cita a las ${hora} con ${conflicto.nombre}.`; marcarError('hora-cita'); return; }
+
+  // Buscar IDs
+  const clientaObj = clientasData.find(c => `${c.nombre} ${c.paterno||''}`.trim() === clientaNombre);
+  const [svcNombre] = servicio.split('|');
+  const servicioObj = serviciosData.find(s => s.nombreServicio === svcNombre);
+
+  if (!clientaObj) { errEl.style.display='flex'; errEl.className='alert alert-error'; errEl.textContent='⚠️ Selecciona una clienta válida de la lista.'; return; }
+
+  const hora24 = convertirA24h(hora);
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/citas`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        idusuarios: 1,
+        iddientas: clientaObj.idClientas,
+        idservicio: servicioObj?.idservicio || null,
+        fechaCita: fecha,
+        horaCita: hora24 + ':00',
+        estadoCita: true,
+        notas
+      })
+    });
+    if (res.ok) {
+      await cargarDatos();
+      cerrarModal('modal-agendar');
+      limpiarForm();
+      showToast(`✓ Cita de ${clientaNombre} agendada`);
+    }
+  } catch (err) { console.error('Error al crear cita:', err); }
 }
 
-function confirmarCita(){
+// ── CANCELAR AGENDAMIENTO ────────────────────────────────────────────────────
+function pedirCancelarAgendamiento() {
   const clienta = document.getElementById('buscar-clienta').value.trim();
   const servicio = document.getElementById('sel-servicio').value;
-  const fecha    = document.getElementById('fecha-cita').value;
-  const hora     = document.getElementById('hora-cita').value;
-  const notas    = document.getElementById('notas-cita').value.trim();
-  const estado   = document.getElementById('estado-cita').value;
-  const errEl    = document.getElementById('modal-agendar-error');
-
-  // Quitar errores previos
-  ['buscar-clienta','sel-servicio','hora-cita'].forEach(quitarError);
-  const miniCalEl = document.getElementById('mini-grid');
-  if(miniCalEl) miniCalEl.style.outline = '';
-
-  // ── Validación 1: Campos obligatorios vacíos ─────────────────────────────
-  const faltantes = [];
-  if(!clienta)  { faltantes.push('Clienta');  marcarError('buscar-clienta'); }
-  if(!servicio) { faltantes.push('Servicio'); marcarError('sel-servicio'); }
-  if(!fecha)    { faltantes.push('Fecha');    document.getElementById('mini-grid').style.outline = '2px solid #c0614e'; document.getElementById('mini-grid').style.borderRadius = '6px'; }
-  if(faltantes.length) {
-    errEl.style.display = 'flex'; errEl.className = 'alert alert-error';
-    errEl.textContent = `⚠️ Completa todos los campos obligatorios: ${faltantes.join(', ')}.`;
-    return;
-  }
-
-  // ── Validación 2: Fecha pasada ───────────────────────────────────────────
-  const hoy = new Date(); hoy.setHours(0,0,0,0);
-  const fechaObj = new Date(fecha + 'T12:00:00');
-  if(fechaObj < hoy) {
-    errEl.style.display = 'flex'; errEl.className = 'alert alert-error';
-    errEl.textContent = '⚠️ Fecha no válida: no se pueden agendar citas en fechas pasadas. Selecciona un día igual o posterior a hoy.';
-    document.getElementById('mini-grid').style.outline = '2px solid #c0614e';
-    document.getElementById('mini-grid').style.borderRadius = '6px';
-    return;
-  }
-
-  // ── Validación 3: Horario fuera de rango de operación ───────────────────
-  const minutos = horaAMinutos(hora);
-  if(minutos < HORA_APERTURA * 60 || minutos >= HORA_CIERRE * 60) {
-    errEl.style.display = 'flex'; errEl.className = 'alert alert-error';
-    errEl.textContent = `⚠️ Horario fuera de operación: el horario de atención es de 9:00 AM a 6:00 PM. Por favor selecciona un horario dentro de ese rango.`;
-    marcarError('hora-cita');
-    return;
-  }
-
-  // ── Validación 4: Conflicto de horario ──────────────────────────────────
-  const conflicto = (todasLasCitas[fecha] || []).find(c => `${c.hora} ${c.period}` === hora);
-  if(conflicto) {
-    errEl.style.display = 'flex'; errEl.className = 'alert alert-error';
-    errEl.textContent = `⚠️ Horario no disponible: ya existe una cita a las ${hora} con ${conflicto.nombre}. Elige otro horario.`;
-    marcarError('hora-cita');
-    return;
-  }
-
-  errEl.style.display = 'none';
-  const [svc, dur] = servicio.split('|');
-  const [horaNum, period] = hora.split(' ');
-  if(!todasLasCitas[fecha]) todasLasCitas[fecha] = [];
-  todasLasCitas[fecha].push({ hora:horaNum, period, nombre:clienta, servicio:`${svc}${dur?' · '+dur+' min':''}`, estado, notas });
-  todasLasCitas[fecha].sort((a,b) => { const f=t=>{const[h,m]=t.hora.split(':').map(Number);return h*60+(m||0);}; return f(a)-f(b); });
-  cerrarModal('modal-agendar'); buildCalendar();
-  if(fecha === selDate) renderCitas(fecha);
-  limpiarForm();
-  showToast(`✓ Cita de ${clienta} el ${formatFecha(fecha)} a las ${hora}`);
+  const fecha = document.getElementById('fecha-cita').value;
+  if (clienta || servicio || fecha) abrirModal('modal-confirmar-cancelar');
+  else cerrarModal('modal-agendar');
 }
-
-// ── CANCELAR AGENDAMIENTO CON CONFIRMACIÓN ───────────────────────────────────
-function pedirCancelarAgendamiento(){
-  // Solo pedir confirmación si hay datos ingresados
-  const clienta  = document.getElementById('buscar-clienta').value.trim();
-  const servicio = document.getElementById('sel-servicio').value;
-  const fecha    = document.getElementById('fecha-cita').value;
-  const hayDatos = clienta || servicio || fecha;
-  if(hayDatos) {
-    abrirModal('modal-confirmar-cancelar');
-  } else {
-    cerrarModal('modal-agendar');
-  }
-}
-function confirmarCancelarAgendamiento(){
-  cerrarModal('modal-confirmar-cancelar');
-  cerrarModal('modal-agendar');
-  limpiarForm();
-}
-function limpiarForm(){
-  ['buscar-clienta','notas-cita'].forEach(id=>document.getElementById(id).value='');
+function confirmarCancelarAgendamiento() { cerrarModal('modal-confirmar-cancelar'); cerrarModal('modal-agendar'); limpiarForm(); }
+function limpiarForm() {
+  ['buscar-clienta','notas-cita'].forEach(id => document.getElementById(id).value='');
   document.getElementById('sel-servicio').value='';
   document.getElementById('duracion-display').value='';
   document.getElementById('fecha-cita').value='';
@@ -768,246 +814,103 @@ function limpiarForm(){
   document.getElementById('hora-cita').selectedIndex=0;
   document.getElementById('estado-cita').selectedIndex=0;
   document.getElementById('modal-agendar-error').style.display='none';
-  // Limpiar marcas de error visuales
   ['buscar-clienta','sel-servicio','hora-cita'].forEach(quitarError);
-  const mg = document.getElementById('mini-grid');
-  if(mg) { mg.style.outline=''; mg.style.borderRadius=''; }
   miniFecha=''; ocultarPerfil(); buildMiniCal();
 }
 
 // ── VISTA SEMANAL ─────────────────────────────────────────────────────────────
-let semanaBase = new Date('2026-03-15T12:00:00'); // lunes de la semana actual
+let semanaBase = getLunesDeSemana(new Date());
 let vistaActual = 'dia';
-
 const HORAS_DIA = [];
-for(let h = 8; h <= 20; h++) {
-  HORAS_DIA.push(`${h}:00`);
-  if(h < 20) HORAS_DIA.push(`${h}:30`);
-}
+for (let h = 8; h <= 20; h++) { HORAS_DIA.push(`${h}:00`); if(h<20) HORAS_DIA.push(`${h}:30`); }
 
 function getLunesDeSemana(d) {
-  const date = new Date(d);
-  const dow = date.getDay(); // 0=dom
-  const diff = (dow === 0) ? -6 : 1 - dow;
-  date.setDate(date.getDate() + diff);
-  date.setHours(12,0,0,0);
-  return date;
+  const date = new Date(d); const dow = date.getDay();
+  const diff = dow===0?-6:1-dow; date.setDate(date.getDate()+diff); date.setHours(12,0,0,0); return date;
 }
 
 function setVista(v) {
   vistaActual = v;
-  document.getElementById('btn-vista-dia').classList.toggle('active', v === 'dia');
-  document.getElementById('btn-vista-semana').classList.toggle('active', v === 'semana');
-
+  document.getElementById('btn-vista-dia').classList.toggle('active', v==='dia');
+  document.getElementById('btn-vista-semana').classList.toggle('active', v==='semana');
   const dayLayout = document.querySelector('.content > .cal-panel');
   const citasPanel = document.querySelector('.citas-panel');
   const semanaPanel = document.getElementById('semana-panel');
-
-  if(v === 'dia') {
-    dayLayout.style.display = '';
-    citasPanel.style.display = '';
-    semanaPanel.classList.remove('active');
-  } else {
-    semanaBase = getLunesDeSemana(selDate ? new Date(selDate + 'T12:00:00') : new Date());
-    dayLayout.style.display = 'none';
-    citasPanel.style.display = 'none';
-    semanaPanel.classList.add('active');
-    buildSemanaView();
-  }
+  if (v==='dia') { dayLayout.style.display=''; citasPanel.style.display=''; semanaPanel.classList.remove('active'); }
+  else { semanaBase=getLunesDeSemana(selDate?new Date(selDate+'T12:00:00'):new Date()); dayLayout.style.display='none'; citasPanel.style.display='none'; semanaPanel.classList.add('active'); buildSemanaView(); }
 }
 
-function navSemana(dir) {
-  semanaBase = new Date(semanaBase);
-  semanaBase.setDate(semanaBase.getDate() + dir * 7);
-  buildSemanaView();
-}
-
-function irHoySemana() {
-  semanaBase = getLunesDeSemana(new Date());
-  buildSemanaView();
-}
+function navSemana(dir) { semanaBase=new Date(semanaBase); semanaBase.setDate(semanaBase.getDate()+dir*7); buildSemanaView(); }
+function irHoySemana() { semanaBase=getLunesDeSemana(new Date()); buildSemanaView(); }
 
 function buildSemanaView() {
   const grid = document.getElementById('semana-grid');
   const today = new Date(); today.setHours(0,0,0,0);
-
-  // Calcular los 7 días de la semana
   const dias = [];
-  for(let i = 0; i < 7; i++) {
-    const d = new Date(semanaBase);
-    d.setDate(d.getDate() + i);
-    d.setHours(12,0,0,0);
-    dias.push(d);
-  }
-
-  // Label de rango
-  const ini = dias[0], fin = dias[6];
-  const mismoMes = ini.getMonth() === fin.getMonth();
+  for (let i=0;i<7;i++) { const d=new Date(semanaBase); d.setDate(d.getDate()+i); d.setHours(12,0,0,0); dias.push(d); }
+  const ini=dias[0], fin=dias[6];
+  const mismoMes = ini.getMonth()===fin.getMonth();
   document.getElementById('semana-label').textContent = mismoMes
     ? `${ini.getDate()} – ${fin.getDate()} de ${MESES[ini.getMonth()]} ${ini.getFullYear()}`
     : `${ini.getDate()} ${MESES[ini.getMonth()].slice(0,3)} – ${fin.getDate()} ${MESES[fin.getMonth()].slice(0,3)} ${fin.getFullYear()}`;
-
-  const diasNombres = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
-
-  // Construir HTML
-  let html = '';
-
-  // Fila de cabeceras
-  html += `<div class="sg-time-col"><div class="sg-time-header"></div>`;
-  HORAS_DIA.forEach(h => {
-    html += `<div class="sg-time-slot"><span>${h}</span></div>`;
-  });
+  const diasNombres=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  let html = `<div class="sg-time-col"><div class="sg-time-header"></div>`;
+  HORAS_DIA.forEach(h => html += `<div class="sg-time-slot"><span>${h}</span></div>`);
   html += `</div>`;
-
-  dias.forEach((d, idx) => {
-    const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    const esHoy = d.getTime() === today.getTime();
-    const citasDia = todasLasCitas[ds] || [];
-
-    html += `<div class="sg-col">`;
-    html += `<div class="sg-col-header${esHoy?' sg-hoy':''}">
-      <div class="sg-dia">${diasNombres[idx]}</div>
-      <div class="sg-num">${d.getDate()}</div>
-    </div>`;
-
-    // Slots por hora
+  dias.forEach((d,idx) => {
+    const ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const esHoy=d.getTime()===today.getTime();
+    const citasDia=todasLasCitas[ds]||[];
+    html+=`<div class="sg-col"><div class="sg-col-header${esHoy?' sg-hoy':''}"><div class="sg-dia">${diasNombres[idx]}</div><div class="sg-num">${d.getDate()}</div></div>`;
     HORAS_DIA.forEach(slotStr => {
-      const [sh, sm] = slotStr.split(':').map(Number);
-      const slotMin = sh * 60 + sm;
-
-      // ¿Hay alguna cita que empieza en este slot?
-      const cita = citasDia.find(c => {
-        const cm = horaAMinutos(`${c.hora} ${c.period}`);
-        return cm === slotMin;
-      });
-
-      if(cita) {
-        // Calcular altura según duración del servicio
-        const durMatch = cita.servicio.match(/(\d+)\s*min/);
-        const dur = durMatch ? parseInt(durMatch[1]) : 30;
-        const slots = Math.max(1, Math.round(dur / 30));
-        const height = slots * 52 - 4;
-
-        html += `<div class="sg-slot" style="height:52px">
-          <div class="sg-cita-block ${cita.estado}" style="height:${height}px;z-index:2"
-               onclick="verDetalle('${ds}', ${citasDia.indexOf(cita)})">
-            <div class="sg-cita-name">${cita.hora} ${cita.period} · ${cita.nombre}</div>
-            <div class="sg-cita-svc">${cita.servicio.split('·')[0].trim()}</div>
-          </div>
-        </div>`;
+      const [sh,sm]=slotStr.split(':').map(Number); const slotMin=sh*60+sm;
+      const cita=citasDia.find(c=>horaAMinutos(`${c.hora} ${c.period}`)===slotMin);
+      if (cita) {
+        html+=`<div class="sg-slot"><div class="sg-cita-block sin" onclick="verDetalle('${ds}',${citasDia.indexOf(cita)})"><div class="sg-cita-name">${cita.hora} ${cita.period} · ${cita.nombre}</div><div class="sg-cita-svc">${cita.servicio}</div></div></div>`;
       } else {
-        html += `<div class="sg-slot">
-          <div class="sg-empty-slot" onclick="abrirAgendarEnSlot('${ds}','${slotStr}')"></div>
-        </div>`;
+        html+=`<div class="sg-slot"><div class="sg-empty-slot" onclick="abrirAgendarEnSlot('${ds}','${slotStr}')"></div></div>`;
       }
     });
-
-    html += `</div>`;
+    html+=`</div>`;
   });
-
   grid.innerHTML = html;
-
-  // Scroll a hora laboral (9 AM = slot índice 2 → 2 * 52 + 40px header)
-  const scrollTarget = 2 * 52 * 2 + 40; // 8:00, 8:30, luego 9:00
-  grid.scrollTop = scrollTarget;
 }
 
 function abrirAgendarEnSlot(ds, horaStr) {
-  // Preseleccionar fecha y hora al abrir modal desde slot vacío
-  miniY = parseInt(ds.split('-')[0]);
-  miniM = parseInt(ds.split('-')[1]) - 1;
-  buildMiniCal();
-  abrirModal('modal-agendar');
-  // Seleccionar fecha en mini-cal
+  miniY=parseInt(ds.split('-')[0]); miniM=parseInt(ds.split('-')[1])-1;
+  buildMiniCal(); abrirModal('modal-agendar');
   setTimeout(() => {
     selMiniDia(ds);
-    // Intentar preseleccionar hora
-    const [h, m] = horaStr.split(':').map(Number);
-    const period = h < 12 ? 'AM' : 'PM';
-    const h12 = h > 12 ? h - 12 : (h === 0 ? 12 : h);
-    const horaVal = `${h12}:${String(m).padStart(2,'0')} ${period}`;
-    const sel = document.getElementById('hora-cita');
-    const opt = Array.from(sel.options).find(o => o.value === horaVal);
-    if(opt) sel.value = opt.value;
+    const [h,m]=horaStr.split(':').map(Number);
+    const period=h<12?'AM':'PM'; const h12=h>12?h-12:(h===0?12:h);
+    const horaVal=`${h12}:${String(m).padStart(2,'0')} ${period}`;
+    const sel=document.getElementById('hora-cita');
+    const opt=Array.from(sel.options).find(o=>o.value===horaVal);
+    if(opt) sel.value=opt.value;
   }, 50);
 }
-function abrirModalAgendar(){ miniY=curY; miniM=curM; buildMiniCal(); abrirModal('modal-agendar'); }
-function actualizarDuracion(){ const p=document.getElementById('sel-servicio').value.split('|'); document.getElementById('duracion-display').value=p[1]?p[1]+' minutos':''; }
-function formatFecha(ds){ const d=new Date(ds+'T12:00:00'); return `${d.getDate()} de ${MESES[d.getMonth()].toLowerCase()}`; }
-function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3500); }
-function abrirModal(id){ document.getElementById(id).classList.add('open'); }
-function cerrarModal(id){ document.getElementById(id).classList.remove('open'); }
+
+function abrirModalAgendar() { miniY=curY; miniM=curM; buildMiniCal(); abrirModal('modal-agendar'); }
+function actualizarDuracion() { const p=document.getElementById('sel-servicio').value.split('|'); document.getElementById('duracion-display').value=p[1]?p[1]+' minutos':''; }
+function formatFecha(ds) { const d=new Date(ds+'T12:00:00'); return `${d.getDate()} de ${MESES[d.getMonth()].toLowerCase()}`; }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3500); }
+function abrirModal(id) { document.getElementById(id).classList.add('open'); }
+function cerrarModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
 document.addEventListener('click',e=>{ if(!e.target.closest('#buscar-clienta')&&!e.target.closest('#clientas-dropdown')) document.getElementById('clientas-dropdown').style.display='none'; });
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
-buildCalendar();
-renderCitas(selDate);
+cargarDatos();
 
-/* ─────────────────────────────────────────────────────────────
-     SISTEMA DE EXPIRACIÓN DE SESIÓN POR INACTIVIDAD
-     - Aviso emergente a los 25 minutos de inactividad
-     - Cuenta regresiva de 60 segundos
-     - Si presiona "Continuar sesión" → reinicia el contador a 25 min
-     - Si presiona "Cerrar sesión" o se agota el tiempo → redirige al login
-  ───────────────────────────────────────────────────────────── */
-  const SESSION_TIMEOUT  = 25 * 60 * 1000;  // 25 minutos
-  const WARNING_BEFORE   = 1 * 60 * 1000;  // aviso 1 min antes (al min 1)
-
-  let _inactivityTimer, _warningTimer, _countdownInterval;
-
-  let _warningVisible = false;
-
-  function resetTimers() {
-    // Si el aviso ya está visible, NO reiniciar — esperar decisión de la encargada
-    if (_warningVisible) return;
-
-    clearTimeout(_inactivityTimer);
-    clearTimeout(_warningTimer);
-    clearInterval(_countdownInterval);
-
-    // Programar aviso al minuto 1
-    _warningTimer = setTimeout(showSessionWarning, SESSION_TIMEOUT - WARNING_BEFORE);
-
-    // Programar cierre automático al minuto 2
-    _inactivityTimer = setTimeout(expireSession, SESSION_TIMEOUT);
-  }
-
-  function showSessionWarning() {
-    _warningVisible = true;  // Bloquear reinicio por actividad
-    let secsLeft = 60;
-    document.getElementById('session-countdown').textContent = secsLeft;
-    document.getElementById('session-overlay').classList.add('open');
-
-    _countdownInterval = setInterval(() => {
-      secsLeft--;
-      document.getElementById('session-countdown').textContent = secsLeft;
-      if (secsLeft <= 0) clearInterval(_countdownInterval);
-    }, 1000);
-  }
-
-  function continuarSesion() {
-    _warningVisible = false;  // Permitir de nuevo el reinicio por actividad
-    resetTimers();
-  }
-
-  function expireSession() {
-    clearTimeout(_inactivityTimer);
-    clearTimeout(_warningTimer);
-    clearInterval(_countdownInterval);
-    _warningVisible = false;
-    document.getElementById('session-overlay').classList.remove('open');
-    window.location.href = 'index.html?sesion=expirada';
-  }
-
-  // Reiniciar timers ante cualquier interacción del usuario
-  // (no tiene efecto si el aviso está visible gracias a _warningVisible)
-  ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt =>
-    document.addEventListener(evt, resetTimers, { passive: true })
-  );
-
-  // Arrancar al cargar la página
-  resetTimers();
+// Sistema de sesión
+const SESSION_TIMEOUT=25*60*1000, WARNING_BEFORE=1*60*1000;
+let _inactivityTimer, _warningTimer, _countdownInterval, _warningVisible=false;
+function resetTimers(){if(_warningVisible)return;clearTimeout(_inactivityTimer);clearTimeout(_warningTimer);clearInterval(_countdownInterval);_warningTimer=setTimeout(showSessionWarning,SESSION_TIMEOUT-WARNING_BEFORE);_inactivityTimer=setTimeout(expireSession,SESSION_TIMEOUT);}
+function showSessionWarning(){_warningVisible=true;let s=60;document.getElementById('session-countdown').textContent=s;document.getElementById('session-overlay').classList.add('open');_countdownInterval=setInterval(()=>{s--;document.getElementById('session-countdown').textContent=s;if(s<=0)clearInterval(_countdownInterval);},1000);}
+function continuarSesion(){_warningVisible=false;resetTimers();}
+function expireSession(){clearTimeout(_inactivityTimer);clearTimeout(_warningTimer);clearInterval(_countdownInterval);_warningVisible=false;document.getElementById('session-overlay').classList.remove('open');window.location.href='index.html?sesion=expirada';}
+['mousemove','mousedown','keydown','touchstart','scroll','click'].forEach(evt=>document.addEventListener(evt,resetTimers,{passive:true}));
+resetTimers();
 </script>
 </body>
 </html>

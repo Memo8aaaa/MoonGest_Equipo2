@@ -228,14 +228,14 @@ body {
   <aside class="sidebar">
     <div class="sidebar-logo"><h2>Moon Beauty<br>Space</h2><p>SISTEMA DE GESTIÓN</p></div>
     <nav class="nav">
-      <a class="nav-item" href="/frontend/citas/citas.html"><span class="nav-icon">📅</span> Gestionar Citas</a>
-      <a class="nav-item" href="/frontend/clientes/clientas.html"><span class="nav-icon">👤</span> Clientas</a>
-      <a class="nav-item active" href="/frontend/pagos/pagos.html"><span class="nav-icon">💳</span> Pagos</a>
-      <a class="nav-item" href="/frontend/reportes/reportes.html"><span class="nav-icon">📊</span> Reportes</a>
-      <a class="nav-item" href="/frontend/notificaciones/notificaciones.html"><span class="nav-icon">🔔</span> Notificaciones</a>
-      <a class="nav-item" href="/frontend/catalago/catalago.html"><span class="nav-icon">✂️</span> Catálogo</a>
+      <a class="nav-item" href="citas.html"><span class="nav-icon">📅</span> Gestionar Citas</a>
+      <a class="nav-item" href="clientas.html"><span class="nav-icon">👤</span> Clientas</a>
+      <a class="nav-item" href="pagos.html"><span class="nav-icon">💳</span> Pagos</a>
+      <a class="nav-item" href="reportes.html"><span class="nav-icon">📊</span> Reportes</a>
+      <a class="nav-item" href="notificaciones.html"><span class="nav-icon">🔔</span> Notificaciones</a>
+      <a class="nav-item" href="catalago.html"><span class="nav-icon">✂️</span> Catálogo</a>
     </nav>
-    <div class="sidebar-footer"><span>Encargada · v2.0</span><button class="btn-cerrar-sesion" onclick="window.location.href='../../index.html'">↩ Cerrar sesión</button></div>
+    <div class="sidebar-footer"><span>Encargada · v2.0</span><button class="btn-cerrar-sesion" onclick="window.location.href='index.html'">↩ Cerrar sesión</button></div>
   </aside>
   <div class="main">
     <div class="topbar"><h1>Enviar Notificaciones</h1><button class="btn btn-primary btn-sm" onclick="document.getElementById('modal-politicas').classList.add('open')">Enviar Políticas del Salón</button></div>
@@ -250,8 +250,7 @@ body {
   <div class="modal-box">
     <div class="modal-title">Enviar Políticas del Salón</div>
     <div class="modal-sub">Selecciona la clienta destinataria y edita el mensaje si necesitas</div>
-    <div class="field"><label>Clienta destinataria</label><select><option>Sofía Martínez · 5551234567</option><option>Valentina Reyes · 5552345678</option><option>Camila Torres · 5553456789</option></select></div>
-    <div class="field"><label>Mensaje (editable)</label><textarea style="min-height:140px">Hola! 🌙 Aquí las políticas de Moon Beauty Space:
+    <div class="field"><label>Clienta destinataria</label><select id="sel-clienta-politicas"><option value="">Cargando clientas...</option></select></div>    <div class="field"><label>Mensaje (editable)</label><textarea style="min-height:140px">Hola! 🌙 Aquí las políticas de Moon Beauty Space:
 
 • Anticipo de $100 requerido para apartar tu cita.
 • Puntualidad: tolerancia de 10 minutos. Si llegas tarde el servicio puede reducirse.
@@ -262,100 +261,132 @@ body {
 ¡Gracias por tu preferencia! 💕</textarea></div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="document.getElementById('modal-politicas').classList.remove('open')">Cancelar</button>
-      <button class="btn btn-primary" onclick="alert('✅ Políticas enviadas por WhatsApp');document.getElementById('modal-politicas').classList.remove('open')">Enviar por WhatsApp</button>
+      <button class="btn btn-primary" onclick="enviarPoliticasWhatsapp()">Enviar por WhatsApp</button>
     </div>
   </div>
 </div>
 
 <script>
-  const recordatorios = [
-    { clienta:'Valentina Reyes', servicio:'Retoque de pestañas', fecha:'16 mar 2026', hora:'10:00 AM', tel:'5552345678' },
-    { clienta:'Andrea López', servicio:'Extensión de pestañas', fecha:'16 mar 2026', hora:'2:00 PM', tel:'5554567890' },
-    { clienta:'Mariana García', servicio:'Diseño de cejas', fecha:'17 mar 2026', hora:'11:00 AM', tel:'5555678901' },
-  ];
-  document.getElementById('notif-list').innerHTML = recordatorios.map((r,i)=>`
-    <div class="card" style="margin-bottom:12px;display:flex;align-items:center;gap:20px">
-      <div style="flex:1">
-        <div style="font-size:14px;font-weight:500;color:var(--text-main)">${r.clienta}</div>
-        <div style="font-size:12px;color:var(--text-muted);margin-top:3px">${r.servicio} · ${r.fecha} · ${r.hora}</div>
-        <div style="font-size:11px;color:var(--text-hint);margin-top:2px">📱 ${r.tel}</div>
-      </div>
-      <button class="btn btn-outline btn-sm" onclick="verMensaje(${i})">Ver mensaje</button>
-      <button class="btn btn-primary btn-sm" onclick="enviar(${i})">Enviar recordatorio</button>
-    </div>`).join('');
-
-  function enviar(i) {
-    const r = recordatorios[i];
-    alert('✅ Recordatorio enviado a ' + r.clienta + ' por WhatsApp');
+  const BASE_URL = 'http://localhost:8080';
+  async function cargarClientas() {
+    try {
+      const res = await fetch(`${BASE_URL}/api/clientas`);
+      const clientas = await res.json();
+      const sel = document.getElementById('sel-clienta-politicas');
+      sel.innerHTML = '<option value="">Seleccionar clienta...</option>';
+      clientas.forEach(c => {
+        const nombre = `${c.nombre} ${c.paterno || ''}`.trim();
+        sel.innerHTML += `<option value="${c.telefono}">${nombre} · ${c.telefono || 'Sin tel'}</option>`;
+      });
+    } catch (err) {
+      console.error('Error al cargar clientas:', err);
+    }
   }
-  function verMensaje(i) {
-    const r = recordatorios[i];
-    alert(`Mensaje para ${r.clienta}:\n\nHola ${r.clienta.split(' ')[0]}! 🌙 Te recordamos tu cita en Moon Beauty Space:\n\n📅 ${r.fecha}\n⏰ ${r.hora}\n✂️ ${r.servicio}\n\nRecuerda llegar sin maquillaje en ojos. ¡Te esperamos! 💕`);
-  }
+  async function cargarNotificaciones() {
+    try {
+      const [citasRes, clientasRes, serviciosRes] = await Promise.all([
+        fetch(`${BASE_URL}/api/citas`),
+        fetch(`${BASE_URL}/api/clientas`),
+        fetch(`${BASE_URL}/api/catalogo`)
+      ]);
+      const citas = await citasRes.json();
+      const clientas = await clientasRes.json();
+      const servicios = await serviciosRes.json();
 
-  /* ─────────────────────────────────────────────────────────────
-     SISTEMA DE EXPIRACIÓN DE SESIÓN POR INACTIVIDAD
-     - Aviso emergente a los 25 minutos de inactividad
-     - Cuenta regresiva de 60 segundos
-     - Si presiona "Continuar sesión" → reinicia el contador a 25 min
-     - Si presiona "Cerrar sesión" o se agota el tiempo → redirige al login
-  ───────────────────────────────────────────────────────────── */
-  const SESSION_TIMEOUT  = 25 * 60 * 1000;  // 25 minutos
-  const WARNING_BEFORE   = 1 * 60 * 1000;  // aviso 1 min antes (al min 1)
+      const ahora = new Date();
+      const en24h = new Date(ahora.getTime() + 24 * 60 * 60 * 1000);
 
-  let _inactivityTimer, _warningTimer, _countdownInterval;
+      const proximas = citas.filter(c => {
+        const fechaHoraCita = new Date(`${c.fechaCita}T${c.horaCita}`);
+        return fechaHoraCita >= ahora && fechaHoraCita <= en24h;
+      });
 
-  let _warningVisible = false;
+      const list = document.getElementById('notif-list');
 
-  function resetTimers() {
-    // Si el aviso ya está visible, NO reiniciar — esperar decisión de la encargada
-    if (_warningVisible) return;
+      if (!proximas.length) {
+        list.innerHTML = '<div style="text-align:center;padding:40px;color:#b8a898">No hay citas en las próximas 24 horas.</div>';
+        return;
+      }
 
-    clearTimeout(_inactivityTimer);
-    clearTimeout(_warningTimer);
-    clearInterval(_countdownInterval);
+      list.innerHTML = proximas.map((c, i) => {
+        const clienta = clientas.find(cl => cl.idClientas === c.iddientas);
+        const servicio = servicios.find(s => s.idservicio === c.idservicio);
+        const nombre = clienta ? `${clienta.nombre} ${clienta.paterno || ''}`.trim() : 'Desconocida';
+        const tel = clienta?.telefono || 'Sin teléfono';
+        const svcNombre = servicio?.nombreServicio || 'Servicio desconocido';
+        const [hora, min] = c.horaCita.split(':');
+        const h = parseInt(hora);
+        const period = h >= 12 ? 'PM' : 'AM';
+        const h12 = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+        const horaDisplay = `${h12}:${min} ${period}`;
 
-    // Programar aviso al minuto 1
-    _warningTimer = setTimeout(showSessionWarning, SESSION_TIMEOUT - WARNING_BEFORE);
-
-    // Programar cierre automático al minuto 2
-    _inactivityTimer = setTimeout(expireSession, SESSION_TIMEOUT);
-  }
-
-  function showSessionWarning() {
-    _warningVisible = true;  // Bloquear reinicio por actividad
-    let secsLeft = 60;
-    document.getElementById('session-countdown').textContent = secsLeft;
-    document.getElementById('session-overlay').classList.add('open');
-
-    _countdownInterval = setInterval(() => {
-      secsLeft--;
-      document.getElementById('session-countdown').textContent = secsLeft;
-      if (secsLeft <= 0) clearInterval(_countdownInterval);
-    }, 1000);
-  }
-
-  function continuarSesion() {
-    _warningVisible = false;  // Permitir de nuevo el reinicio por actividad
-    resetTimers();
+        return `
+          <div class="card" style="margin-bottom:12px;display:flex;align-items:center;gap:20px">
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:500;color:var(--text-main)">${nombre}</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:3px">${svcNombre} · ${c.fechaCita} · ${horaDisplay}</div>
+              <div style="font-size:11px;color:var(--text-hint);margin-top:2px">📱 ${tel}</div>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="verMensaje('${nombre}','${svcNombre}','${c.fechaCita}','${horaDisplay}')">Ver mensaje</button>
+            <button class="btn btn-primary btn-sm" onclick="enviarWhatsapp('${tel}','${nombre}','${svcNombre}','${c.fechaCita}','${horaDisplay}')">Enviar recordatorio</button>
+          </div>`;
+      }).join('');
+    } catch (err) {
+      console.error('Error al cargar recordatorios:', err);
+    }
   }
 
-  function expireSession() {
-    clearTimeout(_inactivityTimer);
-    clearTimeout(_warningTimer);
-    clearInterval(_countdownInterval);
-    _warningVisible = false;
-    document.getElementById('session-overlay').classList.remove('open');
-    window.location.href = 'index.html?sesion=expirada';
+  function verMensaje(nombre, servicio, fecha, hora) {
+    const primerNombre = nombre.split(' ')[0];
+    alert(`Mensaje para ${nombre}:\n\nHola ${primerNombre}! Te recordamos tu cita en Moon Beauty Space:\n\n ${fecha}\n ${hora}\n ${servicio}\n\nRecuerda llegar viva`);
   }
 
-  // Reiniciar timers ante cualquier interacción del usuario
-  // (no tiene efecto si el aviso está visible gracias a _warningVisible)
-  ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt =>
-    document.addEventListener(evt, resetTimers, { passive: true })
-  );
+  function enviarWhatsapp(tel, nombre, servicio, fecha, hora) {
+    const primerNombre = nombre.split(' ')[0];
+    const mensaje = `Hola ${primerNombre}! Te recordamos tu cita en Moon Beauty Space:\n\n ${fecha}\n ${hora}\n ${servicio}\n\nRecuerda llegar viva`;
+    const telLimpio = tel.replace(/\D/g, '');
+    const url = `https://wa.me/52${telLimpio}?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, '_blank');
+  }
 
-  // Arrancar al cargar la página
+  function enviarPoliticasWhatsapp() {
+  const sel = document.getElementById('sel-clienta-politicas');
+  const tel = sel.value;
+  if (!tel) { alert('⚠️ Selecciona una clienta primero.'); return; }
+
+  const mensaje = document.querySelector('#modal-politicas textarea').value;
+  const telLimpio = tel.replace(/\D/g, '');
+  const url = `https://wa.me/52${telLimpio}?text=${encodeURIComponent(mensaje)}`;
+  window.open(url, '_blank');
+  document.getElementById('modal-politicas').classList.remove('open');
+}
+
+  async function marcarEnviada(id) {
+    try {
+      await fetch(`${BASE_URL}/api/notificaciones/${id}/enviar`, { method: 'PUT' });
+      cargarNotificaciones();
+    } catch (err) { console.error(err); }
+  }
+
+  async function eliminar(id) {
+    if (!confirm('¿Eliminar esta notificación?')) return;
+    try {
+      await fetch(`${BASE_URL}/api/notificaciones/${id}`, { method: 'DELETE' });
+      cargarNotificaciones();
+    } catch (err) { console.error(err); }
+  }
+
+  cargarNotificaciones();
+  cargarClientas();
+
+  // Sistema de sesión
+  const SESSION_TIMEOUT=25*60*1000, WARNING_BEFORE=1*60*1000;
+  let _inactivityTimer, _warningTimer, _countdownInterval, _warningVisible=false;
+  function resetTimers(){if(_warningVisible)return;clearTimeout(_inactivityTimer);clearTimeout(_warningTimer);clearInterval(_countdownInterval);_warningTimer=setTimeout(showSessionWarning,SESSION_TIMEOUT-WARNING_BEFORE);_inactivityTimer=setTimeout(expireSession,SESSION_TIMEOUT);}
+  function showSessionWarning(){_warningVisible=true;let s=60;document.getElementById('session-countdown').textContent=s;document.getElementById('session-overlay').classList.add('open');_countdownInterval=setInterval(()=>{s--;document.getElementById('session-countdown').textContent=s;if(s<=0)clearInterval(_countdownInterval);},1000);}
+  function continuarSesion(){_warningVisible=false;resetTimers();}
+  function expireSession(){clearTimeout(_inactivityTimer);clearTimeout(_warningTimer);clearInterval(_countdownInterval);_warningVisible=false;document.getElementById('session-overlay').classList.remove('open');window.location.href='index.html?sesion=expirada';}
+  ['mousemove','mousedown','keydown','touchstart','scroll','click'].forEach(evt=>document.addEventListener(evt,resetTimers,{passive:true}));
   resetTimers();
 </script>
 </body>
