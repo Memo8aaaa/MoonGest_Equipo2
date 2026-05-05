@@ -6,8 +6,7 @@ import java.util.List;
 
 @Repository
 public interface NotificacionRepository extends JpaRepository<Notificacion, Integer> {
-
-    List<Notificacion> findByClientaNombre(String clientaNombre);
     List<Notificacion> findByEstado(String estado);
-    List<Notificacion> findByTipoMensaje(String tipoMensaje);
+    List<Notificacion> findByTipoNotificacion(String tipoNotificacion);
+    List<Notificacion> findByIdCita(Integer idCita);
 }

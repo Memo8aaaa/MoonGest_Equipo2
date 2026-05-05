@@ -11,16 +11,16 @@ public class Cita {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idcita")
-    private Integer idCita;
+    private Integer idcita;
 
-    @Column(name = "usuarios_idusuarios")
-    private Integer usuariosIdUsuarios;
+    @Column(name = "idusuarios")
+    private Integer idusuarios;
 
-    @Column(name = "clientas_idclientas")
-    private Integer clientasIdClientas;
+    @Column(name = "idclientas")
+    private Integer idclientas;
 
-    @Column(name = "catalogo_servicios_idservicio")
-    private Integer catalogoServiciosIdServicio;
+    @Column(name = "idservicio")
+    private Integer idservicio;
 
     @Column(name = "fecha_cita")
     private LocalDate fechaCita;
@@ -34,18 +34,17 @@ public class Cita {
     @Column(name = "notas")
     private String notas;
 
-    // Getters y Setters
-    public Integer getIdCita() { return idCita; }
-    public void setIdCita(Integer idCita) { this.idCita = idCita; }
+    public Integer getIdcita() { return idcita; }
+    public void setIdcita(Integer idcita) { this.idcita = idcita; }
 
-    public Integer getUsuariosIdUsuarios() { return usuariosIdUsuarios; }
-    public void setUsuariosIdUsuarios(Integer usuariosIdUsuarios) { this.usuariosIdUsuarios = usuariosIdUsuarios; }
+    public Integer getIdusuarios() { return idusuarios; }
+    public void setIdusuarios(Integer idusuarios) { this.idusuarios = idusuarios; }
 
-    public Integer getClientasIdClientas() { return clientasIdClientas; }
-    public void setClientasIdClientas(Integer clientasIdClientas) { this.clientasIdClientas = clientasIdClientas; }
+    public Integer getIddientas() { return idclientas; }
+    public void setIddientas(Integer iddientas) { this.idclientas = iddientas; }
 
-    public Integer getCatalogoServiciosIdServicio() { return catalogoServiciosIdServicio; }
-    public void setCatalogoServiciosIdServicio(Integer catalogoServiciosIdServicio) { this.catalogoServiciosIdServicio = catalogoServiciosIdServicio; }
+    public Integer getIdservicio() { return idservicio; }
+    public void setIdservicio(Integer idservicio) { this.idservicio = idservicio; }
 
     public LocalDate getFechaCita() { return fechaCita; }
     public void setFechaCita(LocalDate fechaCita) { this.fechaCita = fechaCita; }
