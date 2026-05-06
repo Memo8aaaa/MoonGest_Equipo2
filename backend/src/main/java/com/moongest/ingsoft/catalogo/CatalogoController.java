@@ -8,6 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/catalogo")
+@CrossOrigin(origins = "*")
 public class CatalogoController {
 
     @Autowired
