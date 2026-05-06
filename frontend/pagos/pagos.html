@@ -371,182 +371,243 @@ body {
 </div>
 
 <script>
-  let citas = [
-    { nombre:'Sofía Martínez', servicio:'Extensión de pestañas', hora:'10:00 AM', total:650, anticipo:100, estado:'pagado' },
-    { nombre:'Valentina Reyes', servicio:'Retoque de pestañas', hora:'12:00 PM', total:350, anticipo:100, estado:'anticipo' },
-    { nombre:'Camila Torres',  servicio:'Diseño de cejas',     hora:'3:00 PM',  total:300, anticipo:0,   estado:'sin' },
-  ];
+const API = 'http://localhost:8080/api/pagos';
 
-  let metodoActual = 'efectivo';
-  let metodoActual2 = 'efectivo';
-  let idxActual = null;
+let citas = []; // empieza vacío, se llena del backend
 
-  function renderPagos() {
-    document.getElementById('pagos-list').innerHTML = citas.map((c,i)=>`
-      <div class="pago-card">
-        <div class="status-bar" style="background:${c.estado==='pagado'?'#3a8a5c':c.estado==='anticipo'?'#e8b820':'#e05040'}"></div>
-        <div class="pago-info">
-          <div class="pago-name">${c.nombre}</div>
-          <div class="pago-service">${c.servicio} · ${c.hora}</div>
-          <div class="pago-detail">
-            <div class="pago-item">Precio total<span>$${c.total}</span></div>
-            <div class="pago-item">Anticipo<span>${c.anticipo?'$'+c.anticipo:'—'}</span></div>
-            <div class="pago-item">Saldo<span style="color:${c.estado==='pagado'?'#3a8a5c':'inherit'}">${c.estado==='pagado'?'$0 ✓':'$'+(c.total-c.anticipo)}</span></div>
-          </div>
-        </div>
-        <span class="badge badge-${c.estado}">${c.estado==='pagado'?'Pagado ✓':c.estado==='anticipo'?'Anticipo $'+c.anticipo:'Sin anticipo'}</span>
-        <div class="pago-actions">
-          ${c.estado==='sin'?`<button class="btn-pago primary" onclick="abrirAnticipo(${i})">Registrar Anticipo</button>`:''}
-          ${c.estado==='anticipo'?`<button class="btn-pago primary" onclick="abrirFinal(${i})">Registrar Pago Final</button>`:''}
-          ${c.estado==='pagado'?`<button class="btn-pago" onclick="alert('Detalle del pago de '+citas[${i}].nombre)">Ver detalle</button>`:''}
-        </div>
-      </div>`).join('');
-  }
+async function cargarCitasDeHoy() {
+  try {
+    const hoy = new Date().toISOString().split('T')[0];
+    
+    // Cargar citas, clientas y catálogo al mismo tiempo
+    const [citasRes, clientasRes, catalogoRes] = await Promise.all([
+      fetch(`http://localhost:8080/api/citas/fecha/${hoy}`),
+      fetch(`http://localhost:8080/api/clientas`),
+      fetch(`http://localhost:8080/api/catalogo`)
+    ]);
 
-  function abrirAnticipo(i) {
-    idxActual = i;
-    const c = citas[i];
-    document.getElementById('anti-sub').textContent = c.nombre + ' · ' + c.servicio + ' · ' + c.hora;
-    document.getElementById('anti-info').innerHTML = `
-      <div class="mib-row"><span>Precio total del servicio</span><span>$${c.total}</span></div>
-      <div class="mib-row"><span>Monto del anticipo</span><span>$100 (fijo por política del salón)</span></div>
-      <div class="mib-row"><span>Saldo pendiente después</span><span>$${c.total-100}</span></div>`;
-    document.getElementById('anti-saldo').textContent = '$'+(c.total-100);
-    selMetodo('efectivo');
-    document.getElementById('anti-error').style.display='none';
-    abrirModal('modal-anticipo');
-  }
+    const citasBackend = await citasRes.json();
+    const clientas = await clientasRes.json();
+    const catalogo = await catalogoRes.json();
 
-  function abrirFinal(i) {
-    idxActual = i;
-    const c = citas[i];
-    document.getElementById('final-sub').textContent = c.nombre + ' · ' + c.servicio + ' · ' + c.hora;
-    document.getElementById('final-info').innerHTML = `
-      <div class="mib-row"><span>Precio total del servicio</span><span>$${c.total}</span></div>
-      <div class="mib-row"><span>Anticipo registrado</span><span>$${c.anticipo}</span></div>
-      <div class="mib-row"><span>Saldo a cobrar ahora</span><span>$${c.total-c.anticipo}</span></div>`;
-    document.getElementById('final-saldo').textContent = '$'+(c.total-c.anticipo);
-    selMetodo2('efectivo');
-    document.getElementById('final-error').style.display='none';
-    abrirModal('modal-final');
-  }
+    citas = citasBackend.map(c => {
+      const clienta = clientas.find(cl => cl.idClientas === c.idclientas);
+      const servicio = catalogo.find(s => s.idservicio === c.idservicio);
+      return {
+        idCita: c.idcita,
+        nombre: clienta ? `${clienta.nombre} ${clienta.paterno || ''}`.trim() : 'Desconocida',
+        servicio: servicio ? servicio.nombreServicio : 'Servicio desconocido',
+        hora: c.horaCita ? c.horaCita.substring(0, 5) : '--:--',
+        total: servicio ? servicio.precio : 0,
+        anticipo: 0,
+        estado: 'sin'
+      };
+    });
 
-  function selMetodo(m) {
-    metodoActual = m;
-    document.getElementById('btn-efectivo').className = 'method-btn'+(m==='efectivo'?' sel':'');
-    document.getElementById('btn-transferencia').className = 'method-btn'+(m==='transferencia'?' sel':'');
-    document.getElementById('transfer-fields').className = 'transferencia-fields'+(m==='transferencia'?' visible':'');
-  }
-
-  function selMetodo2(m) {
-    metodoActual2 = m;
-    document.getElementById('btn-ef2').className = 'method-btn'+(m==='efectivo'?' sel':'');
-    document.getElementById('btn-tr2').className = 'method-btn'+(m==='transferencia'?' sel':'');
-  }
-
-  function onFileSelect(input) {
-    if(input.files[0]) {
-      const f = input.files[0];
-      if(f.size > 5*1024*1024){ alert('El archivo es demasiado grande. Máximo 5MB.'); input.value=''; return; }
-      document.getElementById('file-label').textContent = '✓ ' + f.name;
-    }
-  }
-
-  function guardarAnticipo() {
-    const errEl = document.getElementById('anti-error');
-    if(metodoActual==='transferencia'){
-      const ref = document.getElementById('referencia').value.trim();
-      const file = document.getElementById('file-input').files[0];
-      if(!file||!ref){ errEl.style.display='flex'; errEl.textContent='⚠️ Adjunta el comprobante e ingresa el número de referencia.'; return; }
-    }
-    errEl.style.display='none';
-    citas[idxActual].anticipo = 100;
-    citas[idxActual].estado = 'anticipo';
-    cerrarModal('modal-anticipo');
+    renderPagos();
+  } catch(e) {
+    console.error('Error cargando citas:', e);
+    // Si falla el backend, mostrar datos de prueba
+    citas = [
+      { idCita: 1, nombre:'Sofía Martínez', servicio:'Extensión de pestañas', hora:'10:00', total:650, anticipo:100, estado:'pagado' },
+      { idCita: 2, nombre:'Valentina Reyes', servicio:'Retoque de pestañas',  hora:'12:00', total:350, anticipo:100, estado:'anticipo' },
+      { idCita: 3, nombre:'Camila Torres',   servicio:'Diseño de cejas',       hora:'15:00', total:300, anticipo:0,   estado:'sin' },
+    ];
     renderPagos();
   }
+}
 
-  function guardarFinal() {
-    const errEl = document.getElementById('final-error');
-    errEl.style.display='none';
-    citas[idxActual].estado = 'pagado';
-    cerrarModal('modal-final');
-    renderPagos();
-    // Update summary
-    const pagadas = citas.filter(c=>c.estado==='pagado').reduce((s,c)=>s+c.total,0);
-    document.getElementById('total-dia').textContent = '$'+pagadas;
-    document.getElementById('citas-cobradas').textContent = citas.filter(c=>c.estado==='pagado').length+' citas cobradas completamente';
+let metodoActual = 'efectivo';
+let metodoActual2 = 'efectivo';
+let idxActual = null;
+
+function renderPagos() {
+  document.getElementById('pagos-list').innerHTML = citas.map((c,i)=>`
+    <div class="pago-card">
+      <div class="status-bar" style="background:${c.estado==='pagado'?'#3a8a5c':c.estado==='anticipo'?'#e8b820':'#e05040'}"></div>
+      <div class="pago-info">
+        <div class="pago-name">${c.nombre}</div>
+        <div class="pago-service">${c.servicio} · ${c.hora}</div>
+        <div class="pago-detail">
+          <div class="pago-item">Precio total<span>$${c.total}</span></div>
+          <div class="pago-item">Anticipo<span>${c.anticipo?'$'+c.anticipo:'—'}</span></div>
+          <div class="pago-item">Saldo<span style="color:${c.estado==='pagado'?'#3a8a5c':'inherit'}">${c.estado==='pagado'?'$0 ✓':'$'+(c.total-c.anticipo)}</span></div>
+        </div>
+      </div>
+      <span class="badge badge-${c.estado}">${c.estado==='pagado'?'Pagado ✓':c.estado==='anticipo'?'Anticipo $'+c.anticipo:'Sin anticipo'}</span>
+      <div class="pago-actions">
+        ${c.estado==='sin'?`<button class="btn-pago primary" onclick="abrirAnticipo(${i})">Registrar Anticipo</button>`:''}
+        ${c.estado==='anticipo'?`<button class="btn-pago primary" onclick="abrirFinal(${i})">Registrar Pago Final</button>`:''}
+        ${c.estado==='pagado'?`<button class="btn-pago" onclick="alert('Detalle del pago de '+citas[${i}].nombre)">Ver detalle</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function abrirAnticipo(i) {
+  idxActual = i;
+  const c = citas[i];
+  document.getElementById('anti-sub').textContent = c.nombre + ' · ' + c.servicio + ' · ' + c.hora;
+  document.getElementById('anti-info').innerHTML = `
+    <div class="mib-row"><span>Precio total del servicio</span><span>$${c.total}</span></div>
+    <div class="mib-row"><span>Monto del anticipo</span><span>$100 (fijo por política del salón)</span></div>
+    <div class="mib-row"><span>Saldo pendiente después</span><span>$${c.total-100}</span></div>`;
+  document.getElementById('anti-saldo').textContent = '$'+(c.total-100);
+  selMetodo('efectivo');
+  document.getElementById('anti-error').style.display='none';
+  abrirModal('modal-anticipo');
+}
+
+function abrirFinal(i) {
+  idxActual = i;
+  const c = citas[i];
+  document.getElementById('final-sub').textContent = c.nombre + ' · ' + c.servicio + ' · ' + c.hora;
+  document.getElementById('final-info').innerHTML = `
+    <div class="mib-row"><span>Precio total del servicio</span><span>$${c.total}</span></div>
+    <div class="mib-row"><span>Anticipo registrado</span><span>$${c.anticipo}</span></div>
+    <div class="mib-row"><span>Saldo a cobrar ahora</span><span>$${c.total-c.anticipo}</span></div>`;
+  document.getElementById('final-saldo').textContent = '$'+(c.total-c.anticipo);
+  selMetodo2('efectivo');
+  document.getElementById('final-error').style.display='none';
+  abrirModal('modal-final');
+}
+
+function selMetodo(m) {
+  metodoActual = m;
+  document.getElementById('btn-efectivo').className = 'method-btn'+(m==='efectivo'?' sel':'');
+  document.getElementById('btn-transferencia').className = 'method-btn'+(m==='transferencia'?' sel':'');
+  document.getElementById('transfer-fields').className = 'transferencia-fields'+(m==='transferencia'?' visible':'');
+}
+
+function selMetodo2(m) {
+  metodoActual2 = m;
+  document.getElementById('btn-ef2').className = 'method-btn'+(m==='efectivo'?' sel':'');
+  document.getElementById('btn-tr2').className = 'method-btn'+(m==='transferencia'?' sel':'');
+}
+
+function onFileSelect(input) {
+  if(input.files[0]) {
+    const f = input.files[0];
+    if(f.size > 5*1024*1024){ alert('El archivo es demasiado grande. Máximo 5MB.'); input.value=''; return; }
+    document.getElementById('file-label').textContent = '✓ ' + f.name;
   }
+}
 
-  function abrirModal(id){ document.getElementById(id).classList.add('open'); }
-  function cerrarModal(id){ document.getElementById(id).classList.remove('open'); }
-  document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
-
-  renderPagos();
-  /* ─────────────────────────────────────────────────────────────
-     SISTEMA DE EXPIRACIÓN DE SESIÓN POR INACTIVIDAD
-     - Aviso emergente a los 25 minutos de inactividad
-     - Cuenta regresiva de 60 segundos
-     - Si presiona "Continuar sesión" → reinicia el contador a 25 min
-     - Si presiona "Cerrar sesión" o se agota el tiempo → redirige al login
-  ───────────────────────────────────────────────────────────── */
-  const SESSION_TIMEOUT  = 25 * 60 * 1000;  // 25 minutos
-  const WARNING_BEFORE   = 1 * 60 * 1000;  // aviso 1 min antes (al min 1)
-
-  let _inactivityTimer, _warningTimer, _countdownInterval;
-
-  let _warningVisible = false;
-
-  function resetTimers() {
-    // Si el aviso ya está visible, NO reiniciar — esperar decisión de la encargada
-    if (_warningVisible) return;
-
-    clearTimeout(_inactivityTimer);
-    clearTimeout(_warningTimer);
-    clearInterval(_countdownInterval);
-
-    // Programar aviso al minuto 1
-    _warningTimer = setTimeout(showSessionWarning, SESSION_TIMEOUT - WARNING_BEFORE);
-
-    // Programar cierre automático al minuto 2
-    _inactivityTimer = setTimeout(expireSession, SESSION_TIMEOUT);
+// ── ANTICIPO → POST /api/pagos ──
+async function guardarAnticipo() {
+  const errEl = document.getElementById('anti-error');
+  if (metodoActual === 'transferencia') {
+    const ref = document.getElementById('referencia').value.trim();
+    const file = document.getElementById('file-input').files[0];
+    if (!file || !ref) {
+      errEl.style.display = 'flex';
+      errEl.textContent = '⚠️ Adjunta el comprobante e ingresa el número de referencia.';
+      return;
+    }
   }
+  errEl.style.display = 'none';
 
-  function showSessionWarning() {
-    _warningVisible = true;  // Bloquear reinicio por actividad
-    let secsLeft = 60;
-    document.getElementById('session-countdown').textContent = secsLeft;
-    document.getElementById('session-overlay').classList.add('open');
+  const pago = {
+    idCita:      citas[idxActual].idCita,
+    metodoPago:  metodoActual,
+    tipoPago:    'anticipo',
+    montoPagado: 100,
+    fechaPago:   new Date().toISOString().split('T')[0],
+    referencia:  document.getElementById('referencia')?.value.trim() || null
+  };
 
-    _countdownInterval = setInterval(() => {
-      secsLeft--;
-      document.getElementById('session-countdown').textContent = secsLeft;
-      if (secsLeft <= 0) clearInterval(_countdownInterval);
-    }, 1000);
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(pago)
+    });
+    if (res.ok) {
+      citas[idxActual].anticipo = 100;
+      citas[idxActual].estado = 'anticipo';
+      cerrarModal('modal-anticipo');
+      renderPagos();
+    } else {
+      errEl.style.display = 'flex';
+      errEl.textContent = '❌ Error al guardar en el servidor.';
+    }
+  } catch(e) {
+    errEl.style.display = 'flex';
+    errEl.textContent = '❌ No se pudo conectar al backend. ¿Está corriendo en el puerto 8080?';
   }
+}
 
-  function continuarSesion() {
-    _warningVisible = false;  // Permitir de nuevo el reinicio por actividad
-    resetTimers();
+// ── PAGO FINAL → POST /api/pagos ──
+async function guardarFinal() {
+  const errEl = document.getElementById('final-error');
+  errEl.style.display = 'none';
+  const c = citas[idxActual];
+
+  const pago = {
+    idCita:      c.idCita,
+    metodoPago:  metodoActual2,
+    tipoPago:    'final',
+    montoPagado: c.total - c.anticipo,
+    fechaPago:   new Date().toISOString().split('T')[0],
+    referencia:  null
+  };
+
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(pago)
+    });
+    if (res.ok) {
+      citas[idxActual].estado = 'pagado';
+      cerrarModal('modal-final');
+      renderPagos();
+      const pagadas = citas.filter(c=>c.estado==='pagado').reduce((s,c)=>s+c.total,0);
+      document.getElementById('total-dia').textContent = '$'+pagadas;
+      document.getElementById('citas-cobradas').textContent = citas.filter(c=>c.estado==='pagado').length+' citas cobradas completamente';
+    } else {
+      errEl.style.display = 'flex';
+      errEl.textContent = '❌ Error al guardar en el servidor.';
+    }
+  } catch(e) {
+    errEl.style.display = 'flex';
+    errEl.textContent = '❌ No se pudo conectar al backend. ¿Está corriendo en el puerto 8080?';
   }
+}
 
-  function expireSession() {
-    clearTimeout(_inactivityTimer);
-    clearTimeout(_warningTimer);
-    clearInterval(_countdownInterval);
-    _warningVisible = false;
-    document.getElementById('session-overlay').classList.remove('open');
-    window.location.href = 'index.html?sesion=expirada';
-  }
+function abrirModal(id){ document.getElementById(id).classList.add('open'); }
+function cerrarModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
 
-  // Reiniciar timers ante cualquier interacción del usuario
-  // (no tiene efecto si el aviso está visible gracias a _warningVisible)
-  ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt =>
-    document.addEventListener(evt, resetTimers, { passive: true })
-  );
+cargarCitasDeHoy();
 
-  // Arrancar al cargar la página
-  resetTimers();
+// ── SESIÓN ──
+const SESSION_TIMEOUT = 25 * 60 * 1000;
+const WARNING_BEFORE  = 1  * 60 * 1000;
+let _inactivityTimer, _warningTimer, _countdownInterval;
+let _warningVisible = false;
+
+function resetTimers() {
+  if (_warningVisible) return;
+  clearTimeout(_inactivityTimer); clearTimeout(_warningTimer); clearInterval(_countdownInterval);
+  _warningTimer    = setTimeout(showSessionWarning, SESSION_TIMEOUT - WARNING_BEFORE);
+  _inactivityTimer = setTimeout(expireSession, SESSION_TIMEOUT);
+}
+function showSessionWarning() {
+  _warningVisible = true;
+  let secsLeft = 60;
+  document.getElementById('session-countdown').textContent = secsLeft;
+  document.getElementById('session-overlay').classList.add('open');
+  _countdownInterval = setInterval(()=>{ secsLeft--; document.getElementById('session-countdown').textContent=secsLeft; if(secsLeft<=0) clearInterval(_countdownInterval); }, 1000);
+}
+function continuarSesion() { _warningVisible = false; resetTimers(); }
+function expireSession() {
+  clearTimeout(_inactivityTimer); clearTimeout(_warningTimer); clearInterval(_countdownInterval);
+  _warningVisible = false;
+  document.getElementById('session-overlay').classList.remove('open');
+  window.location.href = 'index.html?sesion=expirada';
+}
+['mousemove','mousedown','keydown','touchstart','scroll','click'].forEach(evt=>document.addEventListener(evt,resetTimers,{passive:true}));
+resetTimers();
 </script>
 </body>
 </html>

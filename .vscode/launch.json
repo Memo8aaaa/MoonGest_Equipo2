@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "IngsoftApplication",
+            "request": "launch",
+            "mainClass": "com.moongest.ingsoft.IngsoftApplication",
+            "projectName": "ingsoft"
+        },
+        {
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
