@@ -262,16 +262,16 @@ body {
   <aside class="sidebar">
     <div class="sidebar-logo"><h2>Moon<br>Beauty<br>Space</h2><p>SISTEMA DE GESTIÓN</p></div>
     <nav class="nav">
-      <a class="nav-item" href="frontend/citas/citas.html"><span class="nav-icon">📅</span> Gestionar Citas</a>
-      <a class="nav-item" href="frontend/clientes/clientas.html"><span class="nav-icon">👤</span> Clientas</a>
-      <a class="nav-item active" href="frontend/pagos/pagos.html"><span class="nav-icon">💳</span> Pagos</a>
-      <a class="nav-item" href="frontend/reportes/reportes.html"><span class="nav-icon">📊</span> Reportes</a>
-      <a class="nav-item" href="frontend/notificaciones/notificaciones.html"><span class="nav-icon">🔔</span> Notificaciones</a>
-      <a class="nav-item" href="frontend/catalago/catalago.html"><span class="nav-icon">✂️</span> Catálogo</a>
+      <a class="nav-item" href="citas.html"><span class="nav-icon">📅</span> Gestionar Citas</a>
+      <a class="nav-item" href="clientas.html"><span class="nav-icon">👤</span> Clientas</a>
+      <a class="nav-item" href="pagos.html"><span class="nav-icon">💳</span> Pagos</a>
+      <a class="nav-item" href="reportes.html"><span class="nav-icon">📊</span> Reportes</a>
+      <a class="nav-item" href="notificaciones.html"><span class="nav-icon">🔔</span> Notificaciones</a>
+      <a class="nav-item" href="catalago.html"><span class="nav-icon">✂️</span> Catálogo</a>
     </nav>
     <div class="sidebar-footer">
       <span>Encargada · v2.0</span>
-      <button class="btn-cerrar-sesion" onclick="window.location.href='../../index.html'">↩ Cerrar sesión</button>
+      <button class="btn-cerrar-sesion" onclick="window.location.href='index.html'">↩ Cerrar sesión</button>
     </div>
   </aside>
 
@@ -279,25 +279,25 @@ body {
     <div class="topbar">
       <h1>Gestionar Pagos</h1>
       <div class="topbar-actions">
-        <span style="font-size:13px;color:var(--text-muted)">Domingo 15 de marzo, 2026</span>
+          <span style="font-size:13px;color:var(--text-muted)" id="fecha-hoy"></span>
       </div>
     </div>
     <div class="content" style="padding:28px 32px;overflow-y:auto">
       <div class="summary-row">
         <div class="summary-card">
           <div class="sc-label">Ingresos del día</div>
-          <div class="sc-value" id="total-dia">$650</div>
+          <div class="sc-value" id="total-dia">$0</div>
           <div class="sc-sub" id="citas-cobradas">1 cita cobrada completamente</div>
         </div>
         <div class="summary-card">
           <div class="sc-label">Anticipos registrados</div>
-          <div class="sc-value">$100</div>
-          <div class="sc-sub">1 cita con anticipo</div>
+          <div class="sc-value" id="total-anticipos">$0</div>
+          <div class="sc-sub" id="citas-anticipo">0 citas con anticipo</div>
         </div>
         <div class="summary-card">
           <div class="sc-label">Sin anticipo</div>
-          <div class="sc-value">1</div>
-          <div class="sc-sub">Cita sin pago registrado</div>
+          <div class="sc-value" id="total-sin">0</div>
+          <div class="sc-sub" id="citas-sin">Citas sin pago registrado</div>
         </div>
       </div>
 
@@ -316,8 +316,8 @@ body {
     <div class="field">
       <label>Método de pago</label>
       <div class="method-row">
-        <div class="method-btn sel" id="btn-efectivo" onclick="selMetodo('efectivo')">💵 Efectivo</div>
-        <div class="method-btn" id="btn-transferencia" onclick="selMetodo('transferencia')">📲 Transferencia</div>
+        <div class="method-btn sel" id="btn-efectivo" onclick="selMetodo('Efectivo')">💵 Efectivo</div>
+        <div class="method-btn" id="btn-transferencia" onclick="selMetodo('Transferencia')">📲 Transferencia</div>
       </div>
     </div>
     <div class="transferencia-fields" id="transfer-fields">
@@ -354,8 +354,8 @@ body {
     <div class="field">
       <label>Método de pago del saldo</label>
       <div class="method-row">
-        <div class="method-btn sel" id="btn-ef2" onclick="selMetodo2('efectivo')">💵 Efectivo</div>
-        <div class="method-btn" id="btn-tr2" onclick="selMetodo2('transferencia')">📲 Transferencia</div>
+        <div class="method-btn sel" id="btn-ef2" onclick="selMetodo2('Efectivo')">💵 Efectivo</div>
+        <div class="method-btn" id="btn-tr2" onclick="selMetodo2('Transferencia')">📲 Transferencia</div>
       </div>
     </div>
     <div class="saldo-highlight">
@@ -371,243 +371,218 @@ body {
 </div>
 
 <script>
-const API = 'http://localhost:8080/api/pagos';
+  let citas = [];
+  let metodoActual = 'Efectivo';
+  let metodoActual2 = 'Efectivo';
+  let idxActual = null;
+  
+  const fechaHoy = new Date();
+  const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  document.getElementById('fecha-hoy').textContent = fechaHoy.toLocaleDateString('es-MX', opciones).replace(/^\w/, c => c.toUpperCase());
 
-let citas = []; // empieza vacío, se llena del backend
+  async function cargarCitasDelDia() {
+    try {
+      const hoy = new Date().toLocaleDateString('en-CA');
+      const response = await fetch(`http://localhost:8080/api/citas/fecha/${hoy}`);
+      const citasRaw = await response.json();
 
-async function cargarCitasDeHoy() {
-  try {
-    const hoy = new Date().toISOString().split('T')[0];
-    
-    // Cargar citas, clientas y catálogo al mismo tiempo
-    const [citasRes, clientasRes, catalogoRes] = await Promise.all([
-      fetch(`http://localhost:8080/api/citas/fecha/${hoy}`),
-      fetch(`http://localhost:8080/api/clientas`),
-      fetch(`http://localhost:8080/api/catalogo`)
-    ]);
+      // Por cada cita cargar sus pagos
+      citas = await Promise.all(citasRaw.map(async (c) => {
+        const pagosRes = await fetch(`http://localhost:8080/api/pagos/cita/${c.idcita}`);
+        const pagos = await pagosRes.json();
+        const anticipo = pagos.find(p => p.tipoPago === 'Adelanto');
+        const pagoFinal = pagos.find(p => p.tipoPago === 'Pago completo');
 
-    const citasBackend = await citasRes.json();
-    const clientas = await clientasRes.json();
-    const catalogo = await catalogoRes.json();
+        const servicioRes = await fetch(`http://localhost:8080/api/catalogo/${c.idservicio}`);
+        const servicio = await servicioRes.json();
+        const clientaRes = await fetch(`http://localhost:8080/api/clientas/${c.idclientas}`);
+        const clienta = await clientaRes.json();
+        const nombreClienta = `${clienta.nombre} ${clienta.paterno || ''}`.trim();
 
-    citas = citasBackend.map(c => {
-      const clienta = clientas.find(cl => cl.idClientas === c.idclientas);
-      const servicio = catalogo.find(s => s.idservicio === c.idservicio);
-      return {
-        idCita: c.idcita,
-        nombre: clienta ? `${clienta.nombre} ${clienta.paterno || ''}`.trim() : 'Desconocida',
-        servicio: servicio ? servicio.nombreServicio : 'Servicio desconocido',
-        hora: c.horaCita ? c.horaCita.substring(0, 5) : '--:--',
-        total: servicio ? servicio.precio : 0,
-        anticipo: 0,
-        estado: 'sin'
-      };
-    });
+        return {
+          idCita: c.idcita,
+          nombre: nombreClienta,
+          servicio: servicio.nombreServicio || `Servicio #${c.idservicio}`,
+          hora: c.horaCita,
+          total: servicio.precioEstandar || 0,
+          anticipo: anticipo ? parseFloat(anticipo.montoPagado) : 0,
+          estado: pagoFinal ? 'pagado' : anticipo ? 'anticipo' : 'sin',
+          pagos
+        };
+      }));
 
-    renderPagos();
-  } catch(e) {
-    console.error('Error cargando citas:', e);
-    // Si falla el backend, mostrar datos de prueba
-    citas = [
-      { idCita: 1, nombre:'Sofía Martínez', servicio:'Extensión de pestañas', hora:'10:00', total:650, anticipo:100, estado:'pagado' },
-      { idCita: 2, nombre:'Valentina Reyes', servicio:'Retoque de pestañas',  hora:'12:00', total:350, anticipo:100, estado:'anticipo' },
-      { idCita: 3, nombre:'Camila Torres',   servicio:'Diseño de cejas',       hora:'15:00', total:300, anticipo:0,   estado:'sin' },
-    ];
-    renderPagos();
-  }
-}
 
-let metodoActual = 'efectivo';
-let metodoActual2 = 'efectivo';
-let idxActual = null;
-
-function renderPagos() {
-  document.getElementById('pagos-list').innerHTML = citas.map((c,i)=>`
-    <div class="pago-card">
-      <div class="status-bar" style="background:${c.estado==='pagado'?'#3a8a5c':c.estado==='anticipo'?'#e8b820':'#e05040'}"></div>
-      <div class="pago-info">
-        <div class="pago-name">${c.nombre}</div>
-        <div class="pago-service">${c.servicio} · ${c.hora}</div>
-        <div class="pago-detail">
-          <div class="pago-item">Precio total<span>$${c.total}</span></div>
-          <div class="pago-item">Anticipo<span>${c.anticipo?'$'+c.anticipo:'—'}</span></div>
-          <div class="pago-item">Saldo<span style="color:${c.estado==='pagado'?'#3a8a5c':'inherit'}">${c.estado==='pagado'?'$0 ✓':'$'+(c.total-c.anticipo)}</span></div>
-        </div>
-      </div>
-      <span class="badge badge-${c.estado}">${c.estado==='pagado'?'Pagado ✓':c.estado==='anticipo'?'Anticipo $'+c.anticipo:'Sin anticipo'}</span>
-      <div class="pago-actions">
-        ${c.estado==='sin'?`<button class="btn-pago primary" onclick="abrirAnticipo(${i})">Registrar Anticipo</button>`:''}
-        ${c.estado==='anticipo'?`<button class="btn-pago primary" onclick="abrirFinal(${i})">Registrar Pago Final</button>`:''}
-        ${c.estado==='pagado'?`<button class="btn-pago" onclick="alert('Detalle del pago de '+citas[${i}].nombre)">Ver detalle</button>`:''}
-      </div>
-    </div>`).join('');
-}
-
-function abrirAnticipo(i) {
-  idxActual = i;
-  const c = citas[i];
-  document.getElementById('anti-sub').textContent = c.nombre + ' · ' + c.servicio + ' · ' + c.hora;
-  document.getElementById('anti-info').innerHTML = `
-    <div class="mib-row"><span>Precio total del servicio</span><span>$${c.total}</span></div>
-    <div class="mib-row"><span>Monto del anticipo</span><span>$100 (fijo por política del salón)</span></div>
-    <div class="mib-row"><span>Saldo pendiente después</span><span>$${c.total-100}</span></div>`;
-  document.getElementById('anti-saldo').textContent = '$'+(c.total-100);
-  selMetodo('efectivo');
-  document.getElementById('anti-error').style.display='none';
-  abrirModal('modal-anticipo');
-}
-
-function abrirFinal(i) {
-  idxActual = i;
-  const c = citas[i];
-  document.getElementById('final-sub').textContent = c.nombre + ' · ' + c.servicio + ' · ' + c.hora;
-  document.getElementById('final-info').innerHTML = `
-    <div class="mib-row"><span>Precio total del servicio</span><span>$${c.total}</span></div>
-    <div class="mib-row"><span>Anticipo registrado</span><span>$${c.anticipo}</span></div>
-    <div class="mib-row"><span>Saldo a cobrar ahora</span><span>$${c.total-c.anticipo}</span></div>`;
-  document.getElementById('final-saldo').textContent = '$'+(c.total-c.anticipo);
-  selMetodo2('efectivo');
-  document.getElementById('final-error').style.display='none';
-  abrirModal('modal-final');
-}
-
-function selMetodo(m) {
-  metodoActual = m;
-  document.getElementById('btn-efectivo').className = 'method-btn'+(m==='efectivo'?' sel':'');
-  document.getElementById('btn-transferencia').className = 'method-btn'+(m==='transferencia'?' sel':'');
-  document.getElementById('transfer-fields').className = 'transferencia-fields'+(m==='transferencia'?' visible':'');
-}
-
-function selMetodo2(m) {
-  metodoActual2 = m;
-  document.getElementById('btn-ef2').className = 'method-btn'+(m==='efectivo'?' sel':'');
-  document.getElementById('btn-tr2').className = 'method-btn'+(m==='transferencia'?' sel':'');
-}
-
-function onFileSelect(input) {
-  if(input.files[0]) {
-    const f = input.files[0];
-    if(f.size > 5*1024*1024){ alert('El archivo es demasiado grande. Máximo 5MB.'); input.value=''; return; }
-    document.getElementById('file-label').textContent = '✓ ' + f.name;
-  }
-}
-
-// ── ANTICIPO → POST /api/pagos ──
-async function guardarAnticipo() {
-  const errEl = document.getElementById('anti-error');
-  if (metodoActual === 'transferencia') {
-    const ref = document.getElementById('referencia').value.trim();
-    const file = document.getElementById('file-input').files[0];
-    if (!file || !ref) {
-      errEl.style.display = 'flex';
-      errEl.textContent = '⚠️ Adjunta el comprobante e ingresa el número de referencia.';
-      return;
-    }
-  }
-  errEl.style.display = 'none';
-
-  const pago = {
-    idCita:      citas[idxActual].idCita,
-    metodoPago:  metodoActual,
-    tipoPago:    'anticipo',
-    montoPagado: 100,
-    fechaPago:   new Date().toISOString().split('T')[0],
-    referencia:  document.getElementById('referencia')?.value.trim() || null
-  };
-
-  try {
-    const res = await fetch(API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(pago)
-    });
-    if (res.ok) {
-      citas[idxActual].anticipo = 100;
-      citas[idxActual].estado = 'anticipo';
-      cerrarModal('modal-anticipo');
       renderPagos();
-    } else {
-      errEl.style.display = 'flex';
-      errEl.textContent = '❌ Error al guardar en el servidor.';
+      actualizarResumen();
+    } catch (error) {
+      console.error('Error al cargar citas:', error);
     }
-  } catch(e) {
-    errEl.style.display = 'flex';
-    errEl.textContent = '❌ No se pudo conectar al backend. ¿Está corriendo en el puerto 8080?';
   }
-}
 
-// ── PAGO FINAL → POST /api/pagos ──
+  function actualizarResumen() {
+    const pagadas = citas.filter(c => c.estado === 'pagado').reduce((s, c) => s + c.total, 0);
+    const conAnticipo = citas.filter(c => c.estado === 'anticipo');
+    const sinAnticipo = citas.filter(c => c.estado === 'sin');
+    const totalAnticipos = conAnticipo.reduce((s, c) => s + c.anticipo, 0);
+
+    document.getElementById('total-dia').textContent = '$' + pagadas;
+    document.getElementById('citas-cobradas').textContent = citas.filter(c => c.estado === 'pagado').length + ' citas cobradas completamente';
+    document.getElementById('total-anticipos').textContent = '$' + totalAnticipos;
+    document.getElementById('citas-anticipo').textContent = conAnticipo.length + ' citas con anticipo';
+    document.getElementById('total-sin').textContent = sinAnticipo.length;
+    document.getElementById('citas-sin').textContent = sinAnticipo.length === 1 ? 'Cita sin pago registrado' : 'Citas sin pago registrado';
+  }
+
+  function renderPagos() {
+    document.getElementById('pagos-list').innerHTML = citas.length === 0
+      ? '<div style="text-align:center;color:var(--text-muted);padding:40px">No hay citas registradas para hoy.</div>'
+      : citas.map((c, i) => `
+        <div class="pago-card">
+          <div class="status-bar" style="background:${c.estado==='pagado'?'#3a8a5c':c.estado==='anticipo'?'#e8b820':'#e05040'}"></div>
+          <div class="pago-info">
+            <div class="pago-name">${c.nombre}</div>
+            <div class="pago-service">${c.servicio} · ${c.hora}</div>
+            <div class="pago-detail">
+              <div class="pago-item">Precio total<span>$${c.total}</span></div>
+              <div class="pago-item">Anticipo<span>${c.anticipo ? '$' + c.anticipo : '—'}</span></div>
+              <div class="pago-item">Saldo<span style="color:${c.estado==='pagado'?'#3a8a5c':'inherit'}">${c.estado==='pagado' ? '$0 ✓' : '$' + (c.total - c.anticipo)}</span></div>
+            </div>
+          </div>
+          <span class="badge badge-${c.estado}">${c.estado==='pagado' ? 'Pagado ✓' : c.estado==='anticipo' ? 'Anticipo $' + c.anticipo : 'Sin anticipo'}</span>
+          <div class="pago-actions">
+            ${c.estado==='sin' ? `<button class="btn-pago primary" onclick="abrirAnticipo(${i})">Registrar Anticipo</button>` : ''}
+            ${c.estado==='anticipo' ? `<button class="btn-pago primary" onclick="abrirFinal(${i})">Registrar Pago Final</button>` : ''}
+            ${c.estado==='pagado' ? `<button class="btn-pago" onclick="verDetalle(${i})">Ver detalle</button>` : ''}
+          </div>
+        </div>`).join('');
+  }
+
+  function abrirAnticipo(i) {
+    idxActual = i;
+    const c = citas[i];
+    document.getElementById('anti-sub').textContent = c.nombre + ' · ' + c.servicio + ' · ' + c.hora;
+    document.getElementById('anti-info').innerHTML = `
+      <div class="mib-row"><span>Precio total del servicio</span><span>$${c.total}</span></div>
+      <div class="mib-row"><span>Monto del anticipo</span><span>$100 (fijo por política del salón)</span></div>
+      <div class="mib-row"><span>Saldo pendiente después</span><span>$${c.total - 100}</span></div>`;
+    document.getElementById('anti-saldo').textContent = '$' + (c.total - 100);
+    selMetodo('efectivo');
+    document.getElementById('anti-error').style.display = 'none';
+    abrirModal('modal-anticipo');
+  }
+
+  function abrirFinal(i) {
+    console.log('abrirFinal llamado con índice:', i, 'cita:', citas[i]);
+    idxActual = i;
+    const c = citas[i];
+    document.getElementById('final-sub').textContent = c.nombre + ' · ' + c.servicio + ' · ' + c.hora;
+    document.getElementById('final-info').innerHTML = `
+      <div class="mib-row"><span>Precio total del servicio</span><span>$${c.total}</span></div>
+      <div class="mib-row"><span>Anticipo registrado</span><span>$${c.anticipo}</span></div>
+      <div class="mib-row"><span>Saldo a cobrar ahora</span><span>$${c.total - c.anticipo}</span></div>`;
+    document.getElementById('final-saldo').textContent = '$' + (c.total - c.anticipo);
+    selMetodo2('efectivo');
+    document.getElementById('final-error').style.display = 'none';
+    abrirModal('modal-final');
+  }
+
+  function selMetodo(m) {
+    metodoActual = m;
+    document.getElementById('btn-efectivo').className = 'method-btn' + (m === 'Efectivo' ? ' sel' : '');
+    document.getElementById('btn-transferencia').className = 'method-btn' + (m === 'Transferencia' ? ' sel' : '');
+    document.getElementById('transfer-fields').className = 'transferencia-fields' + (m === 'transferencia' ? ' visible' : '');
+  }
+
+  function selMetodo2(m) {
+    metodoActual2 = m;
+    document.getElementById('btn-ef2').className = 'method-btn' + (m === 'Efectivo' ? ' sel' : '');
+    document.getElementById('btn-tr2').className = 'method-btn' + (m === 'Transferencia' ? ' sel' : '');
+  }
+
+  function onFileSelect(input) {
+    if (input.files[0]) {
+      const f = input.files[0];
+      if (f.size > 5 * 1024 * 1024) { alert('El archivo es demasiado grande. Máximo 5MB.'); input.value = ''; return; }
+      document.getElementById('file-label').textContent = '✓ ' + f.name;
+    }
+  }
+
+  async function guardarAnticipo() {
+    const errEl = document.getElementById('anti-error');
+    if (metodoActual === 'transferencia') {
+      const ref = document.getElementById('referencia').value.trim();
+      const file = document.getElementById('file-input').files[0];
+      if (!file || !ref) { errEl.style.display = 'flex'; errEl.textContent = '⚠️ Adjunta el comprobante e ingresa el número de referencia.'; return; }
+    }
+    errEl.style.display = 'none';
+    const c = citas[idxActual];
+    try {
+      await fetch('http://localhost:8080/api/pagos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idCita: c.idCita,
+          montoPagado: 100,
+          metodoPago: metodoActual,
+          tipoPago: 'Adelanto',
+          fechaPago: new Date().toISOString().split('T')[0],
+          referencia: metodoActual === 'transferencia' ? document.getElementById('referencia').value.trim() : null
+        })
+      });
+      cerrarModal('modal-anticipo');
+      await cargarCitasDelDia();
+    } catch (error) {
+      console.error('Error al guardar anticipo:', error);
+    }
+  }
+
 async function guardarFinal() {
+  const btnConfirmar = document.querySelector('#modal-final .btn-primary');
+  btnConfirmar.disabled = true;
+  btnConfirmar.textContent = 'Guardando...';
+  
   const errEl = document.getElementById('final-error');
   errEl.style.display = 'none';
   const c = citas[idxActual];
-
-  const pago = {
-    idCita:      c.idCita,
-    metodoPago:  metodoActual2,
-    tipoPago:    'final',
-    montoPagado: c.total - c.anticipo,
-    fechaPago:   new Date().toISOString().split('T')[0],
-    referencia:  null
-  };
-
   try {
-    const res = await fetch(API, {
+    await fetch('http://localhost:8080/api/pagos', {
+      
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(pago)
+      body: JSON.stringify({
+        idCita: c.idCita,
+        montoPagado: c.total - c.anticipo,
+        metodoPago: metodoActual2,
+        tipoPago: 'Pago completo',
+        fechaPago: new Date().toLocaleDateString('en-CA'),
+        referencia: null
+      })
     });
-    if (res.ok) {
-      citas[idxActual].estado = 'pagado';
-      cerrarModal('modal-final');
-      renderPagos();
-      const pagadas = citas.filter(c=>c.estado==='pagado').reduce((s,c)=>s+c.total,0);
-      document.getElementById('total-dia').textContent = '$'+pagadas;
-      document.getElementById('citas-cobradas').textContent = citas.filter(c=>c.estado==='pagado').length+' citas cobradas completamente';
-    } else {
-      errEl.style.display = 'flex';
-      errEl.textContent = '❌ Error al guardar en el servidor.';
-    }
-  } catch(e) {
-    errEl.style.display = 'flex';
-    errEl.textContent = '❌ No se pudo conectar al backend. ¿Está corriendo en el puerto 8080?';
+    const pagosActualizados = await fetch(`http://localhost:8080/api/pagos/cita/${c.idCita}`);
+    const pagosData = await pagosActualizados.json();
+    console.log('Pagos después de guardar:', pagosData);
+    cerrarModal('modal-final');
+    await cargarCitasDelDia();
+  } catch (error) {
+    console.error('Error al guardar pago final:', error);
+  } finally {
+    btnConfirmar.disabled = false;
+    btnConfirmar.textContent = 'Confirmar Pago Final';
   }
 }
 
-function abrirModal(id){ document.getElementById(id).classList.add('open'); }
-function cerrarModal(id){ document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+  function verDetalle(i) {
+    const c = citas[i];
+    alert(`Pagos de ${c.nombre}:\nAnticipo: $${c.anticipo}\nTotal: $${c.total}`);
+  }
 
-cargarCitasDeHoy();
+  function abrirModal(id) { document.getElementById(id).classList.add('open'); }
+  function cerrarModal(id) { document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => {
+    if (e.target === m) m.classList.remove('open');
+  }));
 
-// ── SESIÓN ──
-const SESSION_TIMEOUT = 25 * 60 * 1000;
-const WARNING_BEFORE  = 1  * 60 * 1000;
-let _inactivityTimer, _warningTimer, _countdownInterval;
-let _warningVisible = false;
-
-function resetTimers() {
-  if (_warningVisible) return;
-  clearTimeout(_inactivityTimer); clearTimeout(_warningTimer); clearInterval(_countdownInterval);
-  _warningTimer    = setTimeout(showSessionWarning, SESSION_TIMEOUT - WARNING_BEFORE);
-  _inactivityTimer = setTimeout(expireSession, SESSION_TIMEOUT);
-}
-function showSessionWarning() {
-  _warningVisible = true;
-  let secsLeft = 60;
-  document.getElementById('session-countdown').textContent = secsLeft;
-  document.getElementById('session-overlay').classList.add('open');
-  _countdownInterval = setInterval(()=>{ secsLeft--; document.getElementById('session-countdown').textContent=secsLeft; if(secsLeft<=0) clearInterval(_countdownInterval); }, 1000);
-}
-function continuarSesion() { _warningVisible = false; resetTimers(); }
-function expireSession() {
-  clearTimeout(_inactivityTimer); clearTimeout(_warningTimer); clearInterval(_countdownInterval);
-  _warningVisible = false;
-  document.getElementById('session-overlay').classList.remove('open');
-  window.location.href = 'index.html?sesion=expirada';
-}
-['mousemove','mousedown','keydown','touchstart','scroll','click'].forEach(evt=>document.addEventListener(evt,resetTimers,{passive:true}));
-resetTimers();
+  cargarCitasDelDia();
 </script>
 </body>
 </html>

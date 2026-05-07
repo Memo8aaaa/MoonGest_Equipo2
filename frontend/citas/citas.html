@@ -444,7 +444,7 @@ let todasLasCitas = {};
 
 // ── ESTADO ──────────────────────────────────────────────────────────────────
 let curY = new Date().getFullYear(), curM = new Date().getMonth();
-let selDate = new Date().toISOString().split('T')[0];
+let selDate = new Date().toLocaleDateString('en-CA');
 let miniY = curY, miniM = curM, miniFecha = '';
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const MESES_C = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -463,22 +463,32 @@ async function cargarDatos() {
     const citas = await citasRes.json();
 
     todasLasCitas = {};
-    citas.forEach(cita => {
+    await Promise.all(citas.map(async cita => {
       const fecha = cita.fechaCita;
       if (!todasLasCitas[fecha]) todasLasCitas[fecha] = [];
-      const clienta = clientasData.find(c => c.idClientas === cita.iddientas);
+      const clienta = clientasData.find(c => c.idClientas === cita.idclientas);
       const servicio = serviciosData.find(s => s.idservicio === cita.idservicio);
       const [hora, period] = convertirHora(cita.horaCita);
+
+      let estado = 'sin';
+      try {
+        const pagosRes = await fetch(`${BASE_URL}/api/pagos/cita/${cita.idcita}`);
+        const pagos = await pagosRes.json();
+        const anticipo = pagos.find(p => p.tipoPago === 'Adelanto');
+        const pagoFinal = pagos.find(p => p.tipoPago === 'Pago completo');
+        estado = pagoFinal ? 'pagado' : anticipo ? 'anticipo' : 'sin';
+      } catch(e) {}
+
       todasLasCitas[fecha].push({
         id: cita.idcita,
         hora, period,
         nombre: clienta ? `${clienta.nombre} ${clienta.paterno || ''}`.trim() : 'Desconocida',
         servicio: servicio ? servicio.nombreServicio : 'Servicio desconocido',
-        estado: 'sin',
+        estado,
         notas: cita.notas || '',
         _raw: cita
       });
-    });
+    }));
 
     poblarSelectServicios();
     buildCalendar();
@@ -486,6 +496,9 @@ async function cargarDatos() {
   } catch (err) {
     console.error('Error al cargar datos:', err);
   }
+  const d = new Date(selDate + 'T12:00:00');
+  document.getElementById('day-title').textContent = `${DIAS_ES[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()].toLowerCase()}`;
+  renderCitas(selDate);
 }
 
 function convertirHora(horaStr) {
@@ -605,7 +618,7 @@ function renderCitas(ds) {
         <div class="cita-service">${c.servicio}</div>
         ${c.notas ? `<div class="cita-notas">⚠️ ${c.notas}</div>` : ''}
       </div>
-      <span class="badge badge-sin">Sin anticipo</span>
+      <span class="badge badge-${c.estado}">${c.estado==='pagado'?'Pagado ✓':c.estado==='anticipo'?'Anticipo':'Sin anticipo'}</span>
       <div class="cita-actions">
         <button class="cita-btn" onclick="event.stopPropagation()">Reprogramar</button>
         <button class="cita-btn danger" onclick="event.stopPropagation();cancelarCita('${ds}',${i})">Cancelar</button>
@@ -779,7 +792,7 @@ async function confirmarCita() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         idusuarios: 1,
-        iddientas: clientaObj.idClientas,
+        idclientas: clientaObj.idClientas,
         idservicio: servicioObj?.idservicio || null,
         fechaCita: fecha,
         horaCita: hora24 + ':00',

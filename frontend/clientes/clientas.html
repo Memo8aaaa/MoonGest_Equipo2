@@ -264,16 +264,16 @@ body {
   <aside class="sidebar">
     <div class="sidebar-logo"><h2>Moon<br>Beauty<br>Space</h2><p>SISTEMA DE GESTIÓN</p></div>
     <nav class="nav">
-      <a class="nav-item" href="/frontend/citas/citas.html"><span class="nav-icon">📅</span> Gestionar Citas</a>
-      <a class="nav-item" href="/frontend/clientes/clientas.html"><span class="nav-icon">👤</span> Clientas</a>
-      <a class="nav-item active" href="/frontend/pagos/pagos.html"><span class="nav-icon">💳</span> Pagos</a>
-      <a class="nav-item" href="/frontend/reportes/reportes.html"><span class="nav-icon">📊</span> Reportes</a>
-      <a class="nav-item" href="/frontend/notificaciones/notificaciones.html"><span class="nav-icon">🔔</span> Notificaciones</a>
-      <a class="nav-item" href="/frontend/catalogo/catalogo.html"><span class="nav-icon">✂️</span> Catálogo</a>
+      <a class="nav-item" href="citas.html"><span class="nav-icon">📅</span> Gestionar Citas</a>
+      <a class="nav-item" href="clientas.html"><span class="nav-icon">👤</span> Clientas</a>
+      <a class="nav-item" href="pagos.html"><span class="nav-icon">💳</span> Pagos</a>
+      <a class="nav-item" href="reportes.html"><span class="nav-icon">📊</span> Reportes</a>
+      <a class="nav-item" href="notificaciones.html"><span class="nav-icon">🔔</span> Notificaciones</a>
+      <a class="nav-item" href="catalago.html"><span class="nav-icon">✂️</span> Catálogo</a>
     </nav>
     <div class="sidebar-footer">
       <span>Encargada · v2.0</span>
-      <button class="btn-cerrar-sesion" onclick="window.location.href='../../index.html'">↩ Cerrar sesión</button>
+      <button class="btn-cerrar-sesion" onclick="window.location.href='index.html'">↩ Cerrar sesión</button>
     </div>
   </aside>
 
@@ -378,138 +378,159 @@ body {
 </div>
 
 <script>
-  let clientas = [
-    { nombre:'Sofía Martínez', tel:'5551234567', desde:'12 ene 2025', visitas:8, notas:'Alergia al adhesivo de cianoacrilato. Usar adhesivo sensitivo. Prefiere diseño Cat Eye.', historial:[
-      {servicio:'Extensión pestañas — Volumen ruso', fecha:'13 mar 2026', monto:'$650'},
-      {servicio:'Retoque de pestañas', fecha:'20 feb 2026', monto:'$350'},
-      {servicio:'Extensión pestañas — Clásico', fecha:'28 ene 2026', monto:'$500'},
-    ]},
-    { nombre:'Valentina Reyes', tel:'5552345678', desde:'03 mar 2025', visitas:4, notas:'Sin alergias conocidas. Prefiere volumen natural.', historial:[
-      {servicio:'Retoque de pestañas', fecha:'14 mar 2026', monto:'$350'},
-    ]},
-    { nombre:'Camila Torres', tel:'5553456789', desde:'20 jun 2025', visitas:2, notas:'Primera vez en servicios de pestañas.', historial:[]},
-    { nombre:'Andrea López', tel:'5554567890', desde:'01 ago 2025', visitas:3, notas:'Prefiere citas por la tarde.', historial:[]},
-    { nombre:'Mariana García', tel:'5555678901', desde:'15 feb 2026', visitas:1, notas:'', historial:[]},
-  ];
+let clientas = [];
+let filtradas = [];
+let selIdx = null;
 
-  let filtradas = [...clientas];
-  let selIdx = null;
-
-  function renderLista(lista) {
-    const container = document.getElementById('clientas-list');
-    document.getElementById('list-count').textContent = lista.length + ' clientas';
-    container.innerHTML = lista.map((c,i) => `
-      <div class="clienta-row ${selIdx===i?'selected':''}" onclick="seleccionar(${i})">
-        <div class="avatar">${c.nombre[0]}</div>
-        <div class="cl-info">
-          <div class="cl-name">${c.nombre}</div>
-          <div class="cl-tel">${c.tel}</div>
-          <div class="cl-last">${c.visitas} visita${c.visitas!==1?'s':''}</div>
-        </div>
-      </div>`).join('');
-  }
-
-  function seleccionar(i) {
-    selIdx = i;
-    const c = filtradas[i];
-    renderLista(filtradas);
-    document.getElementById('empty-profile').style.display = 'none';
-    document.getElementById('view-section').classList.remove('hidden');
-    document.getElementById('edit-section').classList.remove('visible');
-    document.getElementById('pf-avatar').textContent = c.nombre[0];
-    document.getElementById('pf-nombre').textContent = c.nombre;
-    document.getElementById('pf-meta').textContent = `Cliente desde ${c.desde} · ${c.visitas} visitas`;
-    document.getElementById('pf-datos').innerHTML = `
-      <div class="info-box"><div class="ib-label">Teléfono</div><div class="ib-value">${c.tel}</div></div>
-      <div class="info-box"><div class="ib-label">Primera visita</div><div class="ib-value">${c.desde}</div></div>
-      <div class="info-box"><div class="ib-label">Total visitas</div><div class="ib-value">${c.visitas}</div></div>`;
-    document.getElementById('pf-notas').textContent = c.notas || 'Sin notas especiales registradas.';
-    document.getElementById('pf-historial').innerHTML = c.historial.length
-      ? c.historial.map(h=>`<div class="hist-row"><div><div class="hist-service">${h.servicio}</div><div class="hist-date">${h.fecha}</div></div><div class="hist-amount">${h.monto}</div></div>`).join('')
-      : '<div style="color:var(--text-hint);font-size:13px;padding:10px 0">Sin historial registrado aún.</div>';
-  }
-
-  function filtrar(q) {
-    filtradas = clientas.filter(c =>
-      c.nombre.toLowerCase().includes(q.toLowerCase()) || c.tel.includes(q));
-    selIdx = null;
-    renderLista(filtradas);
-    document.getElementById('view-section').classList.add('hidden');
-    document.getElementById('empty-profile').style.display = 'flex';
-  }
-
-  function activarEdicion() {
-    const c = filtradas[selIdx];
-    document.getElementById('edit-sub').textContent = c.nombre;
-    document.getElementById('edit-nombre').value = c.nombre;
-    document.getElementById('edit-tel').value = c.tel;
-    document.getElementById('edit-notas').value = c.notas;
-    document.getElementById('view-section').classList.add('hidden');
-    document.getElementById('edit-section').classList.add('visible');
-  }
-
-  function cancelarEdicion() {
-    document.getElementById('edit-section').classList.remove('visible');
-    document.getElementById('view-section').classList.remove('hidden');
-  }
-
-  function validarTel(input) {
-    const fb = document.getElementById('tel-feedback');
-    const val = input.value.replace(/\D/g,'');
-    input.value = val;
-    if(val.length===10){ fb.textContent='✓ Formato válido'; fb.style.color='#3a8a5c'; }
-    else if(val.length>0){ fb.textContent='Debe contener exactamente 10 dígitos'; fb.style.color='#c0614e'; }
-    else fb.textContent='';
-  }
-
-  function validarTelModal(input) {
-    const fb = document.getElementById('nc-tel-feedback');
-    const val = input.value.replace(/\D/g,'');
-    input.value = val;
-    if(val.length===10){ fb.textContent='✓ Formato válido'; fb.style.color='#3a8a5c'; }
-    else if(val.length>0){ fb.textContent='Debe contener exactamente 10 dígitos'; fb.style.color='#c0614e'; }
-    else fb.textContent='';
-  }
-
-  function guardarEdicion() {
-    const nombre = document.getElementById('edit-nombre').value.trim();
-    const tel = document.getElementById('edit-tel').value.trim();
-    const errEl = document.getElementById('edit-error');
-    if(!nombre||!tel){ errEl.style.display='flex'; errEl.textContent='⚠️ El nombre y teléfono son obligatorios.'; return; }
-    if(tel.length!==10){ errEl.style.display='flex'; errEl.textContent='⚠️ El teléfono debe tener exactamente 10 dígitos.'; return; }
-    errEl.style.display='none';
-    filtradas[selIdx].nombre = nombre;
-    filtradas[selIdx].tel = tel;
-    filtradas[selIdx].notas = document.getElementById('edit-notas').value;
-    cancelarEdicion();
-    seleccionar(selIdx);
-    renderLista(filtradas);
-  }
-
-  function guardarNueva() {
-    const nombre = document.getElementById('nc-nombre').value.trim();
-    const tel = document.getElementById('nc-tel').value.trim();
-    const notas = document.getElementById('nc-notas').value.trim();
-    const errEl = document.getElementById('nc-error');
-    if(!nombre||!tel){ errEl.style.display='flex'; errEl.textContent='⚠️ El nombre y teléfono son obligatorios.'; return; }
-    if(tel.length!==10){ errEl.style.display='flex'; errEl.textContent='⚠️ El teléfono debe tener exactamente 10 dígitos.'; return; }
-    const dup = clientas.find(c=>c.tel===tel);
-    if(dup){ errEl.style.display='flex'; errEl.textContent=`⚠️ Ya existe una clienta con este número: ${dup.nombre}`; return; }
-    errEl.style.display='none';
-    const nueva = { nombre, tel, notas, desde: new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'}), visitas:0, historial:[] };
-    clientas.unshift(nueva);
+// ── CARGAR CLIENTAS DESDE LA API ─────────────────────────────────────────────
+async function cargarClientas() {
+  try {
+    const response = await fetch('http://localhost:8080/api/clientas');
+    clientas = await response.json();
     filtradas = [...clientas];
-    cerrarModal('modal-nueva');
-    document.getElementById('nc-nombre').value=''; document.getElementById('nc-tel').value=''; document.getElementById('nc-notas').value='';
     renderLista(filtradas);
-    seleccionar(0);
+  } catch (error) {
+    console.error('Error al cargar clientas:', error);
   }
+}
 
-  function abrirModal(id){ document.getElementById(id).classList.add('open'); }
-  function cerrarModal(id){ document.getElementById(id).classList.remove('open'); }
-  document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+function renderLista(lista) {
+  const container = document.getElementById('clientas-list');
+  document.getElementById('list-count').textContent = lista.length + ' clientas';
+  container.innerHTML = lista.map((c, i) => `
+    <div class="clienta-row ${selIdx === i ? 'selected' : ''}" onclick="seleccionar(${i})">
+      <div class="avatar">${c.nombre[0]}</div>
+      <div class="cl-info">
+        <div class="cl-name">${c.nombre} ${c.paterno || ''} ${c.materno || ''}</div>
+        <div class="cl-tel">${c.telefono}</div>
+        <div class="cl-last">Desde ${c.fechaPrimeraVisita || '—'}</div>
+      </div>
+    </div>`).join('');
+}
 
+function seleccionar(i) {
+  selIdx = i;
+  const c = filtradas[i];
   renderLista(filtradas);
+  document.getElementById('empty-profile').style.display = 'none';
+  document.getElementById('view-section').classList.remove('hidden');
+  document.getElementById('edit-section').classList.remove('visible');
+  document.getElementById('pf-avatar').textContent = c.nombre[0];
+  document.getElementById('pf-nombre').textContent = `${c.nombre} ${c.paterno || ''} ${c.materno || ''}`.trim();  document.getElementById('pf-meta').textContent = `Cliente desde ${c.fechaPrimeraVisita || '—'}`;
+  document.getElementById('pf-datos').innerHTML = `
+    <div class="info-box"><div class="ib-label">Teléfono</div><div class="ib-value">${c.telefono}</div></div>
+    <div class="info-box"><div class="ib-label">Primera visita</div><div class="ib-value">${c.fechaPrimeraVisita || '—'}</div></div>`;
+  document.getElementById('pf-notas').textContent = c.notasAlergia || 'Sin notas especiales registradas.';
+  document.getElementById('pf-historial').innerHTML = '<div style="color:var(--text-hint);font-size:13px;padding:10px 0">Sin historial registrado aún.</div>';
+}
+
+function filtrar(q) {
+  filtradas = clientas.filter(c =>
+    `${c.nombre} ${c.paterno}`.toLowerCase().includes(q.toLowerCase()) || c.telefono.includes(q));
+  selIdx = null;
+  renderLista(filtradas);
+  document.getElementById('view-section').classList.add('hidden');
+  document.getElementById('empty-profile').style.display = 'flex';
+}
+
+function activarEdicion() {
+  const c = filtradas[selIdx];
+  document.getElementById('edit-sub').textContent = `${c.nombre} ${c.paterno}`;
+  document.getElementById('edit-nombre').value = c.nombre;
+  document.getElementById('edit-tel').value = c.telefono;
+  document.getElementById('edit-notas').value = c.notasAlergia || '';
+  document.getElementById('view-section').classList.add('hidden');
+  document.getElementById('edit-section').classList.add('visible');
+}
+
+function cancelarEdicion() {
+  document.getElementById('edit-section').classList.remove('visible');
+  document.getElementById('view-section').classList.remove('hidden');
+}
+
+function validarTel(input) {
+  const fb = document.getElementById('tel-feedback');
+  const val = input.value.replace(/\D/g, '');
+  input.value = val;
+  if (val.length === 10) { fb.textContent = '✓ Formato válido'; fb.style.color = '#3a8a5c'; }
+  else if (val.length > 0) { fb.textContent = 'Debe contener exactamente 10 dígitos'; fb.style.color = '#c0614e'; }
+  else fb.textContent = '';
+}
+
+function validarTelModal(input) {
+  const fb = document.getElementById('nc-tel-feedback');
+  const val = input.value.replace(/\D/g, '');
+  input.value = val;
+  if (val.length === 10) { fb.textContent = '✓ Formato válido'; fb.style.color = '#3a8a5c'; }
+  else if (val.length > 0) { fb.textContent = 'Debe contener exactamente 10 dígitos'; fb.style.color = '#c0614e'; }
+  else fb.textContent = '';
+}
+
+async function guardarEdicion() {
+  const nombre = document.getElementById('edit-nombre').value.trim();
+  const tel = document.getElementById('edit-tel').value.trim();
+  const notas = document.getElementById('edit-notas').value;
+  const errEl = document.getElementById('edit-error');
+  if (!nombre || !tel) { errEl.style.display = 'flex'; errEl.textContent = '⚠️ El nombre y teléfono son obligatorios.'; return; }
+  if (tel.length !== 10) { errEl.style.display = 'flex'; errEl.textContent = '⚠️ El teléfono debe tener exactamente 10 dígitos.'; return; }
+  errEl.style.display = 'none';
+
+  const c = filtradas[selIdx];
+  try {
+    const response = await fetch(`http://localhost:8080/api/clientas/${c.idClientas}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...c, nombre, telefono: tel, notasAlergia: notas })
+    });
+    if (response.ok) {
+      await cargarClientas();
+      cancelarEdicion();
+    }
+  } catch (error) {
+    console.error('Error al editar clienta:', error);
+  }
+}
+
+async function guardarNueva() {
+  const nombre = document.getElementById('nc-nombre').value.trim();
+  const tel = document.getElementById('nc-tel').value.trim();
+  const notas = document.getElementById('nc-notas').value.trim();
+  const errEl = document.getElementById('nc-error');
+  if (!nombre || !tel) { errEl.style.display = 'flex'; errEl.textContent = '⚠️ El nombre y teléfono son obligatorios.'; return; }
+  if (tel.length !== 10) { errEl.style.display = 'flex'; errEl.textContent = '⚠️ El teléfono debe tener exactamente 10 dígitos.'; return; }
+  const dup = clientas.find(c => c.telefono === tel);
+  if (dup) { errEl.style.display = 'flex'; errEl.textContent = `⚠️ Ya existe una clienta con este número: ${dup.nombre}`; return; }
+  errEl.style.display = 'none';
+
+  try {
+    const response = await fetch('http://localhost:8080/api/clientas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombre,
+        telefono: tel,
+        notasAlergia: notas,
+        fechaPrimeraVisita: new Date().toISOString().split('T')[0]
+      })
+    });
+    if (response.ok) {
+      await cargarClientas();
+      cerrarModal('modal-nueva');
+      document.getElementById('nc-nombre').value = '';
+      document.getElementById('nc-tel').value = '';
+      document.getElementById('nc-notas').value = '';
+      seleccionar(0);
+    }
+  } catch (error) {
+    console.error('Error al guardar clienta:', error);
+  }
+}
+
+function abrirModal(id) { document.getElementById(id).classList.add('open'); }
+function cerrarModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
+
+cargarClientas();
 
   /* ─────────────────────────────────────────────────────────────
      SISTEMA DE EXPIRACIÓN DE SESIÓN POR INACTIVIDAD
