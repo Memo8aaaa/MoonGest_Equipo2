@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moon Beauty Space — Gestionar Citas</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --brown-dark: #2d1f14; --brown-mid: #7a5535; --brown-main: #a07850;
+  --brown-light: #c9a98a; --cream: #f9f5f0; --white: #ffffff;
+  --border: #ede5dc; --text-main: #2d1f14; --text-muted: #9e8878; --text-hint: #b8a898;
+  --badge-red-bg: #fdecea; --badge-red-text: #c0614e;
+  --badge-yellow-bg: #fef3e2; --badge-yellow-text: #b07820;
+  --badge-green-bg: #e8f5ee; --badge-green-text: #3a8a5c;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text-main); min-height: 100vh; }
+.app { display: flex; min-height: 100vh; }
+.sidebar { width: 210px; background: var(--brown-dark); display: flex; flex-direction: column; padding: 24px 0; flex-shrink: 0; position: fixed; height: 100vh; top: 0; left: 0; z-index: 100; }
+.sidebar-logo { padding: 0 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.sidebar-logo h2 { font-family: 'Cormorant Garamond', serif; color: #e8d5c0; font-size: 17px; font-weight: 300; line-height: 1.3; }
+.sidebar-logo p { color: rgba(255,255,255,0.3); font-size: 10px; letter-spacing: 1px; margin-top: 4px; }
+.nav { flex: 1; padding: 16px 0; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 12px 20px; font-size: 13px; color: rgba(255,255,255,0.45); cursor: pointer; text-decoration: none; transition: all 0.15s; }
+.nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
+.nav-item.active { background: rgba(160,120,80,0.25); color: #e8c99a; border-left: 3px solid var(--brown-main); }
+.nav-icon { font-size: 15px; width: 20px; text-align: center; }
+.sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+.sidebar-footer span { font-size: 11px; color: rgba(255,255,255,0.3); }
+.btn-cerrar-sesion { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.4); font-size: 12px; cursor: pointer; margin-top: 8px; background: none; border: none; font-family: 'DM Sans', sans-serif; padding: 0; }
+.btn-cerrar-sesion:hover { color: rgba(255,255,255,0.7); }
+.main { flex: 1; margin-left: 210px; display: flex; flex-direction: column; min-height: 100vh; }
+.topbar { background: var(--white); padding: 18px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
+.topbar h1 { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--text-main); font-weight: 400; }
+.topbar-actions { display: flex; gap: 10px; align-items: center; }
+.btn { padding: 9px 20px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: opacity 0.15s; }
+.btn:hover { opacity: 0.88; }
+.btn-primary { background: var(--brown-main); color: #fff; }
+.btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--brown-mid); }
+.btn-sm { padding: 7px 14px; font-size: 12px; border-radius: 6px; }
+.btn-danger { background: #fdecea; color: #c0614e; border: 1.5px solid #f5c4c0; }
+.btn-ghost { background: none; border: none; color: var(--brown-mid); font-size: 12px; font-family: 'DM Sans', sans-serif; cursor: pointer; padding: 0; text-decoration: underline; }
+.btn-ghost:hover { color: var(--brown-main); }
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 11px; font-weight: 500; color: var(--brown-mid); letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 7px; }
+.field input, .field select, .field textarea { width: 100%; padding: 11px 14px; border: 1.5px solid #e8ddd5; border-radius: 8px; font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--text-main); background: #fdf9f6; outline: none; transition: border-color 0.2s; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--brown-main); background: #fff; }
+.field input::placeholder, .field textarea::placeholder { color: #c5b5a8; }
+.field textarea { resize: vertical; min-height: 70px; line-height: 1.6; }
+.field-row { display: flex; gap: 16px; }
+.field-row .field { flex: 1; }
+.badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+.badge-sin { background: var(--badge-red-bg); color: var(--badge-red-text); }
+.badge-anticipo { background: var(--badge-yellow-bg); color: var(--badge-yellow-text); }
+.badge-pagado { background: var(--badge-green-bg); color: var(--badge-green-text); }
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(45,31,20,0.45); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
+.modal-overlay.open { display: flex; }
+.modal-box { background: var(--white); border-radius: 14px; padding: 28px 32px; width: 100%; max-width: 480px; box-shadow: 0 16px 60px rgba(0,0,0,0.18); animation: fadeUp 0.2s ease; max-height: 92vh; overflow-y: auto; }
+.modal-box.wide { max-width: 600px; }
+@keyframes fadeUp { from { transform: translateY(16px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+.modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--text-main); margin-bottom: 4px; }
+.modal-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+.modal-actions .btn { flex: 1; padding: 12px; }
+.alert { padding: 11px 14px; border-radius: 8px; font-size: 12px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+.alert-warning { background: #fef3e2; border: 1px solid #f5d9a0; color: #7a5010; }
+.alert-error { background: var(--badge-red-bg); border: 1px solid #f5c4c0; color: #8a2010; }
+.alert-success { background: var(--badge-green-bg); border: 1px solid #b0dfc0; color: #1a6040; }
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 12px; margin-bottom: 20px; }
+.info-box { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
+.info-box .ib-label { font-size: 10px; color: var(--text-hint); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.info-box .ib-value { font-size: 14px; color: var(--text-main); font-weight: 500; }
+.content { padding: 0; display: flex; flex: 1; overflow: hidden; height: calc(100vh - 66px); }
+.cal-panel { width: 270px; flex-shrink: 0; background: var(--white); border-right: 1px solid var(--border); padding: 22px 20px; overflow-y: auto; }
+.cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.cal-header span { font-size: 14px; font-weight: 500; color: var(--text-main); }
+.cal-nav { background: none; border: none; color: var(--brown-main); cursor: pointer; font-size: 18px; padding: 0 4px; }
+.cal-nav:hover { opacity: 0.7; }
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+.cal-day-name { text-align: center; font-size: 10px; color: var(--text-hint); font-weight: 500; padding: 5px 0; }
+.cal-day { text-align: center; font-size: 12px; padding: 7px 2px; border-radius: 6px; cursor: pointer; color: var(--text-main); position: relative; transition: background 0.12s; user-select: none; }
+.cal-day:hover:not(.empty) { background: #f5ede5; }
+.cal-day.selected { background: #fdf3e8 !important; color: var(--brown-mid) !important; font-weight: 500; outline: 2px solid var(--brown-light); outline-offset: -1px; }
+.cal-day.today { background: var(--brown-main); color: #fff; font-weight: 500; }
+.cal-day.today.selected { background: var(--brown-mid) !important; color: #fff !important; outline: 2px solid var(--brown-light); }
+.cal-day.has-cita::after { content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 5px; height: 5px; border-radius: 50%; background: var(--brown-light); }
+.cal-day.today.has-cita::after { background: rgba(255,255,255,0.8); }
+.cal-day.selected.has-cita::after { background: var(--brown-main); }
+.cal-day.empty { pointer-events: none; color: transparent; }
+.legend { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
+.legend-title { font-size: 10px; color: var(--text-hint); letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 10px; }
+.legend-item { display: flex; align-items: center; gap: 9px; font-size: 12px; color: #7a6558; margin-bottom: 7px; }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+.citas-panel { flex: 1; padding: 24px 28px; overflow-y: auto; background: var(--cream); }
+.day-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--text-main); margin-bottom: 4px; }
+.day-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+.cita-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 12px; display: flex; align-items: center; gap: 18px; cursor: pointer; transition: box-shadow 0.15s; }
+.cita-card:hover { box-shadow: 0 4px 16px rgba(160,120,80,0.13); }
+.cita-time { text-align: center; flex-shrink: 0; width: 54px; }
+.cita-time .hour { font-size: 18px; font-weight: 500; color: var(--text-main); line-height: 1; }
+.cita-time .period { font-size: 10px; color: var(--text-hint); margin-top: 2px; }
+.cita-div { width: 1px; height: 48px; background: var(--border); flex-shrink: 0; }
+.cita-info { flex: 1; }
+.cita-name { font-size: 14px; font-weight: 500; color: var(--text-main); }
+.cita-service { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+.cita-notas { font-size: 11px; color: #b8a898; margin-top: 4px; font-style: italic; }
+.cita-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.cita-btn { padding: 7px 13px; border-radius: 6px; font-size: 12px; border: 1.5px solid var(--border); background: transparent; color: var(--brown-mid); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.12s; }
+.cita-btn:hover { border-color: var(--brown-main); color: var(--brown-main); }
+.cita-btn.danger:hover { border-color: #c0614e; color: #c0614e; }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text-hint); }
+.empty-state .es-icon { font-size: 40px; margin-bottom: 14px; }
+.empty-state p { font-size: 14px; }
+/* ── SECCIÓN DIVIDER ── */
+.sec-div { font-size: 10px; color: var(--text-hint); letter-spacing: 1.5px; text-transform: uppercase; padding-bottom: 8px; border-bottom: 1px solid var(--border); margin: 4px 0 14px; }
+/* ── MINI CAL DISPONIBILIDAD ── */
+.mini-cal { border: 1.5px solid #e8ddd5; border-radius: 10px; padding: 13px; background: #fdf9f6; margin-bottom: 8px; }
+.mini-cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.mini-cal-header span { font-size: 13px; font-weight: 500; color: var(--text-main); }
+.mini-nav { background: none; border: none; color: var(--brown-main); cursor: pointer; font-size: 15px; padding: 0 3px; }
+.mini-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+.mdn { text-align: center; font-size: 9px; color: var(--text-hint); font-weight: 500; padding: 3px 0; }
+.md { text-align: center; font-size: 11px; padding: 5px 2px; border-radius: 5px; cursor: pointer; color: var(--text-main); transition: background 0.1s; }
+.md:hover:not(.md-empty):not(.md-past) { background: #f5ede5; }
+.md.md-empty, .md.md-past { pointer-events: none; color: #d5cac3; }
+.md.md-busy { background: #fdecea; color: #c0614e; font-weight: 500; }
+.md.md-sel { background: var(--brown-main) !important; color: #fff !important; font-weight: 500; }
+.md.md-today { font-weight: 700; }
+.mini-leyenda { display: flex; gap: 12px; margin-top: 8px; font-size: 10px; color: var(--text-muted); }
+.mini-leyenda span { display: flex; align-items: center; gap: 4px; }
+.mini-dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+/* ── PERFIL CLIENTA ── */
+.clienta-card { background: #fdf9f6; border: 1.5px solid #e8ddd5; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; animation: fadeUp 0.18s ease; display: none; }
+.clienta-card.visible { display: block; }
+.cc-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.cc-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--brown-light); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; color: var(--brown-dark); flex-shrink: 0; }
+.cc-name { font-size: 14px; font-weight: 500; color: var(--text-main); }
+.cc-tel { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.cc-stats { display: flex; gap: 8px; flex-wrap: wrap; }
+.cc-stat { background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font-size: 11px; color: var(--text-muted); }
+.cc-stat strong { display: block; font-size: 13px; color: var(--text-main); font-weight: 500; }
+.cc-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.cc-tag { padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 500; }
+.cc-tag.alergia { background: #fdecea; color: #c0614e; }
+.cc-tag.pref { background: #eef4fd; color: #1a5fa0; }
+.cc-tag.nota { background: #fef3e2; color: #b07820; }
+.cc-divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+/* ── VISTA SEMANAL ── */
+.semana-panel { flex: 1; display: none; flex-direction: column; overflow: hidden; background: var(--cream); }
+.semana-panel.active { display: flex; }
+.semana-header { background: var(--white); border-bottom: 1px solid var(--border); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.semana-nav { display: flex; align-items: center; gap: 10px; }
+.semana-nav button { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--brown-main); cursor: pointer; font-size: 15px; padding: 4px 10px; line-height: 1; }
+.semana-nav button:hover { background: #f5ede5; }
+.semana-label { font-size: 13px; font-weight: 500; color: var(--text-main); min-width: 200px; text-align: center; }
+.semana-grid { flex: 1; display: grid; grid-template-columns: 54px repeat(7, 1fr); overflow-y: auto; }
+.sg-time-col { grid-column: 1; }
+.sg-col { border-left: 1px solid var(--border); }
+.sg-col-header { padding: 10px 6px; text-align: center; background: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 5; }
+.sg-col-header .sg-dia { font-size: 11px; color: var(--text-hint); text-transform: uppercase; letter-spacing: 0.8px; }
+.sg-col-header .sg-num { font-size: 20px; font-weight: 400; color: var(--text-main); line-height: 1.2; margin-top: 2px; }
+.sg-col-header.sg-hoy .sg-num { background: var(--brown-main); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 2px auto 0; font-size: 16px; }
+.sg-time-header { padding: 10px 6px; background: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 5; }
+.sg-slot { height: 52px; border-bottom: 1px solid #f5ede5; position: relative; padding: 2px 3px; }
+.sg-slot:nth-child(odd) { background: rgba(249,245,240,0.5); }
+.sg-time-slot { height: 52px; border-bottom: 1px solid #f5ede5; display: flex; align-items: flex-start; justify-content: flex-end; padding: 4px 6px 0 0; }
+.sg-time-slot span { font-size: 9px; color: var(--text-hint); white-space: nowrap; }
+.sg-cita-block {
+  position: absolute; left: 2px; right: 2px; top: 2px;
+  border-radius: 5px; padding: 3px 6px; cursor: pointer;
+  font-size: 10px; line-height: 1.3; overflow: hidden;
+  border-left: 3px solid; transition: opacity 0.15s;
+  min-height: 22px;
+}
+.sg-cita-block:hover { opacity: 0.82; }
+.sg-cita-block.pagado { background: #e8f5ee; border-color: #3a8a5c; color: #1a5c38; }
+.sg-cita-block.anticipo { background: #fef3e2; border-color: #b07820; color: #7a5010; }
+.sg-cita-block.sin { background: #fdecea; border-color: #c0614e; color: #8a2010; }
+.sg-cita-name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sg-cita-svc { opacity: 0.75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 9px; }
+.sg-empty-slot { position: absolute; inset: 2px; border-radius: 4px; cursor: pointer; transition: background 0.12s; }
+.sg-empty-slot:hover { background: rgba(160,120,80,0.07); }
+/* Toggle vista */
+.vista-toggle { display: flex; gap: 4px; background: var(--cream); border-radius: 7px; padding: 3px; border: 1px solid var(--border); }
+.vista-btn { padding: 5px 12px; border-radius: 5px; font-size: 12px; font-weight: 500; cursor: pointer; border: none; background: transparent; color: var(--text-muted); font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.vista-btn.active { background: var(--white); color: var(--brown-mid); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+/* TOAST */
+.toast { position: fixed; bottom: 28px; right: 28px; z-index: 999; background: var(--brown-dark); color: #e8d5c0; padding: 14px 20px; border-radius: 10px; font-size: 13px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); transform: translateY(80px); opacity: 0; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); pointer-events: none; }
+.toast.show { transform: translateY(0); opacity: 1; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><h2>Moon<br>Beauty<br>Space</h2><p>SISTEMA DE GESTIÓN</p></div>
+    <nav class="nav">
+      <a class="nav-item" href="citas.html"><span class="nav-icon">📅</span> Gestionar Citas</a>
+      <a class="nav-item" href="clientas.html"><span class="nav-icon">👤</span> Clientas</a>
+      <a class="nav-item" href="pagos.html"><span class="nav-icon">💳</span> Pagos</a>
+      <a class="nav-item" href="reportes.html"><span class="nav-icon">📊</span> Reportes</a>
+      <a class="nav-item" href="notificaciones.html"><span class="nav-icon">🔔</span> Notificaciones</a>
+      <a class="nav-item" href="catalago.html"><span class="nav-icon">✂️</span> Catálogo</a>
+    </nav>
+    <div class="sidebar-footer">
+      <span>Encargada · v2.0</span>
+      <button class="btn-cerrar-sesion" onclick="window.location.href='index.html'">↩ Cerrar sesión</button>
+    </div>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <h1>Gestionar Citas</h1>
+      <div class="topbar-actions">
+        <div class="vista-toggle">
+          <button class="vista-btn active" id="btn-vista-dia" onclick="setVista('dia')">📅 Día</button>
+          <button class="vista-btn" id="btn-vista-semana" onclick="setVista('semana')">📆 Semana</button>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="abrirModalAgendar()">+ Agendar Cita</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="cal-panel">
+        <div class="cal-header">
+          <button class="cal-nav" onclick="cambiarMes(-1)">‹</button>
+          <span id="cal-mes">Marzo 2026</span>
+          <button class="cal-nav" onclick="cambiarMes(1)">›</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="legend">
+          <div class="legend-title">Estado de pago</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#fdecea;border:1.5px solid #e8a898"></div> Sin anticipo</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#fef3e2;border:1.5px solid #e8c87c"></div> Anticipo registrado</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#e8f5ee;border:1.5px solid #7ecba0"></div> Pagado completamente</div>
+        </div>
+      </div>
+      <div class="citas-panel">
+        <div class="day-title" id="day-title">Domingo 15 de marzo</div>
+        <div class="day-sub" id="day-sub"></div>
+        <div id="citas-list"></div>
+      </div>
+
+      <!-- ── VISTA SEMANAL ── -->
+      <div class="semana-panel" id="semana-panel">
+        <div class="semana-header">
+          <div class="semana-nav">
+            <button onclick="navSemana(-1)">‹</button>
+            <span class="semana-label" id="semana-label"></span>
+            <button onclick="navSemana(1)">›</button>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="irHoySemana()">Hoy</button>
+        </div>
+        <div class="semana-grid" id="semana-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL AGENDAR CITA ═══ -->
+<div class="modal-overlay" id="modal-agendar">
+  <div class="modal-box wide">
+    <div class="modal-title">Agendar Cita</div>
+    <div class="modal-sub">Completa los datos para registrar la nueva cita</div>
+
+    <!-- PASO 1: Clienta -->
+    <div class="sec-div">1 · Clienta</div>
+    <div class="field" style="margin-bottom:8px">
+      <label>Buscar clienta existente</label>
+      <input type="text" id="buscar-clienta" placeholder="Nombre o teléfono..." oninput="filtrarClientas(this.value)" autocomplete="off">
+      <div id="clientas-dropdown" style="display:none;background:#fff;border:1.5px solid #e8ddd5;border-radius:8px;margin-top:4px;overflow:hidden;max-height:160px;overflow-y:auto;"></div>
+    </div>
+    <div style="margin-bottom:14px;text-align:right">
+      <button class="btn-ghost" onclick="abrirNuevaClienta()">+ Registrar nueva clienta</button>
+    </div>
+
+    <!-- Tarjeta de perfil de clienta (aparece al seleccionar) -->
+    <div class="clienta-card" id="clienta-card">
+      <div class="cc-header">
+        <div class="cc-avatar" id="cc-avatar">?</div>
+        <div>
+          <div class="cc-name" id="cc-name">—</div>
+          <div class="cc-tel" id="cc-tel">—</div>
+        </div>
+      </div>
+      <div class="cc-stats" id="cc-stats"></div>
+      <hr class="cc-divider">
+      <div style="font-size:10px;color:var(--text-hint);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;">Alertas y notas del perfil</div>
+      <div class="cc-tags" id="cc-tags"></div>
+    </div>
+
+    <!-- PASO 2: Servicio -->
+    <div class="sec-div">2 · Servicio</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Servicio</label>
+        <select id="sel-servicio" onchange="actualizarDuracion()">
+          <option value="">Seleccionar servicio...</option>
+          <option value="Extensión clásica|75">Extensión clásica (75 min)</option>
+          <option value="Volumen ruso|90">Volumen ruso (90 min)</option>
+          <option value="Retoque de pestañas|45">Retoque (45 min)</option>
+          <option value="Diseño de cejas|30">Diseño de cejas (30 min)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Duración</label>
+        <input type="text" id="duracion-display" placeholder="Automático" readonly style="background:#f0ebe5;color:#9e8878">
+      </div>
+    </div>
+
+    <!-- PASO 3: Fecha y hora -->
+    <div class="sec-div">3 · Fecha y hora</div>
+    <div class="field-row" style="align-items:flex-start">
+      <div style="flex:1.5">
+        <label style="display:block;font-size:11px;font-weight:500;color:var(--brown-mid);letter-spacing:1.4px;text-transform:uppercase;margin-bottom:7px;">Calendario de disponibilidad</label>
+        <div class="mini-cal">
+          <div class="mini-cal-header">
+            <button class="mini-nav" onclick="cambiarMiniMes(-1)">‹</button>
+            <span id="mini-mes">Mar 2026</span>
+            <button class="mini-nav" onclick="cambiarMiniMes(1)">›</button>
+          </div>
+          <div class="mini-grid" id="mini-grid"></div>
+          <div class="mini-leyenda">
+            <span><span class="mini-dot" style="background:#fdecea;border:1px solid #e8a898"></span>Con citas</span>
+            <span><span class="mini-dot" style="background:var(--brown-main)"></span>Seleccionado</span>
+            <span><span class="mini-dot" style="background:#ece8e4;border:1px solid #ccc"></span>Pasado</span>
+          </div>
+        </div>
+        <input type="date" id="fecha-cita" style="display:none">
+        <div id="fecha-display" style="font-size:12px;color:var(--text-muted);margin-top:4px;">Sin fecha seleccionada</div>
+      </div>
+      <div style="flex:1">
+        <div class="field">
+          <label>Hora</label>
+          <select id="hora-cita">
+            <option value="9:00 AM">9:00 AM</option><option value="9:30 AM">9:30 AM</option>
+            <option value="10:00 AM">10:00 AM</option><option value="10:30 AM">10:30 AM</option>
+            <option value="11:00 AM">11:00 AM</option><option value="11:30 AM">11:30 AM</option>
+            <option value="12:00 PM">12:00 PM</option><option value="12:30 PM">12:30 PM</option>
+            <option value="1:00 PM">1:00 PM</option><option value="2:00 PM">2:00 PM</option>
+            <option value="3:00 PM">3:00 PM</option><option value="4:00 PM">4:00 PM</option>
+            <option value="5:00 PM">5:00 PM</option><option value="6:00 PM">6:00 PM</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>Estado de pago</label>
+          <select id="estado-cita">
+            <option value="sin">Sin anticipo</option>
+            <option value="anticipo">Anticipo registrado</option>
+            <option value="pagado">Pagado completamente</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- PASO 4: Notas -->
+    <div class="sec-div" style="margin-top:14px">4 · Notas de la cita</div>
+    <div class="field">
+      <textarea id="notas-cita" placeholder="Indicaciones o peticiones especiales para esta cita..."></textarea>
+    </div>
+
+    <div id="modal-agendar-error" class="alert alert-error" style="display:none"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="pedirCancelarAgendamiento()">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarCita()">Confirmar Cita</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL NUEVA CLIENTA ═══ -->
+<div class="modal-overlay" id="modal-nueva-clienta">
+  <div class="modal-box">
+    <div class="modal-title">Nueva Clienta</div>
+    <div class="modal-sub">Registra los datos de la nueva clienta en el sistema</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Nombre completo *</label>
+        <input type="text" id="nc-nombre" placeholder="Ej. Laura Sánchez">
+      </div>
+      <div class="field">
+        <label>Teléfono *</label>
+        <input type="text" id="nc-tel" placeholder="555-000-0000">
+      </div>
+    </div>
+    <div class="field">
+      <label>Correo electrónico</label>
+      <input type="email" id="nc-email" placeholder="correo@ejemplo.com">
+    </div>
+    <div class="field">
+      <label>Alergias conocidas</label>
+      <input type="text" id="nc-alergias" placeholder="Ej. adhesivo latex, ninguna... (separar con comas)">
+    </div>
+    <div class="field">
+      <label>Preferencias / Estilo</label>
+      <input type="text" id="nc-pref" placeholder="Ej. extensiones naturales, efecto cat-eye...">
+    </div>
+    <div class="field">
+      <label>Notas del perfil</label>
+      <textarea id="nc-notas" placeholder="Información relevante: sensibilidades, horarios preferidos..."></textarea>
+    </div>
+    <div id="nc-error" class="alert alert-error" style="display:none"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="volverAgendar()">← Regresar</button>
+      <button class="btn btn-primary" onclick="guardarNuevaClienta()">Guardar y seleccionar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL CONFIRMAR CANCELAR AGENDAMIENTO ═══ -->
+<div class="modal-overlay" id="modal-confirmar-cancelar">
+  <div class="modal-box" style="max-width:380px;text-align:center">
+    <div style="font-size:36px;margin-bottom:12px">🗑️</div>
+    <div class="modal-title" style="text-align:center">¿Cancelar el agendamiento?</div>
+    <div class="modal-sub" style="text-align:center;margin-bottom:20px">Los datos ingresados no se guardarán y tendrás que comenzar de nuevo.</div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="cerrarModal('modal-confirmar-cancelar')">Seguir editando</button>
+      <button class="btn btn-danger" onclick="confirmarCancelarAgendamiento()">Sí, cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL DETALLE ═══ -->
+<div class="modal-overlay" id="modal-detalle">
+  <div class="modal-box">
+    <div class="modal-title" id="det-nombre"></div>
+    <div class="modal-sub" id="det-service"></div>
+    <div class="info-grid" id="det-info"></div>
+    <div id="det-notas"></div>
+    <div id="det-perfil" style="margin-bottom:4px"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-danger btn-sm" id="btn-cancelar-cita">Cancelar Cita</button>
+      <button class="btn btn-outline btn-sm" onclick="cerrarModal('modal-detalle')">Reprogramar</button>
+      <button class="btn btn-primary btn-sm" onclick="cerrarModal('modal-detalle')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const BASE_URL = 'http://localhost:8080';
+
+let clientasData = [];
+let serviciosData = [];
+let todasLasCitas = {};
+
+// ── ESTADO ──────────────────────────────────────────────────────────────────
+let curY = new Date().getFullYear(), curM = new Date().getMonth();
+let selDate = new Date().toLocaleDateString('en-CA');
+let miniY = curY, miniM = curM, miniFecha = '';
+const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MESES_C = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const DIAS_ES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+// ── CARGA INICIAL ─────────────────────────────────────────────────────────────
+async function cargarDatos() {
+  try {
+    const [cRes, sRes, citasRes] = await Promise.all([
+      fetch(`${BASE_URL}/api/clientas`),
+      fetch(`${BASE_URL}/api/catalogo`),
+      fetch(`${BASE_URL}/api/citas`)
+    ]);
+    clientasData = await cRes.json();
+    serviciosData = await sRes.json();
+    const citas = await citasRes.json();
+
+    todasLasCitas = {};
+    await Promise.all(citas.map(async cita => {
+      const fecha = cita.fechaCita;
+      if (!todasLasCitas[fecha]) todasLasCitas[fecha] = [];
+      const clienta = clientasData.find(c => c.idClientas === cita.idclientas);
+      const servicio = serviciosData.find(s => s.idservicio === cita.idservicio);
+      const [hora, period] = convertirHora(cita.horaCita);
+
+      let estado = 'sin';
+      try {
+        const pagosRes = await fetch(`${BASE_URL}/api/pagos/cita/${cita.idcita}`);
+        const pagos = await pagosRes.json();
+        const anticipo = pagos.find(p => p.tipoPago === 'Adelanto');
+        const pagoFinal = pagos.find(p => p.tipoPago === 'Pago completo');
+        estado = pagoFinal ? 'pagado' : anticipo ? 'anticipo' : 'sin';
+      } catch(e) {}
+
+      todasLasCitas[fecha].push({
+        id: cita.idcita,
+        hora, period,
+        nombre: clienta ? `${clienta.nombre} ${clienta.paterno || ''}`.trim() : 'Desconocida',
+        servicio: servicio ? servicio.nombreServicio : 'Servicio desconocido',
+        estado,
+        notas: cita.notas || '',
+        _raw: cita
+      });
+    }));
+
+    poblarSelectServicios();
+    buildCalendar();
+    renderCitas(selDate);
+  } catch (err) {
+    console.error('Error al cargar datos:', err);
+  }
+  const d = new Date(selDate + 'T12:00:00');
+  document.getElementById('day-title').textContent = `${DIAS_ES[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()].toLowerCase()}`;
+  renderCitas(selDate);
+}
+
+function convertirHora(horaStr) {
+  if (!horaStr) return ['00:00', 'AM'];
+  const partes = horaStr.split(':');
+  let h = parseInt(partes[0]);
+  const m = partes[1] || '00';
+  const period = h >= 12 ? 'PM' : 'AM';
+  if (h > 12) h -= 12;
+  if (h === 0) h = 12;
+  return [`${h}:${m}`, period];
+}
+
+function convertirA24h(horaAmPm) {
+  const [time, period] = horaAmPm.split(' ');
+  let [h, m] = time.split(':').map(Number);
+  if (period === 'PM' && h !== 12) h += 12;
+  if (period === 'AM' && h === 12) h = 0;
+  return `${String(h).padStart(2,'0')}:${String(m||0).padStart(2,'0')}`;
+}
+
+function poblarSelectServicios() {
+  const sel = document.getElementById('sel-servicio');
+  sel.innerHTML = '<option value="">Seleccionar servicio...</option>';
+  serviciosData.filter(s => s.activo).forEach(s => {
+    sel.innerHTML += `<option value="${s.nombreServicio}|${s.duracionEstimada}">${s.nombreServicio}</option>`;
+  });
+}
+
+// ── CALENDARIO PRINCIPAL ─────────────────────────────────────────────────────
+function buildCalendar() {
+  const g = document.getElementById('cal-grid');
+  document.getElementById('cal-mes').textContent = MESES[curM] + ' ' + curY;
+  g.innerHTML = ['L','M','M','J','V','S','D'].map(d => `<div class="cal-day-name">${d}</div>`).join('');
+  const off = (new Date(curY, curM, 1).getDay() + 6) % 7;
+  for (let i = 0; i < off; i++) g.innerHTML += `<div class="cal-day empty"></div>`;
+  const days = new Date(curY, curM + 1, 0).getDate(), today = new Date();
+  for (let d = 1; d <= days; d++) {
+    const ds = `${curY}-${String(curM+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const hc = !!(todasLasCitas[ds]?.length);
+    const isT = today.getFullYear()===curY && today.getMonth()===curM && today.getDate()===d;
+    const isS = ds === selDate;
+    g.innerHTML += `<div class="cal-day${isT?' today':''}${isS?' selected':''}${hc?' has-cita':''}" onclick="selectDay('${ds}',${d})">${d}</div>`;
+  }
+}
+
+function selectDay(ds, dn) {
+  selDate = ds; buildCalendar(); renderCitas(ds);
+  const d = new Date(ds + 'T12:00:00');
+  document.getElementById('day-title').textContent = `${DIAS_ES[d.getDay()]} ${dn} de ${MESES[d.getMonth()].toLowerCase()}`;
+}
+
+function cambiarMes(dir) {
+  curM += dir;
+  if (curM > 11) { curM = 0; curY++; }
+  if (curM < 0) { curM = 11; curY--; }
+  buildCalendar();
+  document.getElementById('day-title').textContent = MESES[curM] + ' ' + curY;
+  document.getElementById('day-sub').textContent = 'Selecciona un día para ver las citas';
+  document.getElementById('citas-list').innerHTML = `<div class="empty-state"><div class="es-icon">📅</div><p>Haz clic en un día del calendario.</p></div>`;
+}
+
+// ── MINI CALENDARIO ──────────────────────────────────────────────────────────
+function buildMiniCal() {
+  document.getElementById('mini-mes').textContent = MESES_C[miniM] + ' ' + miniY;
+  const g = document.getElementById('mini-grid');
+  g.innerHTML = ['L','M','M','J','V','S','D'].map(d => `<div class="mdn">${d}</div>`).join('');
+  const off = (new Date(miniY, miniM, 1).getDay() + 6) % 7;
+  for (let i = 0; i < off; i++) g.innerHTML += `<div class="md md-empty"></div>`;
+  const days = new Date(miniY, miniM + 1, 0).getDate();
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let d = 1; d <= days; d++) {
+    const ds = `${miniY}-${String(miniM+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dObj = new Date(ds + 'T12:00:00');
+    const isPast = dObj < today, isT = dObj.getTime() === today.getTime();
+    const hc = !!(todasLasCitas[ds]?.length), isSel = ds === miniFecha;
+    let cls = 'md' + (isPast?' md-past':(hc?' md-busy':'')) + (isT?' md-today':'') + (isSel?' md-sel':'');
+    const oc = !isPast ? `onclick="selMiniDia('${ds}')"` : '';
+    g.innerHTML += `<div class="${cls}" ${oc}>${d}</div>`;
+  }
+}
+
+function selMiniDia(ds) {
+  miniFecha = ds;
+  document.getElementById('fecha-cita').value = ds;
+  const d = new Date(ds + 'T12:00:00');
+  document.getElementById('fecha-display').textContent = `Seleccionado: ${DIAS_ES[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()].toLowerCase()} ${d.getFullYear()}`;
+  buildMiniCal();
+  const citas = todasLasCitas[ds];
+  const err = document.getElementById('modal-agendar-error');
+  if (citas?.length) { err.style.display='flex'; err.className='alert alert-warning'; err.textContent=`ℹ️ Este día ya tiene ${citas.length} cita(s). Verifica el horario.`; }
+  else err.style.display = 'none';
+}
+
+function cambiarMiniMes(dir) {
+  miniM += dir;
+  if (miniM > 11) { miniM = 0; miniY++; }
+  if (miniM < 0) { miniM = 11; miniY--; }
+  buildMiniCal();
+}
+
+// ── RENDER CITAS ─────────────────────────────────────────────────────────────
+function renderCitas(ds) {
+  const citas = todasLasCitas[ds] || [];
+  const list = document.getElementById('citas-list');
+  document.getElementById('day-sub').textContent = citas.length ? `${citas.length} cita${citas.length!==1?'s':''} agendada${citas.length!==1?'s':''}` : 'Sin citas registradas';
+  if (!citas.length) {
+    list.innerHTML = `<div class="empty-state"><div class="es-icon">📭</div><p>No hay citas para este día.</p><br><button class="btn btn-primary btn-sm" onclick="abrirModalAgendar()">+ Agendar primera cita</button></div>`;
+    return;
+  }
+  list.innerHTML = citas.map((c,i) => `
+    <div class="cita-card" onclick="verDetalle('${ds}',${i})">
+      <div class="cita-time"><div class="hour">${c.hora}</div><div class="period">${c.period}</div></div>
+      <div class="cita-div"></div>
+      <div class="cita-info">
+        <div class="cita-name">${c.nombre}</div>
+        <div class="cita-service">${c.servicio}</div>
+        ${c.notas ? `<div class="cita-notas">⚠️ ${c.notas}</div>` : ''}
+      </div>
+      <span class="badge badge-${c.estado}">${c.estado==='pagado'?'Pagado ✓':c.estado==='anticipo'?'Anticipo':'Sin anticipo'}</span>
+      <div class="cita-actions">
+        <button class="cita-btn" onclick="event.stopPropagation()">Reprogramar</button>
+        <button class="cita-btn danger" onclick="event.stopPropagation();cancelarCita('${ds}',${i})">Cancelar</button>
+      </div>
+    </div>`).join('');
+}
+
+// ── DETALLE CITA ─────────────────────────────────────────────────────────────
+function verDetalle(ds, i) {
+  const c = (todasLasCitas[ds] || [])[i]; if (!c) return;
+  const d = new Date(ds + 'T12:00:00');
+  document.getElementById('det-nombre').textContent = c.nombre;
+  document.getElementById('det-service').textContent = `${c.servicio} · ${d.getDate()} ${MESES[d.getMonth()].toLowerCase()} ${d.getFullYear()}`;
+  document.getElementById('det-info').innerHTML = `
+    <div class="info-box"><div class="ib-label">Hora</div><div class="ib-value">${c.hora} ${c.period}</div></div>
+    <div class="info-box"><div class="ib-label">Notas</div><div class="ib-value">${c.notas || '—'}</div></div>`;
+  document.getElementById('det-notas').innerHTML = c.notas ? `<div class="alert alert-warning" style="margin-bottom:14px">⚠️ ${c.notas}</div>` : '';
+  document.getElementById('det-perfil').innerHTML = '';
+  document.getElementById('btn-cancelar-cita').onclick = () => { cancelarCita(ds, i); cerrarModal('modal-detalle'); };
+  abrirModal('modal-detalle');
+}
+
+async function cancelarCita(ds, i) {
+  const citas = todasLasCitas[ds]; if (!citas) return;
+  const c = citas[i]; if (!c) return;
+  try {
+    await fetch(`${BASE_URL}/api/citas/${c.id}`, { method: 'DELETE' });
+    await cargarDatos();
+    renderCitas(ds);
+    showToast(`✓ Cita de ${c.nombre} cancelada`);
+  } catch (err) {
+    console.error('Error al cancelar cita:', err);
+  }
+}
+
+// ── BUSCAR CLIENTA ───────────────────────────────────────────────────────────
+function filtrarClientas(q) {
+  const dd = document.getElementById('clientas-dropdown');
+  if (!q.trim()) { dd.style.display='none'; ocultarPerfil(); return; }
+  const res = clientasData.filter(c =>
+    `${c.nombre} ${c.paterno||''}`.toLowerCase().includes(q.toLowerCase()) || c.telefono?.includes(q)
+  );
+  dd.style.display = 'block';
+  if (!res.length) {
+    dd.innerHTML = `
+      <div style="padding:12px 14px;font-size:13px;color:var(--text-muted);border-bottom:1px solid #f5ede5">No se encontró ninguna clienta.</div>
+      <div onclick="abrirNuevaClienta()" style="padding:10px 14px;cursor:pointer;font-size:13px;color:var(--brown-mid);font-weight:500" onmouseover="this.style.background='#fdf9f6'" onmouseout="this.style.background=''">+ Registrar nueva clienta</div>`;
+    return;
+  }
+  dd.innerHTML = res.map(c => {
+    const nombre = `${c.nombre} ${c.paterno||''}`.trim();
+    return `<div onclick="selClienta(${c.idClientas},'${nombre}')" style="padding:10px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid #f5ede5;display:flex;align-items:center;justify-content:space-between" onmouseover="this.style.background='#fdf9f6'" onmouseout="this.style.background=''">${nombre} <span style="color:#b8a898;font-size:11px">· ${c.telefono||''}</span>${c.notasAlergia?`<span style="background:#fdecea;color:#c0614e;font-size:10px;padding:2px 7px;border-radius:10px;margin-left:auto">⚠ alergia</span>`:''}</div>`;
+  }).join('');
+}
+
+function selClienta(id, nombre) {
+  document.getElementById('buscar-clienta').value = nombre;
+  document.getElementById('clientas-dropdown').style.display = 'none';
+  mostrarPerfil(id);
+}
+
+function mostrarPerfil(id) {
+  const p = clientasData.find(c => c.idClientas === id);
+  const card = document.getElementById('clienta-card');
+  if (!p) { card.classList.remove('visible'); return; }
+  const nombre = `${p.nombre} ${p.paterno||''}`.trim();
+  document.getElementById('cc-avatar').textContent = nombre.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('cc-name').textContent = nombre;
+  document.getElementById('cc-tel').textContent = p.telefono || '—';
+  document.getElementById('cc-stats').innerHTML = `<div class="cc-stat"><strong>${p.fechaPrimeraVisita||'—'}</strong>Primera visita</div>`;
+  const tags = [
+    ...(p.notasAlergia ? [`<span class="cc-tag alergia">⚠ ${p.notasAlergia}</span>`] : []),
+    ...(p.notasPreferencias ? [`<span class="cc-tag pref">✦ ${p.notasPreferencias}</span>`] : []),
+  ].join('');
+  document.getElementById('cc-tags').innerHTML = tags || '<span style="font-size:11px;color:var(--text-hint)">Sin notas en el perfil</span>';
+  card.classList.add('visible');
+}
+
+function ocultarPerfil() { document.getElementById('clienta-card').classList.remove('visible'); }
+
+// ── NUEVA CLIENTA ────────────────────────────────────────────────────────────
+function abrirNuevaClienta() {
+  cerrarModal('modal-agendar');
+  ['nc-nombre','nc-tel','nc-email','nc-alergias','nc-pref','nc-notas'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('nc-error').style.display = 'none';
+  abrirModal('modal-nueva-clienta');
+}
+function volverAgendar() { cerrarModal('modal-nueva-clienta'); abrirModal('modal-agendar'); }
+
+async function guardarNuevaClienta() {
+  const nombre = document.getElementById('nc-nombre').value.trim();
+  const tel = document.getElementById('nc-tel').value.trim();
+  const alerg = document.getElementById('nc-alergias').value.trim();
+  const pref = document.getElementById('nc-pref').value.trim();
+  const errEl = document.getElementById('nc-error');
+  if (!nombre || !tel) { errEl.style.display='flex'; errEl.textContent='⚠️ Nombre y teléfono son obligatorios.'; return; }
+  try {
+    const res = await fetch(`${BASE_URL}/api/clientas`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombre, telefono: tel,
+        notasAlergia: alerg,
+        notasPreferencias: pref,
+        fechaPrimeraVisita: new Date().toISOString().split('T')[0]
+      })
+    });
+    if (res.ok) {
+      const nueva = await res.json();
+      clientasData.push(nueva);
+      cerrarModal('modal-nueva-clienta'); abrirModal('modal-agendar');
+      const nombreCompleto = `${nueva.nombre} ${nueva.paterno||''}`.trim();
+      document.getElementById('buscar-clienta').value = nombreCompleto;
+      mostrarPerfil(nueva.idClientas);
+      showToast(`✓ Clienta "${nombreCompleto}" registrada`);
+    }
+  } catch (err) { console.error('Error al guardar clienta:', err); }
+}
+
+// ── CONFIRMAR CITA ───────────────────────────────────────────────────────────
+const HORA_APERTURA = 9, HORA_CIERRE = 18;
+
+function horaAMinutos(horaStr) {
+  const [time, period] = horaStr.split(' ');
+  let [h, m] = time.split(':').map(Number);
+  if (period === 'PM' && h !== 12) h += 12;
+  if (period === 'AM' && h === 12) h = 0;
+  return h * 60 + (m || 0);
+}
+
+function marcarError(id) { const el=document.getElementById(id); if(el){el.style.borderColor='#c0614e';el.style.background='#fff8f7';} }
+function quitarError(id) { const el=document.getElementById(id); if(el){el.style.borderColor='';el.style.background='';} }
+
+async function confirmarCita() {
+  const clientaNombre = document.getElementById('buscar-clienta').value.trim();
+  const servicio = document.getElementById('sel-servicio').value;
+  const fecha = document.getElementById('fecha-cita').value;
+  const hora = document.getElementById('hora-cita').value;
+  const notas = document.getElementById('notas-cita').value.trim();
+  const errEl = document.getElementById('modal-agendar-error');
+
+  ['buscar-clienta','sel-servicio','hora-cita'].forEach(quitarError);
+
+  const faltantes = [];
+  if (!clientaNombre) { faltantes.push('Clienta'); marcarError('buscar-clienta'); }
+  if (!servicio) { faltantes.push('Servicio'); marcarError('sel-servicio'); }
+  if (!fecha) { faltantes.push('Fecha'); document.getElementById('mini-grid').style.outline='2px solid #c0614e'; }
+  if (faltantes.length) { errEl.style.display='flex'; errEl.className='alert alert-error'; errEl.textContent=`⚠️ Completa: ${faltantes.join(', ')}.`; return; }
+
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  if (new Date(fecha+'T12:00:00') < hoy) { errEl.style.display='flex'; errEl.className='alert alert-error'; errEl.textContent='⚠️ No se pueden agendar citas en fechas pasadas.'; return; }
+
+  const minutos = horaAMinutos(hora);
+  if (minutos < HORA_APERTURA*60 || minutos >= HORA_CIERRE*60) { errEl.style.display='flex'; errEl.className='alert alert-error'; errEl.textContent='⚠️ Horario fuera del rango de operación (9 AM – 6 PM).'; marcarError('hora-cita'); return; }
+
+  const conflicto = (todasLasCitas[fecha]||[]).find(c => `${c.hora} ${c.period}` === hora);
+  if (conflicto) { errEl.style.display='flex'; errEl.className='alert alert-error'; errEl.textContent=`⚠️ Ya existe una cita a las ${hora} con ${conflicto.nombre}.`; marcarError('hora-cita'); return; }
+
+  // Buscar IDs
+  const clientaObj = clientasData.find(c => `${c.nombre} ${c.paterno||''}`.trim() === clientaNombre);
+  const [svcNombre] = servicio.split('|');
+  const servicioObj = serviciosData.find(s => s.nombreServicio === svcNombre);
+
+  if (!clientaObj) { errEl.style.display='flex'; errEl.className='alert alert-error'; errEl.textContent='⚠️ Selecciona una clienta válida de la lista.'; return; }
+
+  const hora24 = convertirA24h(hora);
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/citas`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        idusuarios: 1,
+        idclientas: clientaObj.idClientas,
+        idservicio: servicioObj?.idservicio || null,
+        fechaCita: fecha,
+        horaCita: hora24 + ':00',
+        estadoCita: true,
+        notas
+      })
+    });
+    if (res.ok) {
+      await cargarDatos();
+      cerrarModal('modal-agendar');
+      limpiarForm();
+      showToast(`✓ Cita de ${clientaNombre} agendada`);
+    }
+  } catch (err) { console.error('Error al crear cita:', err); }
+}
+
+// ── CANCELAR AGENDAMIENTO ────────────────────────────────────────────────────
+function pedirCancelarAgendamiento() {
+  const clienta = document.getElementById('buscar-clienta').value.trim();
+  const servicio = document.getElementById('sel-servicio').value;
+  const fecha = document.getElementById('fecha-cita').value;
+  if (clienta || servicio || fecha) abrirModal('modal-confirmar-cancelar');
+  else cerrarModal('modal-agendar');
+}
+function confirmarCancelarAgendamiento() { cerrarModal('modal-confirmar-cancelar'); cerrarModal('modal-agendar'); limpiarForm(); }
+function limpiarForm() {
+  ['buscar-clienta','notas-cita'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('sel-servicio').value='';
+  document.getElementById('duracion-display').value='';
+  document.getElementById('fecha-cita').value='';
+  document.getElementById('fecha-display').textContent='Sin fecha seleccionada';
+  document.getElementById('hora-cita').selectedIndex=0;
+  document.getElementById('estado-cita').selectedIndex=0;
+  document.getElementById('modal-agendar-error').style.display='none';
+  ['buscar-clienta','sel-servicio','hora-cita'].forEach(quitarError);
+  miniFecha=''; ocultarPerfil(); buildMiniCal();
+}
+
+// ── VISTA SEMANAL ─────────────────────────────────────────────────────────────
+let semanaBase = getLunesDeSemana(new Date());
+let vistaActual = 'dia';
+const HORAS_DIA = [];
+for (let h = 8; h <= 20; h++) { HORAS_DIA.push(`${h}:00`); if(h<20) HORAS_DIA.push(`${h}:30`); }
+
+function getLunesDeSemana(d) {
+  const date = new Date(d); const dow = date.getDay();
+  const diff = dow===0?-6:1-dow; date.setDate(date.getDate()+diff); date.setHours(12,0,0,0); return date;
+}
+
+function setVista(v) {
+  vistaActual = v;
+  document.getElementById('btn-vista-dia').classList.toggle('active', v==='dia');
+  document.getElementById('btn-vista-semana').classList.toggle('active', v==='semana');
+  const dayLayout = document.querySelector('.content > .cal-panel');
+  const citasPanel = document.querySelector('.citas-panel');
+  const semanaPanel = document.getElementById('semana-panel');
+  if (v==='dia') { dayLayout.style.display=''; citasPanel.style.display=''; semanaPanel.classList.remove('active'); }
+  else { semanaBase=getLunesDeSemana(selDate?new Date(selDate+'T12:00:00'):new Date()); dayLayout.style.display='none'; citasPanel.style.display='none'; semanaPanel.classList.add('active'); buildSemanaView(); }
+}
+
+function navSemana(dir) { semanaBase=new Date(semanaBase); semanaBase.setDate(semanaBase.getDate()+dir*7); buildSemanaView(); }
+function irHoySemana() { semanaBase=getLunesDeSemana(new Date()); buildSemanaView(); }
+
+function buildSemanaView() {
+  const grid = document.getElementById('semana-grid');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dias = [];
+  for (let i=0;i<7;i++) { const d=new Date(semanaBase); d.setDate(d.getDate()+i); d.setHours(12,0,0,0); dias.push(d); }
+  const ini=dias[0], fin=dias[6];
+  const mismoMes = ini.getMonth()===fin.getMonth();
+  document.getElementById('semana-label').textContent = mismoMes
+    ? `${ini.getDate()} – ${fin.getDate()} de ${MESES[ini.getMonth()]} ${ini.getFullYear()}`
+    : `${ini.getDate()} ${MESES[ini.getMonth()].slice(0,3)} – ${fin.getDate()} ${MESES[fin.getMonth()].slice(0,3)} ${fin.getFullYear()}`;
+  const diasNombres=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  let html = `<div class="sg-time-col"><div class="sg-time-header"></div>`;
+  HORAS_DIA.forEach(h => html += `<div class="sg-time-slot"><span>${h}</span></div>`);
+  html += `</div>`;
+  dias.forEach((d,idx) => {
+    const ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const esHoy=d.getTime()===today.getTime();
+    const citasDia=todasLasCitas[ds]||[];
+    html+=`<div class="sg-col"><div class="sg-col-header${esHoy?' sg-hoy':''}"><div class="sg-dia">${diasNombres[idx]}</div><div class="sg-num">${d.getDate()}</div></div>`;
+    HORAS_DIA.forEach(slotStr => {
+      const [sh,sm]=slotStr.split(':').map(Number); const slotMin=sh*60+sm;
+      const cita=citasDia.find(c=>horaAMinutos(`${c.hora} ${c.period}`)===slotMin);
+      if (cita) {
+        html+=`<div class="sg-slot"><div class="sg-cita-block sin" onclick="verDetalle('${ds}',${citasDia.indexOf(cita)})"><div class="sg-cita-name">${cita.hora} ${cita.period} · ${cita.nombre}</div><div class="sg-cita-svc">${cita.servicio}</div></div></div>`;
+      } else {
+        html+=`<div class="sg-slot"><div class="sg-empty-slot" onclick="abrirAgendarEnSlot('${ds}','${slotStr}')"></div></div>`;
+      }
+    });
+    html+=`</div>`;
+  });
+  grid.innerHTML = html;
+}
+
+function abrirAgendarEnSlot(ds, horaStr) {
+  miniY=parseInt(ds.split('-')[0]); miniM=parseInt(ds.split('-')[1])-1;
+  buildMiniCal(); abrirModal('modal-agendar');
+  setTimeout(() => {
+    selMiniDia(ds);
+    const [h,m]=horaStr.split(':').map(Number);
+    const period=h<12?'AM':'PM'; const h12=h>12?h-12:(h===0?12:h);
+    const horaVal=`${h12}:${String(m).padStart(2,'0')} ${period}`;
+    const sel=document.getElementById('hora-cita');
+    const opt=Array.from(sel.options).find(o=>o.value===horaVal);
+    if(opt) sel.value=opt.value;
+  }, 50);
+}
+
+function abrirModalAgendar() { miniY=curY; miniM=curM; buildMiniCal(); abrirModal('modal-agendar'); }
+function actualizarDuracion() { const p=document.getElementById('sel-servicio').value.split('|'); document.getElementById('duracion-display').value=p[1]?p[1]+' minutos':''; }
+function formatFecha(ds) { const d=new Date(ds+'T12:00:00'); return `${d.getDate()} de ${MESES[d.getMonth()].toLowerCase()}`; }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3500); }
+function abrirModal(id) { document.getElementById(id).classList.add('open'); }
+function cerrarModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+document.addEventListener('click',e=>{ if(!e.target.closest('#buscar-clienta')&&!e.target.closest('#clientas-dropdown')) document.getElementById('clientas-dropdown').style.display='none'; });
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+cargarDatos();
+
+// Sistema de sesión
+const SESSION_TIMEOUT=25*60*1000, WARNING_BEFORE=1*60*1000;
+let _inactivityTimer, _warningTimer, _countdownInterval, _warningVisible=false;
+function resetTimers(){if(_warningVisible)return;clearTimeout(_inactivityTimer);clearTimeout(_warningTimer);clearInterval(_countdownInterval);_warningTimer=setTimeout(showSessionWarning,SESSION_TIMEOUT-WARNING_BEFORE);_inactivityTimer=setTimeout(expireSession,SESSION_TIMEOUT);}
+function showSessionWarning(){_warningVisible=true;let s=60;document.getElementById('session-countdown').textContent=s;document.getElementById('session-overlay').classList.add('open');_countdownInterval=setInterval(()=>{s--;document.getElementById('session-countdown').textContent=s;if(s<=0)clearInterval(_countdownInterval);},1000);}
+function continuarSesion(){_warningVisible=false;resetTimers();}
+function expireSession(){clearTimeout(_inactivityTimer);clearTimeout(_warningTimer);clearInterval(_countdownInterval);_warningVisible=false;document.getElementById('session-overlay').classList.remove('open');window.location.href='index.html?sesion=expirada';}
+['mousemove','mousedown','keydown','touchstart','scroll','click'].forEach(evt=>document.addEventListener(evt,resetTimers,{passive:true}));
+resetTimers();
+</script>
+</body>
+</html>

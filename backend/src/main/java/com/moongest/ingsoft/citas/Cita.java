@@ -40,8 +40,8 @@ public class Cita {
     public Integer getIdusuarios() { return idusuarios; }
     public void setIdusuarios(Integer idusuarios) { this.idusuarios = idusuarios; }
 
-    public Integer getIddientas() { return idclientas; }
-    public void setIddientas(Integer iddientas) { this.idclientas = iddientas; }
+    public Integer getIdclientas() { return idclientas; }
+    public void setIdclientas(Integer idclientas) { this.idclientas = idclientas; }
 
     public Integer getIdservicio() { return idservicio; }
     public void setIdservicio(Integer idservicio) { this.idservicio = idservicio; }

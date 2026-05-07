@@ -5,12 +5,16 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import com.moongest.ingsoft.pagos.PagoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class CitaService {
 
     @Autowired
     private CitaRepository citaRepository;
+    @Autowired
+    private PagoRepository pagoRepository;
 
     // Listar todas
     public List<Cita> listarTodas() {
@@ -30,7 +34,7 @@ public class CitaService {
     // Editar cita
     public Optional<Cita> editar(Integer id, Cita datosNuevos) {
         return citaRepository.findById(id).map(c -> {
-            c.setIddientas(datosNuevos.getIddientas());
+            c.setIdclientas(datosNuevos.getIdclientas());
             c.setIdservicio(datosNuevos.getIdservicio());
             c.setFechaCita(datosNuevos.getFechaCita());
             c.setHoraCita(datosNuevos.getHoraCita());
@@ -43,6 +47,7 @@ public class CitaService {
     // Cancelar cita
     public boolean cancelar(Integer id) {
         if (citaRepository.existsById(id)) {
+            pagoRepository.deleteByIdCita(id);
             citaRepository.deleteById(id);
             return true;
         }

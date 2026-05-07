@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moon Beauty Space — Clientas</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --brown-dark: #2d1f14;
+  --brown-mid: #7a5535;
+  --brown-main: #a07850;
+  --brown-light: #c9a98a;
+  --cream: #f9f5f0;
+  --white: #ffffff;
+  --border: #ede5dc;
+  --text-main: #2d1f14;
+  --text-muted: #9e8878;
+  --text-hint: #b8a898;
+  --badge-red-bg: #fdecea; --badge-red-text: #c0614e;
+  --badge-yellow-bg: #fef3e2; --badge-yellow-text: #b07820;
+  --badge-green-bg: #e8f5ee; --badge-green-text: #3a8a5c;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+/* ── APP SHELL ── */
+.app { display: flex; min-height: 100vh; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 210px;
+  background: var(--brown-dark);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  flex-shrink: 0;
+  position: fixed;
+  height: 100vh;
+  top: 0; left: 0;
+  z-index: 100;
+}
+.sidebar-logo {
+  padding: 0 20px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar-logo h2 {
+  font-family: 'Cormorant Garamond', serif;
+  color: #e8d5c0;
+  font-size: 17px;
+  font-weight: 300;
+  line-height: 1.3;
+}
+.sidebar-logo p { color: rgba(255,255,255,0.3); font-size: 10px; letter-spacing: 1px; margin-top: 4px; }
+.nav { flex: 1; padding: 16px 0; }
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
+.nav-item.active { background: rgba(160,120,80,0.25); color: #e8c99a; border-left: 3px solid var(--brown-main); }
+.nav-icon { font-size: 15px; width: 20px; text-align: center; }
+.sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+.sidebar-footer span { font-size: 11px; color: rgba(255,255,255,0.3); }
+.btn-cerrar-sesion {
+  display: flex; align-items: center; gap: 8px;
+  color: rgba(255,255,255,0.4); font-size: 12px;
+  cursor: pointer; margin-top: 8px;
+  background: none; border: none; font-family: 'DM Sans', sans-serif;
+  padding: 0;
+}
+.btn-cerrar-sesion:hover { color: rgba(255,255,255,0.7); }
+
+/* ── MAIN CONTENT ── */
+.main { flex: 1; margin-left: 210px; display: flex; flex-direction: column; min-height: 100vh; }
+.topbar {
+  background: var(--white);
+  padding: 18px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50;
+}
+.topbar h1 { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--text-main); font-weight: 400; }
+.topbar-actions { display: flex; gap: 10px; align-items: center; }
+.content { flex: 1; padding: 28px 32px; }
+
+/* ── BUTTONS ── */
+.btn {
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s;
+}
+.btn:hover { opacity: 0.88; }
+.btn-primary { background: var(--brown-main); color: #fff; }
+.btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--brown-mid); }
+.btn-sm { padding: 7px 14px; font-size: 12px; border-radius: 6px; }
+.btn-danger { background: #fdecea; color: #c0614e; border: 1.5px solid #f5c4c0; }
+
+/* ── FORM FIELDS ── */
+.field { margin-bottom: 18px; }
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--brown-mid);
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid #e8ddd5;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-main);
+  background: #fdf9f6;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--brown-main); background: #fff; }
+.field input::placeholder, .field textarea::placeholder { color: #c5b5a8; }
+.field textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+.field-row { display: flex; gap: 16px; }
+.field-row .field { flex: 1; }
+
+/* ── BADGES ── */
+.badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.badge-sin { background: var(--badge-red-bg); color: var(--badge-red-text); }
+.badge-anticipo { background: var(--badge-yellow-bg); color: var(--badge-yellow-text); }
+.badge-pagado { background: var(--badge-green-bg); color: var(--badge-green-text); }
+
+/* ── CARDS ── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(45,31,20,0.4);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 28px 32px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 16px 60px rgba(0,0,0,0.15);
+  animation: fadeUp 0.2s ease;
+}
+@keyframes fadeUp { from { transform: translateY(16px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+.modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--text-main); margin-bottom: 4px; }
+.modal-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+.modal-actions .btn { flex: 1; padding: 12px; }
+
+/* ── ALERTS ── */
+.alert {
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.alert-warning { background: #fef3e2; border: 1px solid #f5d9a0; color: #7a5010; }
+.alert-error { background: var(--badge-red-bg); border: 1px solid #f5c4c0; color: #8a2010; }
+.alert-success { background: var(--badge-green-bg); border: 1px solid #b0dfc0; color: #1a6040; }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-size: 11px;
+  color: var(--text-hint);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* ── INFO BOX ── */
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 12px; margin-bottom: 20px; }
+.info-box { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
+.info-box .ib-label { font-size: 10px; color: var(--text-hint); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.info-box .ib-value { font-size: 14px; color: var(--text-main); font-weight: 500; }
+
+  </style>
+  <style>
+    .content { padding:0; display:flex; flex:1; overflow:hidden; height:calc(100vh - 66px); }
+    .list-panel { width:320px; flex-shrink:0; background:var(--white); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+    .search-box { padding:16px; border-bottom:1px solid var(--border); }
+    .search-input { width:100%; padding:10px 14px; border:1.5px solid #e8ddd5; border-radius:8px; font-size:13px; font-family:'DM Sans',sans-serif; color:var(--text-main); background:#fdf9f6; outline:none; }
+    .search-input::placeholder { color:#c5b5a8; }
+    .list-count { padding:10px 16px 6px; font-size:11px; color:var(--text-hint); letter-spacing:1px; text-transform:uppercase; border-bottom:1px solid var(--border); }
+    .clientas-scroll { overflow-y:auto; flex:1; }
+    .clienta-row { padding:13px 16px; border-bottom:1px solid #f5ede5; cursor:pointer; display:flex; align-items:center; gap:12px; transition:background 0.12s; }
+    .clienta-row:hover { background:#fdf9f6; }
+    .clienta-row.selected { background:#fdf3e8; border-left:3px solid var(--brown-main); }
+    .avatar { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#e8c99a,#c9a98a); display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:500; color:var(--brown-mid); flex-shrink:0; }
+    .cl-info .cl-name { font-size:13px; font-weight:500; color:var(--text-main); }
+    .cl-info .cl-tel { font-size:11px; color:var(--text-muted); margin-top:1px; }
+    .cl-info .cl-last { font-size:10px; color:var(--text-hint); margin-top:2px; }
+    /* Profile */
+    .profile-panel { flex:1; overflow-y:auto; padding:28px 32px; background:var(--cream); }
+    .profile-header { display:flex; align-items:center; gap:20px; margin-bottom:26px; padding-bottom:22px; border-bottom:1px solid var(--border); }
+    .profile-avatar { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,#e8c99a,#c9a98a); display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:500; color:var(--brown-mid); }
+    .profile-meta h2 { font-family:'Cormorant Garamond',serif; font-size:26px; color:var(--text-main); font-weight:400; }
+    .profile-meta p { font-size:12px; color:var(--text-muted); margin-top:4px; }
+    .profile-actions { margin-left:auto; display:flex; gap:8px; }
+    .notes-box { background:var(--white); border:1px solid var(--border); border-radius:8px; padding:14px 16px; font-size:13px; color:#5a4535; line-height:1.7; }
+    .hist-row { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:var(--white); border:1px solid var(--border); border-radius:8px; margin-bottom:8px; }
+    .hist-service { font-size:13px; color:var(--text-main); font-weight:500; }
+    .hist-date { font-size:11px; color:var(--text-muted); margin-top:2px; }
+    .hist-amount { font-size:14px; font-weight:500; color:var(--badge-green-text); }
+    .empty-profile { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:var(--text-hint); text-align:center; padding:40px; }
+    .empty-profile .ep-icon { font-size:48px; margin-bottom:16px; }
+    /* Form editar */
+    .edit-section { display:none; }
+    .edit-section.visible { display:block; }
+    .view-section { display:block; }
+    .view-section.hidden { display:none; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><h2>Moon<br>Beauty<br>Space</h2><p>SISTEMA DE GESTIÓN</p></div>
+    <nav class="nav">
+      <a class="nav-item" href="citas.html"><span class="nav-icon">📅</span> Gestionar Citas</a>
+      <a class="nav-item" href="clientas.html"><span class="nav-icon">👤</span> Clientas</a>
+      <a class="nav-item" href="pagos.html"><span class="nav-icon">💳</span> Pagos</a>
+      <a class="nav-item" href="reportes.html"><span class="nav-icon">📊</span> Reportes</a>
+      <a class="nav-item" href="notificaciones.html"><span class="nav-icon">🔔</span> Notificaciones</a>
+      <a class="nav-item" href="catalago.html"><span class="nav-icon">✂️</span> Catálogo</a>
+    </nav>
+    <div class="sidebar-footer">
+      <span>Encargada · v2.0</span>
+      <button class="btn-cerrar-sesion" onclick="window.location.href='index.html'">↩ Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <h1>Gestionar Clientas</h1>
+      <button class="btn btn-primary btn-sm" onclick="abrirModal('modal-nueva')">+ Nueva Clienta</button>
+    </div>
+    <div class="content">
+      <div class="list-panel">
+        <div class="search-box">
+          <input class="search-input" id="buscador" placeholder="Buscar por nombre o teléfono..." oninput="filtrar(this.value)">
+        </div>
+        <div class="list-count" id="list-count">5 clientas registradas</div>
+        <div class="clientas-scroll" id="clientas-list"></div>
+      </div>
+      <div class="profile-panel" id="profile-panel">
+        <div class="empty-profile" id="empty-profile">
+          <div class="ep-icon">👤</div>
+          <p>Selecciona una clienta para ver su perfil</p>
+        </div>
+        <!-- Perfil vista -->
+        <div class="view-section hidden" id="view-section">
+          <div class="profile-header">
+            <div class="profile-avatar" id="pf-avatar"></div>
+            <div class="profile-meta">
+              <h2 id="pf-nombre"></h2>
+              <p id="pf-meta"></p>
+            </div>
+            <div class="profile-actions">
+              <button class="btn btn-outline btn-sm" onclick="window.location.href='citas.html'">Agendar Cita</button>
+              <button class="btn btn-primary btn-sm" onclick="activarEdicion()">Editar</button>
+            </div>
+          </div>
+          <div class="section-label">Datos de contacto</div>
+          <div class="info-grid" id="pf-datos" style="margin-bottom:20px"></div>
+          <div class="section-label">Notas especiales</div>
+          <div class="notes-box" id="pf-notas" style="margin-bottom:20px"></div>
+          <div class="section-label">Historial de servicios</div>
+          <div id="pf-historial"></div>
+        </div>
+        <!-- Formulario edición -->
+        <div class="edit-section" id="edit-section">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--text-main)">Editar Clienta</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:2px" id="edit-sub"></div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Nombre completo *</label>
+              <input type="text" id="edit-nombre" placeholder="Nombre completo">
+            </div>
+            <div class="field">
+              <label>Teléfono * (10 dígitos)</label>
+              <input type="tel" id="edit-tel" placeholder="5551234567" maxlength="10" oninput="validarTel(this)">
+              <div id="tel-feedback" style="font-size:11px;margin-top:4px"></div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Notas especiales</label>
+            <textarea id="edit-notas" placeholder="Alergias, preferencias, observaciones médicas..."></textarea>
+          </div>
+          <div id="edit-error" class="alert alert-error" style="display:none"></div>
+          <div style="display:flex;gap:10px;margin-top:8px">
+            <button class="btn btn-outline" onclick="cancelarEdicion()">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardarEdicion()">Guardar Cambios</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NUEVA CLIENTA -->
+<div class="modal-overlay" id="modal-nueva">
+  <div class="modal-box">
+    <div class="modal-title">Nueva Clienta</div>
+    <div class="modal-sub">Registra los datos de la nueva clienta</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Nombre completo *</label>
+        <input type="text" id="nc-nombre" placeholder="Nombre completo">
+      </div>
+      <div class="field">
+        <label>Teléfono * (10 dígitos)</label>
+        <input type="tel" id="nc-tel" placeholder="5551234567" maxlength="10" oninput="validarTelModal(this)">
+        <div id="nc-tel-feedback" style="font-size:11px;margin-top:4px"></div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Notas especiales (opcional)</label>
+      <textarea id="nc-notas" placeholder="Alergias, preferencias de servicio, observaciones médicas..."></textarea>
+    </div>
+    <div id="nc-error" class="alert alert-error" style="display:none"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="cerrarModal('modal-nueva')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarNueva()">Guardar Clienta</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let clientas = [];
+let filtradas = [];
+let selIdx = null;
+
+// ── CARGAR CLIENTAS DESDE LA API ─────────────────────────────────────────────
+async function cargarClientas() {
+  try {
+    const response = await fetch('http://localhost:8080/api/clientas');
+    clientas = await response.json();
+    filtradas = [...clientas];
+    renderLista(filtradas);
+  } catch (error) {
+    console.error('Error al cargar clientas:', error);
+  }
+}
+
+function renderLista(lista) {
+  const container = document.getElementById('clientas-list');
+  document.getElementById('list-count').textContent = lista.length + ' clientas';
+  container.innerHTML = lista.map((c, i) => `
+    <div class="clienta-row ${selIdx === i ? 'selected' : ''}" onclick="seleccionar(${i})">
+      <div class="avatar">${c.nombre[0]}</div>
+      <div class="cl-info">
+        <div class="cl-name">${c.nombre} ${c.paterno || ''} ${c.materno || ''}</div>
+        <div class="cl-tel">${c.telefono}</div>
+        <div class="cl-last">Desde ${c.fechaPrimeraVisita || '—'}</div>
+      </div>
+    </div>`).join('');
+}
+
+function seleccionar(i) {
+  selIdx = i;
+  const c = filtradas[i];
+  renderLista(filtradas);
+  document.getElementById('empty-profile').style.display = 'none';
+  document.getElementById('view-section').classList.remove('hidden');
+  document.getElementById('edit-section').classList.remove('visible');
+  document.getElementById('pf-avatar').textContent = c.nombre[0];
+  document.getElementById('pf-nombre').textContent = `${c.nombre} ${c.paterno || ''} ${c.materno || ''}`.trim();  document.getElementById('pf-meta').textContent = `Cliente desde ${c.fechaPrimeraVisita || '—'}`;
+  document.getElementById('pf-datos').innerHTML = `
+    <div class="info-box"><div class="ib-label">Teléfono</div><div class="ib-value">${c.telefono}</div></div>
+    <div class="info-box"><div class="ib-label">Primera visita</div><div class="ib-value">${c.fechaPrimeraVisita || '—'}</div></div>`;
+  document.getElementById('pf-notas').textContent = c.notasAlergia || 'Sin notas especiales registradas.';
+  document.getElementById('pf-historial').innerHTML = '<div style="color:var(--text-hint);font-size:13px;padding:10px 0">Sin historial registrado aún.</div>';
+}
+
+function filtrar(q) {
+  filtradas = clientas.filter(c =>
+    `${c.nombre} ${c.paterno}`.toLowerCase().includes(q.toLowerCase()) || c.telefono.includes(q));
+  selIdx = null;
+  renderLista(filtradas);
+  document.getElementById('view-section').classList.add('hidden');
+  document.getElementById('empty-profile').style.display = 'flex';
+}
+
+function activarEdicion() {
+  const c = filtradas[selIdx];
+  document.getElementById('edit-sub').textContent = `${c.nombre} ${c.paterno}`;
+  document.getElementById('edit-nombre').value = c.nombre;
+  document.getElementById('edit-tel').value = c.telefono;
+  document.getElementById('edit-notas').value = c.notasAlergia || '';
+  document.getElementById('view-section').classList.add('hidden');
+  document.getElementById('edit-section').classList.add('visible');
+}
+
+function cancelarEdicion() {
+  document.getElementById('edit-section').classList.remove('visible');
+  document.getElementById('view-section').classList.remove('hidden');
+}
+
+function validarTel(input) {
+  const fb = document.getElementById('tel-feedback');
+  const val = input.value.replace(/\D/g, '');
+  input.value = val;
+  if (val.length === 10) { fb.textContent = '✓ Formato válido'; fb.style.color = '#3a8a5c'; }
+  else if (val.length > 0) { fb.textContent = 'Debe contener exactamente 10 dígitos'; fb.style.color = '#c0614e'; }
+  else fb.textContent = '';
+}
+
+function validarTelModal(input) {
+  const fb = document.getElementById('nc-tel-feedback');
+  const val = input.value.replace(/\D/g, '');
+  input.value = val;
+  if (val.length === 10) { fb.textContent = '✓ Formato válido'; fb.style.color = '#3a8a5c'; }
+  else if (val.length > 0) { fb.textContent = 'Debe contener exactamente 10 dígitos'; fb.style.color = '#c0614e'; }
+  else fb.textContent = '';
+}
+
+async function guardarEdicion() {
+  const nombre = document.getElementById('edit-nombre').value.trim();
+  const tel = document.getElementById('edit-tel').value.trim();
+  const notas = document.getElementById('edit-notas').value;
+  const errEl = document.getElementById('edit-error');
+  if (!nombre || !tel) { errEl.style.display = 'flex'; errEl.textContent = '⚠️ El nombre y teléfono son obligatorios.'; return; }
+  if (tel.length !== 10) { errEl.style.display = 'flex'; errEl.textContent = '⚠️ El teléfono debe tener exactamente 10 dígitos.'; return; }
+  errEl.style.display = 'none';
+
+  const c = filtradas[selIdx];
+  try {
+    const response = await fetch(`http://localhost:8080/api/clientas/${c.idClientas}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...c, nombre, telefono: tel, notasAlergia: notas })
+    });
+    if (response.ok) {
+      await cargarClientas();
+      cancelarEdicion();
+    }
+  } catch (error) {
+    console.error('Error al editar clienta:', error);
+  }
+}
+
+async function guardarNueva() {
+  const nombre = document.getElementById('nc-nombre').value.trim();
+  const tel = document.getElementById('nc-tel').value.trim();
+  const notas = document.getElementById('nc-notas').value.trim();
+  const errEl = document.getElementById('nc-error');
+  if (!nombre || !tel) { errEl.style.display = 'flex'; errEl.textContent = '⚠️ El nombre y teléfono son obligatorios.'; return; }
+  if (tel.length !== 10) { errEl.style.display = 'flex'; errEl.textContent = '⚠️ El teléfono debe tener exactamente 10 dígitos.'; return; }
+  const dup = clientas.find(c => c.telefono === tel);
+  if (dup) { errEl.style.display = 'flex'; errEl.textContent = `⚠️ Ya existe una clienta con este número: ${dup.nombre}`; return; }
+  errEl.style.display = 'none';
+
+  try {
+    const response = await fetch('http://localhost:8080/api/clientas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombre,
+        telefono: tel,
+        notasAlergia: notas,
+        fechaPrimeraVisita: new Date().toISOString().split('T')[0]
+      })
+    });
+    if (response.ok) {
+      await cargarClientas();
+      cerrarModal('modal-nueva');
+      document.getElementById('nc-nombre').value = '';
+      document.getElementById('nc-tel').value = '';
+      document.getElementById('nc-notas').value = '';
+      seleccionar(0);
+    }
+  } catch (error) {
+    console.error('Error al guardar clienta:', error);
+  }
+}
+
+function abrirModal(id) { document.getElementById(id).classList.add('open'); }
+function cerrarModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
+
+cargarClientas();
+
+  /* ─────────────────────────────────────────────────────────────
+     SISTEMA DE EXPIRACIÓN DE SESIÓN POR INACTIVIDAD
+     - Aviso emergente a los 25 minutos de inactividad
+     - Cuenta regresiva de 60 segundos
+     - Si presiona "Continuar sesión" → reinicia el contador a 25 min
+     - Si presiona "Cerrar sesión" o se agota el tiempo → redirige al login
+  ───────────────────────────────────────────────────────────── */
+  const SESSION_TIMEOUT  = 25 * 60 * 1000;  // 25 minutos
+  const WARNING_BEFORE   = 1 * 60 * 1000;  // aviso 1 min antes (al min 1)
+
+  let _inactivityTimer, _warningTimer, _countdownInterval;
+
+  let _warningVisible = false;
+
+  function resetTimers() {
+    // Si el aviso ya está visible, NO reiniciar — esperar decisión de la encargada
+    if (_warningVisible) return;
+
+    clearTimeout(_inactivityTimer);
+    clearTimeout(_warningTimer);
+    clearInterval(_countdownInterval);
+
+    // Programar aviso al minuto 1
+    _warningTimer = setTimeout(showSessionWarning, SESSION_TIMEOUT - WARNING_BEFORE);
+
+    // Programar cierre automático al minuto 2
+    _inactivityTimer = setTimeout(expireSession, SESSION_TIMEOUT);
+  }
+
+  function showSessionWarning() {
+    _warningVisible = true;  // Bloquear reinicio por actividad
+    let secsLeft = 60;
+    document.getElementById('session-countdown').textContent = secsLeft;
+    document.getElementById('session-overlay').classList.add('open');
+
+    _countdownInterval = setInterval(() => {
+      secsLeft--;
+      document.getElementById('session-countdown').textContent = secsLeft;
+      if (secsLeft <= 0) clearInterval(_countdownInterval);
+    }, 1000);
+  }
+
+  function continuarSesion() {
+    _warningVisible = false;  // Permitir de nuevo el reinicio por actividad
+    resetTimers();
+  }
+
+  function expireSession() {
+    clearTimeout(_inactivityTimer);
+    clearTimeout(_warningTimer);
+    clearInterval(_countdownInterval);
+    _warningVisible = false;
+    document.getElementById('session-overlay').classList.remove('open');
+    window.location.href = 'index.html?sesion=expirada';
+  }
+
+  // Reiniciar timers ante cualquier interacción del usuario
+  // (no tiene efecto si el aviso está visible gracias a _warningVisible)
+  ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt =>
+    document.addEventListener(evt, resetTimers, { passive: true })
+  );
+
+  // Arrancar al cargar la página
+  resetTimers();
+</script>
+</body>
+</html>

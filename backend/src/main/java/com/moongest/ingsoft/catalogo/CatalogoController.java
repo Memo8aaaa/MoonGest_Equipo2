@@ -32,6 +32,13 @@ public class CatalogoController {
         return service.crear(servicio);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> obtenerPorId(@PathVariable Integer id) {
+        return service.obtenerPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     // PUT editar servicio
     @PutMapping("/{id}")
     public ResponseEntity<Catalogo> editar(
