@@ -28,10 +28,11 @@ public class Catalogo {
     @Column(name = "activo", nullable = false)
     private Integer activo = 1;
 
-    @Column(name = "categoria", nullable = false, length = 20)
+    @Column(name = "categoria", nullable = false, length = 20,
+            columnDefinition = "varchar(20) default 'pestañas'")
     private String categoria = "pestañas";
 
-    @Column(name = "precio_retoque")
+    @Column(name = "precio_retoque", columnDefinition = "decimal(10,2)")
     private BigDecimal precioRetoque;
 
     // Getters y Setters
@@ -54,7 +55,8 @@ public class Catalogo {
     public void setActivo(Integer activo) { this.activo = activo; }
 
     public String getCategoria() { return categoria; }
-    public void setCategoria(String categoria) { this.categoria = categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria ;
+    }
 
     public BigDecimal getPrecioRetoque() { return precioRetoque; }
     public void setPrecioRetoque(BigDecimal precioRetoque) { this.precioRetoque = precioRetoque; }

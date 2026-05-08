@@ -554,12 +554,13 @@ body {
       activo: 1
     };
 
+
     try {
       if (editIdx !== null) {
         await fetch(`http://localhost:8080/api/catalogo/${servicios[editIdx].idservicio}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...servicios[editIdx], ...serv })
+          body: JSON.stringify(serv)
         });
         editIdx = null;
       } else {

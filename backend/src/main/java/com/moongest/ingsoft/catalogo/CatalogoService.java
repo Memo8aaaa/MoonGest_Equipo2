@@ -41,8 +41,10 @@ public class CatalogoService {
             s.setDescripcion(datos.getDescripcion());
             s.setDuracionEstimada(datos.getDuracionEstimada());
             s.setPrecioEstandar(datos.getPrecioEstandar());
-            s.setCategoria(datos.getCategoria());
             s.setPrecioRetoque(datos.getPrecioRetoque());
+            if (datos.getCategoria() != null && !datos.getCategoria().isBlank()) {
+                s.setCategoria(datos.getCategoria());
+            }
             return repository.save(s);
         }
         return null;
