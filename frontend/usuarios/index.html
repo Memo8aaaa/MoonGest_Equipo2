@@ -370,7 +370,7 @@ body {
           const data = await response.json();
           // Guardamos el usuario en sesión
           sessionStorage.setItem('usuario', JSON.stringify(data));
-          window.location.href = "citas.html";
+          window.location.href = "../citas/citas.html";
         } else {
           intentos--;
           document.getElementById('intentos-display').textContent = intentos + ' / 3';
