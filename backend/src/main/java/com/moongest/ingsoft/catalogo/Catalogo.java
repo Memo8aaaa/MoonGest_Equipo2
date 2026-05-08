@@ -1,8 +1,8 @@
 package com.moongest.ingsoft.catalogo;
 
 import jakarta.persistence.*;
-
 import java.math.BigDecimal;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "catalogo_servicios")
@@ -20,13 +20,19 @@ public class Catalogo {
     private String descripcion;
 
     @Column(name = "duracion_estimada", nullable = false)
-    private String duracionEstimada;
+    private LocalTime duracionEstimada;
 
     @Column(name = "precio_estandar", nullable = false)
     private BigDecimal precioEstandar;
 
     @Column(name = "activo", nullable = false)
     private Integer activo = 1;
+
+    @Column(name = "categoria", nullable = false, length = 20)
+    private String categoria = "pestañas";
+
+    @Column(name = "precio_retoque")
+    private BigDecimal precioRetoque;
 
     // Getters y Setters
     public Integer getIdservicio() { return idservicio; }
@@ -38,12 +44,18 @@ public class Catalogo {
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public String getDuracionEstimada() { return duracionEstimada; }
-    public void setDuracionEstimada(String duracionEstimada) { this.duracionEstimada = duracionEstimada; }
+    public LocalTime getDuracionEstimada() { return duracionEstimada; }
+    public void setDuracionEstimada(LocalTime duracionEstimada) { this.duracionEstimada = duracionEstimada; }
 
     public BigDecimal getPrecioEstandar() { return precioEstandar; }
     public void setPrecioEstandar(BigDecimal precioEstandar) { this.precioEstandar = precioEstandar; }
 
     public Integer getActivo() { return activo; }
     public void setActivo(Integer activo) { this.activo = activo; }
+
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
+
+    public BigDecimal getPrecioRetoque() { return precioRetoque; }
+    public void setPrecioRetoque(BigDecimal precioRetoque) { this.precioRetoque = precioRetoque; }
 }
