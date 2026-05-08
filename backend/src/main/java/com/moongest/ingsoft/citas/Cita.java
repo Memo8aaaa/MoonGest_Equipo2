@@ -13,11 +13,11 @@ public class Cita {
     @Column(name = "idcita")
     private Integer idcita;
 
-    @Column(name = "idusuarios")
-    private Integer idusuarios;
+    @Column(name = "idusuario")
+    private Integer idusuario;
 
-    @Column(name = "idclientas")
-    private Integer idclientas;
+    @Column(name = "idclienta")
+    private Integer idclienta;
 
     @Column(name = "idservicio")
     private Integer idservicio;
@@ -37,11 +37,11 @@ public class Cita {
     public Integer getIdcita() { return idcita; }
     public void setIdcita(Integer idcita) { this.idcita = idcita; }
 
-    public Integer getIdusuarios() { return idusuarios; }
-    public void setIdusuarios(Integer idusuarios) { this.idusuarios = idusuarios; }
+    public Integer getIdusuario() { return idusuario; }
+    public void setIdusuario(Integer idusuario) { this.idusuario = idusuario; }
 
-    public Integer getIdclientas() { return idclientas; }
-    public void setIdclientas(Integer idclientas) { this.idclientas = idclientas; }
+    public Integer getIdclienta() { return idclienta; }
+    public void setIdclienta(Integer idclienta) { this.idclienta = idclienta; }
 
     public Integer getIdservicio() { return idservicio; }
     public void setIdservicio(Integer idservicio) { this.idservicio = idservicio; }

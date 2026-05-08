@@ -8,8 +8,8 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idusuarios")
-    private Integer idUsuarios;
+    @Column(name = "idusuario")
+    private Integer idUsuario;
 
     @Column(name = "nombre", length = 25)
     private String nombre;
@@ -21,8 +21,8 @@ public class Usuario {
     private String rol;
 
     // Getters y Setters
-    public Integer getIdUsuarios() { return idUsuarios; }
-    public void setIdUsuarios(Integer idUsuarios) { this.idUsuarios = idUsuarios; }
+    public Integer getIdUsuario() { return idUsuario; }
+    public void setIdUsuario(Integer idUsuario) { this.idUsuario = idUsuario; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }

@@ -9,13 +9,13 @@ public class Clienta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idclientas")
-    private Integer idClientas;
+    @Column(name = "idclienta")
+    private Integer idClienta;
 
     @Column(name = "nombre", length = 25)
     private String nombre;
 
-    @Column(name = "paterno", length = 25)
+    @Column(name = "paterno",nullable = true, length = 25)
     private String paterno;
 
     @Column(name = "materno", length = 25)
@@ -34,8 +34,8 @@ public class Clienta {
     private String notasPreferencias;
 
     // Getters y Setters
-    public Integer getIdClientas() { return idClientas; }
-    public void setIdClientas(Integer idClientas) { this.idClientas = idClientas; }
+    public Integer getIdClienta() { return idClienta; }
+    public void setIdClienta(Integer idClienta) { this.idClienta = idClienta; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }

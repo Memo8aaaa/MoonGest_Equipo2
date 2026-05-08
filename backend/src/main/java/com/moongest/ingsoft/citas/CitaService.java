@@ -34,7 +34,7 @@ public class CitaService {
     // Editar cita
     public Optional<Cita> editar(Integer id, Cita datosNuevos) {
         return citaRepository.findById(id).map(c -> {
-            c.setIdclientas(datosNuevos.getIdclientas());
+            c.setIdclienta(datosNuevos.getIdclienta());
             c.setIdservicio(datosNuevos.getIdservicio());
             c.setFechaCita(datosNuevos.getFechaCita());
             c.setHoraCita(datosNuevos.getHoraCita());
