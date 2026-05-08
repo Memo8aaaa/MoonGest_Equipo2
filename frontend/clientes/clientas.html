@@ -305,6 +305,7 @@ body {
             </div>
             <div class="profile-actions">
               <button class="btn btn-outline btn-sm" onclick="window.location.href='citas.html'">Agendar Cita</button>
+              <button class="btn btn-danger btn-sm" onclick="confirmarEliminar()">Eliminar</button>
               <button class="btn btn-primary btn-sm" onclick="activarEdicion()">Editar</button>
             </div>
           </div>
@@ -325,8 +326,18 @@ body {
           </div>
           <div class="field-row">
             <div class="field">
-              <label>Nombre completo *</label>
-              <input type="text" id="edit-nombre" placeholder="Nombre completo">
+              <label>Nombre *</label>
+              <input type="text" id="edit-nombre" placeholder="Nombre(s)">
+            </div>
+            <div class="field">
+              <label>Apellido paterno *</label>
+              <input type="text" id="edit-paterno" placeholder="Apellido paterno">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Apellido materno</label>
+              <input type="text" id="edit-materno" placeholder="Apellido materno">
             </div>
             <div class="field">
               <label>Teléfono * (10 dígitos)</label>
@@ -355,16 +366,26 @@ body {
     <div class="modal-title">Nueva Clienta</div>
     <div class="modal-sub">Registra los datos de la nueva clienta</div>
     <div class="field-row">
-      <div class="field">
-        <label>Nombre completo *</label>
-        <input type="text" id="nc-nombre" placeholder="Nombre completo">
-      </div>
-      <div class="field">
-        <label>Teléfono * (10 dígitos)</label>
-        <input type="tel" id="nc-tel" placeholder="5551234567" maxlength="10" oninput="validarTelModal(this)">
-        <div id="nc-tel-feedback" style="font-size:11px;margin-top:4px"></div>
-      </div>
-    </div>
+  <div class="field">
+    <label>Nombre *</label>
+    <input type="text" id="nc-nombre" placeholder="Nombre(s)">
+  </div>
+  <div class="field">
+    <label>Apellido paterno *</label>
+    <input type="text" id="nc-paterno" placeholder="Apellido paterno">
+  </div>
+</div>
+<div class="field-row">
+  <div class="field">
+    <label>Apellido materno</label>
+    <input type="text" id="nc-materno" placeholder="Apellido materno">
+  </div>
+  <div class="field">
+    <label>Teléfono * (10 dígitos)</label>
+    <input type="tel" id="nc-tel" placeholder="5551234567" maxlength="10" oninput="validarTelModal(this)">
+    <div id="nc-tel-feedback" style="font-size:11px;margin-top:4px"></div>
+  </div>
+</div>
     <div class="field">
       <label>Notas especiales (opcional)</label>
       <textarea id="nc-notas" placeholder="Alergias, preferencias de servicio, observaciones médicas..."></textarea>
@@ -373,6 +394,20 @@ body {
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="cerrarModal('modal-nueva')">Cancelar</button>
       <button class="btn btn-primary" onclick="guardarNueva()">Guardar Clienta</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-eliminar">
+  <div class="modal-box">
+    <div class="modal-title">Eliminar Clienta</div>
+    <div class="modal-sub" id="eliminar-sub"></div>
+    <div class="alert alert-warning">
+      ⚠️ Esta acción no se puede deshacer. Se eliminará permanentemente el registro de la clienta.
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="cerrarModal('modal-eliminar')">Cancelar</button>
+      <button class="btn btn-danger" onclick="eliminarClienta()">Sí, eliminar</button>
     </div>
   </div>
 </div>
@@ -435,8 +470,10 @@ function filtrar(q) {
 
 function activarEdicion() {
   const c = filtradas[selIdx];
-  document.getElementById('edit-sub').textContent = `${c.nombre} ${c.paterno}`;
-  document.getElementById('edit-nombre').value = c.nombre;
+  document.getElementById('edit-sub').textContent = `${c.nombre} ${c.paterno || ''}`;
+  document.getElementById('edit-nombre').value = c.nombre || '';
+  document.getElementById('edit-paterno').value = c.paterno || '';
+  document.getElementById('edit-materno').value = c.materno || '';
   document.getElementById('edit-tel').value = c.telefono;
   document.getElementById('edit-notas').value = c.notasAlergia || '';
   document.getElementById('view-section').classList.add('hidden');
@@ -468,10 +505,12 @@ function validarTelModal(input) {
 
 async function guardarEdicion() {
   const nombre = document.getElementById('edit-nombre').value.trim();
+  const paterno = document.getElementById('edit-paterno').value.trim();
+  const materno = document.getElementById('edit-materno').value.trim();
   const tel = document.getElementById('edit-tel').value.trim();
   const notas = document.getElementById('edit-notas').value;
   const errEl = document.getElementById('edit-error');
-  if (!nombre || !tel) { errEl.style.display = 'flex'; errEl.textContent = '⚠️ El nombre y teléfono son obligatorios.'; return; }
+  if (!nombre || !paterno || !tel) { errEl.style.display = 'flex'; errEl.textContent = '⚠️ El nombre, apellido paterno y teléfono son obligatorios.'; return; }
   if (tel.length !== 10) { errEl.style.display = 'flex'; errEl.textContent = '⚠️ El teléfono debe tener exactamente 10 dígitos.'; return; }
   errEl.style.display = 'none';
 
@@ -480,7 +519,7 @@ async function guardarEdicion() {
     const response = await fetch(`http://localhost:8080/api/clientas/${c.idClienta}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...c, nombre, telefono: tel, notasAlergia: notas })
+      body: JSON.stringify({ ...c, nombre, paterno, materno, telefono: tel, notasAlergia: notas })
     });
     if (response.ok) {
       await cargarClientas();
@@ -493,10 +532,12 @@ async function guardarEdicion() {
 
 async function guardarNueva() {
   const nombre = document.getElementById('nc-nombre').value.trim();
+  const paterno = document.getElementById('nc-paterno').value.trim();
+  const materno = document.getElementById('nc-materno').value.trim(); 
   const tel = document.getElementById('nc-tel').value.trim();
   const notas = document.getElementById('nc-notas').value.trim();
   const errEl = document.getElementById('nc-error');
-  if (!nombre || !tel) { errEl.style.display = 'flex'; errEl.textContent = '⚠️ El nombre y teléfono son obligatorios.'; return; }
+  if (!nombre || !paterno || !tel) { errEl.style.display = 'flex'; errEl.textContent = '⚠️ El nombre, apellido paterno y teléfono son obligatorios.'; return; }
   if (tel.length !== 10) { errEl.style.display = 'flex'; errEl.textContent = '⚠️ El teléfono debe tener exactamente 10 dígitos.'; return; }
   const dup = clientas.find(c => c.telefono === tel);
   if (dup) { errEl.style.display = 'flex'; errEl.textContent = `⚠️ Ya existe una clienta con este número: ${dup.nombre}`; return; }
@@ -508,6 +549,8 @@ async function guardarNueva() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         nombre,
+        paterno,
+        materno,
         telefono: tel,
         notasAlergia: notas,
         fechaPrimeraVisita: new Date().toISOString().split('T')[0]
@@ -517,6 +560,8 @@ async function guardarNueva() {
       await cargarClientas();
       cerrarModal('modal-nueva');
       document.getElementById('nc-nombre').value = '';
+      document.getElementById('nc-paterno').value = '';
+      document.getElementById('nc-materno').value = '';
       document.getElementById('nc-tel').value = '';
       document.getElementById('nc-notas').value = '';
       seleccionar(0);
@@ -525,7 +570,30 @@ async function guardarNueva() {
     console.error('Error al guardar clienta:', error);
   }
 }
+function confirmarEliminar() {
+  const c = filtradas[selIdx];
+  document.getElementById('eliminar-sub').textContent = 
+    `¿Estás segura de que deseas eliminar a ${c.nombre} ${c.paterno || ''}?`;
+  abrirModal('modal-eliminar');
+}
 
+async function eliminarClienta() {
+  const c = filtradas[selIdx];
+  try {
+    const response = await fetch(`http://localhost:8080/api/clientas/${c.idClienta}`, {
+      method: 'DELETE'
+    });
+    if (response.ok) {
+      cerrarModal('modal-eliminar');
+      selIdx = null;
+      document.getElementById('view-section').classList.add('hidden');
+      document.getElementById('empty-profile').style.display = 'flex';
+      await cargarClientas();
+    }
+  } catch (error) {
+    console.error('Error al eliminar clienta:', error);
+  }
+}
 function abrirModal(id) { document.getElementById(id).classList.add('open'); }
 function cerrarModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
