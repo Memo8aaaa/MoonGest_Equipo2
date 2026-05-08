@@ -477,7 +477,7 @@ async function guardarEdicion() {
 
   const c = filtradas[selIdx];
   try {
-    const response = await fetch(`http://localhost:8080/api/clientas/${c.idClientas}`, {
+    const response = await fetch(`http://localhost:8080/api/clientas/${c.idClienta}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...c, nombre, telefono: tel, notasAlergia: notas })

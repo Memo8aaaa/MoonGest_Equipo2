@@ -6,257 +6,101 @@
   <title>Moon Beauty Space — Reportes</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap');
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root {
-  --brown-dark: #2d1f14;
-  --brown-mid: #7a5535;
-  --brown-main: #a07850;
-  --brown-light: #c9a98a;
-  --cream: #f9f5f0;
-  --white: #ffffff;
-  --border: #ede5dc;
-  --text-main: #2d1f14;
-  --text-muted: #9e8878;
-  --text-hint: #b8a898;
-  --badge-red-bg: #fdecea; --badge-red-text: #c0614e;
-  --badge-yellow-bg: #fef3e2; --badge-yellow-text: #b07820;
-  --badge-green-bg: #e8f5ee; --badge-green-text: #3a8a5c;
-}
+  :root {
+    --brown-dark: #2d1f14; --brown-mid: #7a5535; --brown-main: #a07850;
+    --brown-light: #c9a98a; --cream: #f9f5f0; --white: #ffffff;
+    --border: #ede5dc; --text-main: #2d1f14; --text-muted: #9e8878; --text-hint: #b8a898;
+    --badge-red-bg: #fdecea; --badge-red-text: #c0614e;
+    --badge-yellow-bg: #fef3e2; --badge-yellow-text: #b07820;
+    --badge-green-bg: #e8f5ee; --badge-green-text: #3a8a5c;
+  }
 
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--cream);
-  color: var(--text-main);
-  min-height: 100vh;
-}
-
-/* ── APP SHELL ── */
-.app { display: flex; min-height: 100vh; }
-
-/* ── SIDEBAR ── */
-.sidebar {
-  width: 210px;
-  background: var(--brown-dark);
-  display: flex;
-  flex-direction: column;
-  padding: 24px 0;
-  flex-shrink: 0;
-  position: fixed;
-  height: 100vh;
-  top: 0; left: 0;
-  z-index: 100;
-}
-.sidebar-logo {
-  padding: 0 20px 24px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-.sidebar-logo h2 {
-  font-family: 'Cormorant Garamond', serif;
-  color: #e8d5c0;
-  font-size: 17px;
-  font-weight: 300;
-  line-height: 1.3;
-}
-.sidebar-logo p { color: rgba(255,255,255,0.3); font-size: 10px; letter-spacing: 1px; margin-top: 4px; }
-.nav { flex: 1; padding: 16px 0; }
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 20px;
-  font-size: 13px;
-  color: rgba(255,255,255,0.45);
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.15s;
-}
-.nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
-.nav-item.active { background: rgba(160,120,80,0.25); color: #e8c99a; border-left: 3px solid var(--brown-main); }
-.nav-icon { font-size: 15px; width: 20px; text-align: center; }
-.sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
-.sidebar-footer span { font-size: 11px; color: rgba(255,255,255,0.3); }
-.btn-cerrar-sesion {
-  display: flex; align-items: center; gap: 8px;
-  color: rgba(255,255,255,0.4); font-size: 12px;
-  cursor: pointer; margin-top: 8px;
-  background: none; border: none; font-family: 'DM Sans', sans-serif;
-  padding: 0;
-}
-.btn-cerrar-sesion:hover { color: rgba(255,255,255,0.7); }
-
-/* ── MAIN CONTENT ── */
-.main { flex: 1; margin-left: 210px; display: flex; flex-direction: column; min-height: 100vh; }
-.topbar {
-  background: var(--white);
-  padding: 18px 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--border);
-  position: sticky; top: 0; z-index: 50;
-}
-.topbar h1 { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--text-main); font-weight: 400; }
-.topbar-actions { display: flex; gap: 10px; align-items: center; }
-.content { flex: 1; padding: 28px 32px; }
-
-/* ── BUTTONS ── */
-.btn {
-  padding: 9px 20px;
-  border-radius: 8px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  transition: opacity 0.15s;
-}
-.btn:hover { opacity: 0.88; }
-.btn-primary { background: var(--brown-main); color: #fff; }
-.btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--brown-mid); }
-.btn-sm { padding: 7px 14px; font-size: 12px; border-radius: 6px; }
-.btn-danger { background: #fdecea; color: #c0614e; border: 1.5px solid #f5c4c0; }
-
-/* ── FORM FIELDS ── */
-.field { margin-bottom: 18px; }
-.field label {
-  display: block;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--brown-mid);
-  letter-spacing: 1.4px;
-  text-transform: uppercase;
-  margin-bottom: 7px;
-}
-.field input, .field select, .field textarea {
-  width: 100%;
-  padding: 11px 14px;
-  border: 1.5px solid #e8ddd5;
-  border-radius: 8px;
-  font-size: 13px;
-  font-family: 'DM Sans', sans-serif;
-  color: var(--text-main);
-  background: #fdf9f6;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--brown-main); background: #fff; }
-.field input::placeholder, .field textarea::placeholder { color: #c5b5a8; }
-.field textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
-.field-row { display: flex; gap: 16px; }
-.field-row .field { flex: 1; }
-
-/* ── BADGES ── */
-.badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-.badge-sin { background: var(--badge-red-bg); color: var(--badge-red-text); }
-.badge-anticipo { background: var(--badge-yellow-bg); color: var(--badge-yellow-text); }
-.badge-pagado { background: var(--badge-green-bg); color: var(--badge-green-text); }
-
-/* ── CARDS ── */
-.card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 18px 20px;
-}
-
-/* ── MODAL ── */
-.modal-overlay {
-  display: none;
-  position: fixed; inset: 0;
-  background: rgba(45,31,20,0.4);
-  z-index: 200;
-  align-items: center;
-  justify-content: center;
-}
-.modal-overlay.open { display: flex; }
-.modal-box {
-  background: var(--white);
-  border-radius: 14px;
-  padding: 28px 32px;
-  width: 100%;
-  max-width: 480px;
-  box-shadow: 0 16px 60px rgba(0,0,0,0.15);
-  animation: fadeUp 0.2s ease;
-}
-@keyframes fadeUp { from { transform: translateY(16px); opacity:0; } to { transform: translateY(0); opacity:1; } }
-.modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--text-main); margin-bottom: 4px; }
-.modal-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
-.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-.modal-actions .btn { flex: 1; padding: 12px; }
-
-/* ── ALERTS ── */
-.alert {
-  padding: 11px 14px;
-  border-radius: 8px;
-  font-size: 12px;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-}
-.alert-warning { background: #fef3e2; border: 1px solid #f5d9a0; color: #7a5010; }
-.alert-error { background: var(--badge-red-bg); border: 1px solid #f5c4c0; color: #8a2010; }
-.alert-success { background: var(--badge-green-bg); border: 1px solid #b0dfc0; color: #1a6040; }
-
-/* ── SECTION LABEL ── */
-.section-label {
-  font-size: 11px;
-  color: var(--text-hint);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-
-/* ── INFO BOX ── */
-.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 12px; margin-bottom: 20px; }
-.info-box { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
-.info-box .ib-label { font-size: 10px; color: var(--text-hint); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-.info-box .ib-value { font-size: 14px; color: var(--text-main); font-weight: 500; }
-
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text-main); min-height: 100vh; }
+  .app { display: flex; min-height: 100vh; }
+  .sidebar { width: 210px; background: var(--brown-dark); display: flex; flex-direction: column; padding: 24px 0; flex-shrink: 0; position: fixed; height: 100vh; top: 0; left: 0; z-index: 100; }
+  .sidebar-logo { padding: 0 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .sidebar-logo h2 { font-family: 'Cormorant Garamond', serif; color: #e8d5c0; font-size: 17px; font-weight: 300; line-height: 1.3; }
+  .sidebar-logo p { color: rgba(255,255,255,0.3); font-size: 10px; letter-spacing: 1px; margin-top: 4px; }
+  .nav { flex: 1; padding: 16px 0; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 12px 20px; font-size: 13px; color: rgba(255,255,255,0.45); cursor: pointer; text-decoration: none; transition: all 0.15s; }
+  .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
+  .nav-item.active { background: rgba(160,120,80,0.25); color: #e8c99a; border-left: 3px solid var(--brown-main); }
+  .nav-icon { font-size: 15px; width: 20px; text-align: center; }
+  .sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .sidebar-footer span { font-size: 11px; color: rgba(255,255,255,0.3); }
+  .btn-cerrar-sesion { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.4); font-size: 12px; cursor: pointer; margin-top: 8px; background: none; border: none; font-family: 'DM Sans', sans-serif; padding: 0; }
+  .btn-cerrar-sesion:hover { color: rgba(255,255,255,0.7); }
+  .main { flex: 1; margin-left: 210px; display: flex; flex-direction: column; min-height: 100vh; }
+  .topbar { background: var(--white); padding: 18px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
+  .topbar h1 { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--text-main); font-weight: 400; }
+  .topbar-actions { display: flex; gap: 10px; align-items: center; }
+  .btn { padding: 9px 20px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: opacity 0.15s; }
+  .btn:hover { opacity: 0.88; }
+  .btn-primary { background: var(--brown-main); color: #fff; }
+  .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--brown-mid); }
+  .btn-sm { padding: 7px 14px; font-size: 12px; border-radius: 6px; }
+  .section-label { font-size: 11px; color: var(--text-hint); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 <div class="app">
   <aside class="sidebar">
     <div class="sidebar-logo"><h2>Moon<br>Beauty<br>Space</h2><p>SISTEMA DE GESTIÓN</p></div>
     <nav class="nav">
-<a class="nav-item" href="/frontend/citas/citas.html"><span class="nav-icon">📅</span> Gestionar Citas</a>
-      <a class="nav-item" href="/frontend/clientes/clientas.html"><span class="nav-icon">👤</span> Clientas</a>
-      <a class="nav-item active" href="/frontend/pagos/pagos.html"><span class="nav-icon">💳</span> Pagos</a>
-      <a class="nav-item" href="/frontend/reportes/reportes.html"><span class="nav-icon">📊</span> Reportes</a>
-      <a class="nav-item" href="/frontend/notificaciones/notificaciones.html"><span class="nav-icon">🔔</span> Notificaciones</a>
-      <a class="nav-item" href="/frontend/catalago/catalago.html"><span class="nav-icon">✂️</span> Catálogo</a>
+      <a class="nav-item" href="citas.html"><span class="nav-icon">📅</span> Gestionar Citas</a>
+      <a class="nav-item" href="clientas.html"><span class="nav-icon">👤</span> Clientas</a>
+      <a class="nav-item" href="pagos.html"><span class="nav-icon">💳</span> Pagos</a>
+      <a class="nav-item active" href="reportes.html"><span class="nav-icon">📊</span> Reportes</a>
+      <a class="nav-item" href="notificaciones.html"><span class="nav-icon">🔔</span> Notificaciones</a>
+      <a class="nav-item" href="catalago.html"><span class="nav-icon">✂️</span> Catálogo</a>
     </nav>
     <div class="sidebar-footer">
       <span>Encargada · v2.0</span>
-      <button class="btn-cerrar-sesion" onclick="window.location.href='../../index.html'">↩ Cerrar sesión</button>
+      <button class="btn-cerrar-sesion" onclick="window.location.href='index.html'">↩ Cerrar sesión</button>
     </div>
   </aside>
   <div class="main">
     <div class="topbar"><h1>Generar Reportes</h1></div>
     <div class="content" style="padding:32px;overflow-y:auto">
+
+      <!-- Tarjetas resumen -->
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px">
-        <div class="card"><div style="font-size:11px;color:var(--text-hint);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Ingresos del día</div><div style="font-size:28px;font-family:'Cormorant Garamond',serif">$1,300</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px">3 citas atendidas</div></div>
-        <div class="card"><div style="font-size:11px;color:var(--text-hint);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Ingresos del mes</div><div style="font-size:28px;font-family:'Cormorant Garamond',serif">$18,450</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px">42 citas en marzo</div></div>
-        <div class="card"><div style="font-size:11px;color:var(--text-hint);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Promedio por cita</div><div style="font-size:28px;font-family:'Cormorant Garamond',serif">$439</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px">Este mes</div></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-        <div class="section-label" style="margin-bottom:0">Reporte del día · 15 mar 2026</div>
-        <div style="display:flex;gap:8px">
-          <input type="date" style="padding:7px 12px;border:1.5px solid #e8ddd5;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;background:#fdf9f6;outline:none" value="2026-03-15">
-          <button class="btn btn-outline btn-sm">Exportar PDF</button>
-          <button class="btn btn-outline btn-sm">Exportar Excel</button>
+        <div class="card">
+          <div style="font-size:11px;color:var(--text-hint);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Ingresos del día</div>
+          <div style="font-size:28px;font-family:'Cormorant Garamond',serif" id="ingreso-dia">$0</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:4px" id="citas-dia">0 citas atendidas</div>
+        </div>
+        <div class="card">
+          <div style="font-size:11px;color:var(--text-hint);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Ingresos del mes</div>
+          <div style="font-size:28px;font-family:'Cormorant Garamond',serif" id="ingreso-mes">$0</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:4px" id="citas-mes">0 citas este mes</div>
+        </div>
+        <div class="card">
+          <div style="font-size:11px;color:var(--text-hint);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Promedio por cita</div>
+          <div style="font-size:28px;font-family:'Cormorant Garamond',serif" id="promedio">$0</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Este mes</div>
         </div>
       </div>
+
+      <!-- Filtro y acciones -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="section-label" style="margin-bottom:0" id="reporte-fecha-label">Reporte del día</div>
+        <div style="display:flex;gap:8px">
+          <input type="date" id="fecha-input" style="padding:7px 12px;border:1.5px solid #e8ddd5;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;background:#fdf9f6;outline:none">
+          <button class="btn btn-outline btn-sm" onclick="exportarPDF()">Exportar PDF</button>
+          <button class="btn btn-outline btn-sm" onclick="exportarExcel()">Exportar Excel</button>
+        </div>
+      </div>
+
+      <!-- Tabla -->
       <table style="width:100%;border-collapse:collapse;background:var(--white);border-radius:10px;overflow:hidden;border:1px solid var(--border)">
         <thead><tr style="background:#fdf9f6">
           <th style="padding:12px 16px;text-align:left;font-size:11px;color:var(--text-hint);letter-spacing:1px;text-transform:uppercase;font-weight:500;border-bottom:1px solid var(--border)">Clienta</th>
@@ -266,19 +110,18 @@ body {
           <th style="padding:12px 16px;text-align:right;font-size:11px;color:var(--text-hint);letter-spacing:1px;text-transform:uppercase;font-weight:500;border-bottom:1px solid var(--border)">Pago final</th>
           <th style="padding:12px 16px;text-align:right;font-size:11px;color:var(--text-hint);letter-spacing:1px;text-transform:uppercase;font-weight:500;border-bottom:1px solid var(--border)">Total</th>
         </tr></thead>
-        <tbody>
-          <tr style="border-bottom:1px solid var(--border)"><td style="padding:13px 16px;font-size:13px">Sofía Martínez</td><td style="padding:13px 16px;font-size:13px;color:var(--text-muted)">Extensión pestañas</td><td style="padding:13px 16px;font-size:13px;color:var(--text-muted)">10:00 AM</td><td style="padding:13px 16px;text-align:right;font-size:13px">$100</td><td style="padding:13px 16px;text-align:right;font-size:13px">$550</td><td style="padding:13px 16px;text-align:right;font-size:14px;font-weight:500;color:#3a8a5c">$650</td></tr>
-          <tr style="border-bottom:1px solid var(--border)"><td style="padding:13px 16px;font-size:13px">Valentina Reyes</td><td style="padding:13px 16px;font-size:13px;color:var(--text-muted)">Retoque pestañas</td><td style="padding:13px 16px;font-size:13px;color:var(--text-muted)">12:00 PM</td><td style="padding:13px 16px;text-align:right;font-size:13px">$100</td><td style="padding:13px 16px;text-align:right;font-size:13px">$250</td><td style="padding:13px 16px;text-align:right;font-size:14px;font-weight:500;color:#3a8a5c">$350</td></tr>
-          <tr><td style="padding:13px 16px;font-size:13px">Camila Torres</td><td style="padding:13px 16px;font-size:13px;color:var(--text-muted)">Diseño de cejas</td><td style="padding:13px 16px;font-size:13px;color:var(--text-muted)">3:00 PM</td><td style="padding:13px 16px;text-align:right;font-size:13px">—</td><td style="padding:13px 16px;text-align:right;font-size:13px">$300</td><td style="padding:13px 16px;text-align:right;font-size:14px;font-weight:500;color:#3a8a5c">$300</td></tr>
+        <tbody id="reporte-tbody">
+          <tr><td colspan="6" style="padding:20px;text-align:center;color:var(--text-muted)">Cargando...</td></tr>
         </tbody>
         <tfoot><tr style="background:#fdf9f6;border-top:1px solid var(--border)">
           <td colspan="5" style="padding:13px 16px;font-size:13px;font-weight:500;text-align:right">Total del día</td>
-          <td style="padding:13px 16px;text-align:right;font-size:16px;font-weight:500;font-family:'Cormorant Garamond',serif;color:#3a8a5c">$1,300</td>
+          <td style="padding:13px 16px;text-align:right;font-size:16px;font-weight:500;font-family:'Cormorant Garamond',serif;color:#3a8a5c" id="total-tabla">$0</td>
         </tr></tfoot>
       </table>
     </div>
   </div>
 </div>
+
 <!-- MODAL SESIÓN -->
 <div id="session-overlay" style="display:none;position:fixed;inset:0;background:rgba(45,31,20,0.55);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(3px);">
   <div style="background:#fff;border-radius:16px;padding:32px 36px;width:100%;max-width:420px;box-shadow:0 20px 70px rgba(0,0,0,0.22);text-align:center;">
@@ -298,6 +141,195 @@ body {
 </div>
 
 <script>
+  const BASE_URL = 'http://localhost:8080';
+  const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  function exportarPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const fecha = document.getElementById('fecha-input').value;
+    const hoy = new Date(fecha + 'T12:00:00');
+    const fechaLabel = `${hoy.getDate()} ${MESES[hoy.getMonth()]} ${hoy.getFullYear()}`;
+
+    // Encabezado
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text('Moon Beauty Space', 14, 20);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.text('Reporte de ingresos — ' + fechaLabel, 14, 28);
+
+    // Resumen
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Ingresos del día:', 14, 40);
+    doc.setFont('helvetica', 'normal');
+    doc.text(document.getElementById('ingreso-dia').textContent, 60, 40);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Ingresos del mes:', 14, 48);
+    doc.setFont('helvetica', 'normal');
+    doc.text(document.getElementById('ingreso-mes').textContent, 60, 48);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Citas atendidas hoy:', 14, 56);
+    doc.setFont('helvetica', 'normal');
+    doc.text(document.getElementById('citas-dia').textContent, 60, 56);
+
+    // Tabla
+    const filas = [];
+    document.querySelectorAll('#reporte-tbody tr').forEach(tr => {
+      const cols = tr.querySelectorAll('td');
+      if (cols.length === 6) {
+        filas.push([
+          cols[0].textContent,
+          cols[1].textContent,
+          cols[2].textContent,
+          cols[3].textContent,
+          cols[4].textContent,
+          cols[5].textContent
+        ]);
+      }
+    });
+
+    doc.autoTable({
+      startY: 65,
+      head: [['Clienta', 'Servicio', 'Hora', 'Anticipo', 'Pago final', 'Total']],
+      body: filas,
+      foot: [['', '', '', '', 'Total del día', document.getElementById('total-tabla').textContent]],
+      styles: { fontSize: 10, cellPadding: 4 },
+      headStyles: { fillColor: [160, 120, 80], textColor: 255 },
+      footStyles: { fillColor: [253, 249, 246], textColor: [45, 31, 20], fontStyle: 'bold' }
+    });
+
+    doc.save(`reporte-${fecha}.pdf`);
+  }
+
+function exportarExcel() {
+  const fecha = document.getElementById('fecha-input').value;
+  const hoy = new Date(fecha + 'T12:00:00');
+  const fechaLabel = `${hoy.getDate()} ${MESES[hoy.getMonth()]} ${hoy.getFullYear()}`;
+
+  const filas = [
+    ['Moon Beauty Space — Reporte de ingresos'],
+    ['Fecha:', fechaLabel],
+    ['Ingresos del día:', document.getElementById('ingreso-dia').textContent],
+    ['Ingresos del mes:', document.getElementById('ingreso-mes').textContent],
+    ['Citas atendidas:', document.getElementById('citas-dia').textContent],
+    [],
+    ['Clienta', 'Servicio', 'Hora', 'Anticipo', 'Pago final', 'Total']
+  ];
+
+  document.querySelectorAll('#reporte-tbody tr').forEach(tr => {
+    const cols = tr.querySelectorAll('td');
+    if (cols.length === 6) {
+      filas.push([
+        cols[0].textContent,
+        cols[1].textContent,
+        cols[2].textContent,
+        cols[3].textContent,
+        cols[4].textContent,
+        cols[5].textContent
+      ]);
+    }
+  });
+
+  filas.push([]);
+  filas.push(['', '', '', '', 'Total del día', document.getElementById('total-tabla').textContent]);
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(filas);
+  ws['!cols'] = [{ wch: 20 }, { wch: 25 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 12 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'Reporte');
+    XLSX.writeFile(wb, `reporte-${fecha}.xlsx`);
+  }
+
+
+  async function cargarReporte(fecha) {
+    try {
+      const [citasRes, pagosRes, serviciosRes, clientasRes] = await Promise.all([
+        fetch(`${BASE_URL}/api/citas/fecha/${fecha}`),
+        fetch(`${BASE_URL}/api/pagos`),
+        fetch(`${BASE_URL}/api/catalogo`),
+        fetch(`${BASE_URL}/api/clientas`)
+      ]);
+      const citas = await citasRes.json();
+      const pagos = await pagosRes.json();
+      const servicios = await serviciosRes.json();
+      const clientas = await clientasRes.json();
+
+      // Construir filas de la tabla
+      const filas = citas.map(c => {
+        const clienta = clientas.find(cl => cl.idClienta === c.idclienta);
+        const servicio = servicios.find(s => s.idservicio === c.idservicio);
+        const pagosCita = pagos.filter(p => p.idCita === c.idcita);
+        const anticipo = pagosCita.find(p => p.tipoPago === 'Adelanto');
+        const pagoFinal = pagosCita.find(p => p.tipoPago === 'Pago completo');
+        const montoAnticipo = anticipo ? parseFloat(anticipo.montoPagado) : 0;
+        const montoFinal = pagoFinal ? parseFloat(pagoFinal.montoPagado) : 0;
+        const nombreClienta = clienta ? `${clienta.nombre} ${clienta.paterno || ''}`.trim() : 'Desconocida';
+        const partes = c.horaCita.split(':');
+        const h = parseInt(partes[0]);
+        const m = partes[1] || '00';
+        const period = h >= 12 ? 'PM' : 'AM';
+        const h12 = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+        const hora = `${h12}:${m} ${period}`;
+        return {
+          nombreClienta,
+          servicio: servicio ? servicio.nombreServicio : '—',
+          hora,
+          montoAnticipo,
+          montoFinal
+        };
+      });
+
+    // Total del día
+    const totalDia = filas.reduce((s, f) => s + f.montoAnticipo + f.montoFinal, 0);
+
+    // Total del mes
+    const hoy = new Date(fecha + 'T12:00:00');
+    const pagosMes = pagos.filter(p => {
+      const fp = new Date(p.fechaPago + 'T12:00:00');
+      return fp.getMonth() === hoy.getMonth() && fp.getFullYear() === hoy.getFullYear();
+    });
+    const totalMes = pagosMes.reduce((s, p) => s + parseFloat(p.montoPagado), 0);
+    const citasMes = new Set(pagosMes.map(p => p.idCita)).size;
+    const promedio = citasMes > 0 ? Math.round(totalMes / citasMes) : 0;
+
+    // Actualizar tarjetas
+    document.getElementById('ingreso-dia').textContent = '$' + totalDia.toLocaleString();
+    document.getElementById('citas-dia').textContent = citas.length + ' citas atendidas';
+    document.getElementById('ingreso-mes').textContent = '$' + totalMes.toLocaleString();
+    document.getElementById('citas-mes').textContent = citasMes + ' citas en ' + MESES[hoy.getMonth()].toLowerCase();
+    document.getElementById('promedio').textContent = '$' + promedio.toLocaleString();
+    document.getElementById('reporte-fecha-label').textContent = `Reporte del día · ${hoy.getDate()} ${MESES[hoy.getMonth()].slice(0,3).toLowerCase()} ${hoy.getFullYear()}`;
+
+    // Renderizar tabla
+    const tbody = document.getElementById('reporte-tbody');
+    tbody.innerHTML = filas.length === 0
+      ? `<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--text-muted)">No hay citas para este día.</td></tr>`
+      : filas.map(f => `
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:13px 16px;font-size:13px">${f.nombreClienta}</td>
+          <td style="padding:13px 16px;font-size:13px;color:var(--text-muted)">${f.servicio}</td>
+          <td style="padding:13px 16px;font-size:13px;color:var(--text-muted)">${f.hora}</td>
+          <td style="padding:13px 16px;text-align:right;font-size:13px">${f.montoAnticipo ? '$' + f.montoAnticipo.toLocaleString() : '—'}</td>
+          <td style="padding:13px 16px;text-align:right;font-size:13px">${f.montoFinal ? '$' + f.montoFinal.toLocaleString() : '—'}</td>
+          <td style="padding:13px 16px;text-align:right;font-size:14px;font-weight:500;color:#3a8a5c">$${(f.montoAnticipo + f.montoFinal).toLocaleString()}</td>
+        </tr>`).join('');
+
+    document.getElementById('total-tabla').textContent = '$' + totalDia.toLocaleString();
+
+  } catch (err) {
+    console.error('Error al cargar reporte:', err);
+  }
+}
+
+// Inicializar con fecha de hoy
+const hoy = new Date().toLocaleDateString('en-CA');
+document.getElementById('fecha-input').value = hoy;
+document.getElementById('fecha-input').addEventListener('change', e => cargarReporte(e.target.value));
+cargarReporte(hoy);
+
+// Sistema de sesión
 (function(){
   const SESSION_TIMEOUT = 25 * 60 * 1000;
   const WARNING_BEFORE  =  1 * 60 * 1000;

@@ -466,7 +466,7 @@ async function cargarDatos() {
     await Promise.all(citas.map(async cita => {
       const fecha = cita.fechaCita;
       if (!todasLasCitas[fecha]) todasLasCitas[fecha] = [];
-      const clienta = clientasData.find(c => c.idClientas === cita.idclientas);
+      const clienta = clientasData.find(c => c.idClienta === cita.idclienta);
       const servicio = serviciosData.find(s => s.idservicio === cita.idservicio);
       const [hora, period] = convertirHora(cita.horaCita);
 
@@ -670,7 +670,7 @@ function filtrarClientas(q) {
   }
   dd.innerHTML = res.map(c => {
     const nombre = `${c.nombre} ${c.paterno||''}`.trim();
-    return `<div onclick="selClienta(${c.idClientas},'${nombre}')" style="padding:10px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid #f5ede5;display:flex;align-items:center;justify-content:space-between" onmouseover="this.style.background='#fdf9f6'" onmouseout="this.style.background=''">${nombre} <span style="color:#b8a898;font-size:11px">· ${c.telefono||''}</span>${c.notasAlergia?`<span style="background:#fdecea;color:#c0614e;font-size:10px;padding:2px 7px;border-radius:10px;margin-left:auto">⚠ alergia</span>`:''}</div>`;
+    return `<div onclick="selClienta(${c.idClienta},'${nombre}')" style="padding:10px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid #f5ede5;display:flex;align-items:center;justify-content:space-between" onmouseover="this.style.background='#fdf9f6'" onmouseout="this.style.background=''">${nombre} <span style="color:#b8a898;font-size:11px">· ${c.telefono||''}</span>${c.notasAlergia?`<span style="background:#fdecea;color:#c0614e;font-size:10px;padding:2px 7px;border-radius:10px;margin-left:auto">⚠ alergia</span>`:''}</div>`;
   }).join('');
 }
 
@@ -681,7 +681,7 @@ function selClienta(id, nombre) {
 }
 
 function mostrarPerfil(id) {
-  const p = clientasData.find(c => c.idClientas === id);
+  const p = clientasData.find(c => c.idClienta === id);
   const card = document.getElementById('clienta-card');
   if (!p) { card.classList.remove('visible'); return; }
   const nombre = `${p.nombre} ${p.paterno||''}`.trim();
@@ -732,7 +732,7 @@ async function guardarNuevaClienta() {
       cerrarModal('modal-nueva-clienta'); abrirModal('modal-agendar');
       const nombreCompleto = `${nueva.nombre} ${nueva.paterno||''}`.trim();
       document.getElementById('buscar-clienta').value = nombreCompleto;
-      mostrarPerfil(nueva.idClientas);
+      mostrarPerfil(nueva.idClienta);
       showToast(`✓ Clienta "${nombreCompleto}" registrada`);
     }
   } catch (err) { console.error('Error al guardar clienta:', err); }
@@ -791,8 +791,8 @@ async function confirmarCita() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        idusuarios: 1,
-        idclientas: clientaObj.idClientas,
+        idusuario: 1,
+        idclienta: clientaObj.idClienta,
         idservicio: servicioObj?.idservicio || null,
         fechaCita: fecha,
         horaCita: hora24 + ':00',

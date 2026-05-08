@@ -395,7 +395,7 @@ body {
 
         const servicioRes = await fetch(`http://localhost:8080/api/catalogo/${c.idservicio}`);
         const servicio = await servicioRes.json();
-        const clientaRes = await fetch(`http://localhost:8080/api/clientas/${c.idclientas}`);
+        const clientaRes = await fetch(`http://localhost:8080/api/clientas/${c.idclienta}`);
         const clienta = await clientaRes.json();
         const nombreClienta = `${clienta.nombre} ${clienta.paterno || ''}`.trim();
 
