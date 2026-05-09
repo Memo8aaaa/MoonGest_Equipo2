@@ -6,6 +6,7 @@ Herramientas utilizadas
 
 -Gemini: Fue la herramienta de IA utilizada como apoyo durante el desarrollo del
   módulo de Notificaciones, para verificar y corregir errores de conexión.
+  
 -Claude: Fue la herramienta de IA utilizada como apoyo al momento de establecer
   la conexión con la base de datos y corrección de código general del backend.
 
@@ -13,7 +14,7 @@ Herramientas utilizadas
 
 1. Corrección de código:
 Se utilizó IA para identificar y corregir errores en el código del backend desarrollado
-en Java 21 con Spring Boot, en los siguientes casos:
+en Java 21 con Spring Boot, en los siguientes casos
 
 - Corrección de errores de sintaxis y lógica en las clases de los módulos
   (Usuarios, Clientas, Citas, y Notificaciones).
@@ -24,7 +25,7 @@ en Java 21 con Spring Boot, en los siguientes casos:
 
 2. Conectividad con la base de datos:
 Se utilizó IA para establecer y corregir la conexión entre el backend de Spring Boot
-y la base de datos MySQL local:
+y la base de datos MySQL local
 
 - Configuración del archivo `application.properties` con los parámetros correctos
   de URL de conexión, usuario y contraseña.
