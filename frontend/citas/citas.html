@@ -433,6 +433,41 @@ body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(
   </div>
 </div>
 
+  <!-- ═══ MODAL REPROGRAMAR CITA ═══ -->
+<div class="modal-overlay" id="modal-reprogramar">
+  <div class="modal-box">
+    <div class="modal-title">Reprogramar Cita</div>
+    <div class="modal-sub" id="rep-sub"></div>
+    <div class="sec-div">Nueva fecha</div>
+    <div class="mini-cal">
+      <div class="mini-cal-header">
+        <button class="mini-nav" onclick="cambiarMiniMesRep(-1)">‹</button>
+        <span id="rep-mes">Mayo 2026</span>
+        <button class="mini-nav" onclick="cambiarMiniMesRep(1)">›</button>
+      </div>
+      <div class="mini-grid" id="rep-grid"></div>
+    </div>
+    <div id="rep-fecha-display" style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Sin fecha seleccionada</div>
+    <div class="field">
+      <label>Nueva hora</label>
+      <select id="rep-hora">
+        <option value="9:00 AM">9:00 AM</option><option value="9:30 AM">9:30 AM</option>
+        <option value="10:00 AM">10:00 AM</option><option value="10:30 AM">10:30 AM</option>
+        <option value="11:00 AM">11:00 AM</option><option value="11:30 AM">11:30 AM</option>
+        <option value="12:00 PM">12:00 PM</option><option value="12:30 PM">12:30 PM</option>
+        <option value="1:00 PM">1:00 PM</option><option value="2:00 PM">2:00 PM</option>
+        <option value="3:00 PM">3:00 PM</option><option value="4:00 PM">4:00 PM</option>
+        <option value="5:00 PM">5:00 PM</option><option value="6:00 PM">6:00 PM</option>
+      </select>
+    </div>
+    <div id="rep-error" class="alert alert-error" style="display:none"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="cerrarModal('modal-reprogramar')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarReprogramar()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -449,6 +484,87 @@ let miniY = curY, miniM = curM, miniFecha = '';
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const MESES_C = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 const DIAS_ES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+let repY = new Date().getFullYear(), repM = new Date().getMonth(), repFecha = '', repCitaId = null, repDs = null, repIdx = null;
+
+function abrirReprogramar(ds, i) {
+  cerrarModal('modal-detalle');
+  const c = (todasLasCitas[ds] || [])[i];
+  if (!c) return;
+  repCitaId = c.id;
+  repDs = ds;
+  repIdx = i;
+  repFecha = '';
+  repY = new Date().getFullYear();
+  repM = new Date().getMonth();
+  document.getElementById('rep-sub').textContent = `${c.nombre} · ${c.servicio}`;
+  document.getElementById('rep-fecha-display').textContent = 'Sin fecha seleccionada';
+  document.getElementById('rep-error').style.display = 'none';
+  buildMiniCalRep();
+  abrirModal('modal-reprogramar');
+}
+
+function buildMiniCalRep() {
+  document.getElementById('rep-mes').textContent = MESES_C[repM] + ' ' + repY;
+  const g = document.getElementById('rep-grid');
+  g.innerHTML = ['L','M','M','J','V','S','D'].map(d => `<div class="mdn">${d}</div>`).join('');
+  const off = (new Date(repY, repM, 1).getDay() + 6) % 7;
+  for (let i = 0; i < off; i++) g.innerHTML += `<div class="md md-empty"></div>`;
+  const days = new Date(repY, repM + 1, 0).getDate();
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let d = 1; d <= days; d++) {
+    const ds = `${repY}-${String(repM+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dObj = new Date(ds + 'T12:00:00');
+    const isPast = dObj < today;
+    const isT = dObj.getTime() === today.getTime();
+    const isSel = ds === repFecha;
+    let cls = 'md' + (isPast ? ' md-past' : '') + (isT ? ' md-today' : '') + (isSel ? ' md-sel' : '');
+    const oc = !isPast ? `onclick="selFechaRep('${ds}')"` : '';
+    g.innerHTML += `<div class="${cls}" ${oc}>${d}</div>`;
+  }
+}
+
+function selFechaRep(ds) {
+  repFecha = ds;
+  const d = new Date(ds + 'T12:00:00');
+  document.getElementById('rep-fecha-display').textContent = `Seleccionado: ${DIAS_ES[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()].toLowerCase()} ${d.getFullYear()}`;
+  buildMiniCalRep();
+}
+
+function cambiarMiniMesRep(dir) {
+  repM += dir;
+  if (repM > 11) { repM = 0; repY++; }
+  if (repM < 0) { repM = 11; repY--; }
+  buildMiniCalRep();
+}
+
+async function confirmarReprogramar() {
+  const errEl = document.getElementById('rep-error');
+  if (!repFecha) { errEl.style.display = 'flex'; errEl.textContent = '⚠️ Selecciona una fecha.'; return; }
+  const hora = document.getElementById('rep-hora').value;
+  const hora24 = convertirA24h(hora);
+  const c = (todasLasCitas[repDs] || [])[repIdx];
+  if (!c) return;
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/citas/${repCitaId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...c._raw,
+        fechaCita: repFecha,
+        horaCita: hora24 + ':00'
+      })
+    });
+    if (res.ok) {
+      cerrarModal('modal-reprogramar');
+      await cargarDatos();
+      showToast(`✓ Cita de ${c.nombre} reprogramada`);
+    }
+  } catch (err) {
+    console.error('Error al reprogramar:', err);
+  }
+}
 
 // ── CARGA INICIAL ─────────────────────────────────────────────────────────────
 async function cargarDatos() {
@@ -620,7 +736,7 @@ function renderCitas(ds) {
       </div>
       <span class="badge badge-${c.estado}">${c.estado==='pagado'?'Pagado ✓':c.estado==='anticipo'?'Anticipo':'Sin anticipo'}</span>
       <div class="cita-actions">
-        <button class="cita-btn" onclick="event.stopPropagation()">Reprogramar</button>
+        <button class="cita-btn" onclick="event.stopPropagation();abrirReprogramar('${ds}',${i})">Reprogramar</button>
         <button class="cita-btn danger" onclick="event.stopPropagation();cancelarCita('${ds}',${i})">Cancelar</button>
       </div>
     </div>`).join('');
